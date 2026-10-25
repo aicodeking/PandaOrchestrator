@@ -1,0 +1,44 @@
+{
+  "version": "1.0.0",
+  "categories": [
+    "implementation", "bugfix", "refactor", "test_writing", "code_review", "research",
+    "planning", "docs_writing", "ui_frontend", "data_analysis", "devops_infra",
+    "math_reasoning", "chat_simple"
+  ],
+  "skill_axes": [
+    "coding", "debugging", "reasoning", "math", "writing", "research", "review",
+    "planning", "ui_frontend", "data_analysis"
+  ],
+  "skill_levels": { "min": 0, "max": 10, "meaning": "0 = skill not needed; 10 = needs best-in-class ability on this axis" },
+  "difficulty_levels": { "min": 1, "max": 10, "meaning": "1 = trivial for any small model; 5 = mid-tier model usually succeeds; 8 = only frontier models usually succeed; 10 = frontier models usually fail" },
+  "flags": [
+    "needs_tools", "needs_vision", "long_context", "needs_review", "ambiguous_spec",
+    "multi_file", "needs_web"
+  ],
+  "checklist": [
+    { "id": "edits_code", "q": "Does the task require writing or modifying code?" },
+    { "id": "touches_gt3_files", "q": "Will it likely touch more than 3 files?" },
+    { "id": "new_feature", "q": "Does it add new functionality (not only fixing or restructuring)?" },
+    { "id": "has_failing_behavior", "q": "Does it describe a bug, error, or failing behavior to diagnose?" },
+    { "id": "needs_root_cause", "q": "Does solving it require finding a non-obvious root cause?" },
+    { "id": "needs_run_commands", "q": "Does it require running commands, tests, or tools in an environment?" },
+    { "id": "needs_browser_or_web", "q": "Does it require browsing the web or fetching external information?" },
+    { "id": "has_images", "q": "Does it include or require understanding images/screenshots/designs?" },
+    { "id": "input_gt_50k_tokens", "q": "Does it require reading more than ~50k tokens of input (large logs, many files, long docs)?" },
+    { "id": "concurrency_or_distributed", "q": "Does it involve concurrency, distributed systems, or race conditions?" },
+    { "id": "security_sensitive", "q": "Is it security-sensitive (auth, crypto, permissions, secrets)?" },
+    { "id": "formal_math_or_proof", "q": "Does it require formal math, proofs, or nontrivial algorithms analysis?" },
+    { "id": "domain_expertise", "q": "Does it need specialised domain expertise beyond general software engineering?" },
+    { "id": "clear_acceptance_criteria", "q": "Are acceptance criteria explicit and checkable?" },
+    { "id": "undefined_terms", "q": "Does the spec contain undefined terms or important missing details?" },
+    { "id": "design_decisions", "q": "Does it require making architecture or design decisions with trade-offs?" },
+    { "id": "visual_ui_work", "q": "Does it involve building or styling a visual user interface?" },
+    { "id": "writes_prose", "q": "Is the main output prose (docs, report, explanation) rather than code?" },
+    { "id": "data_processing", "q": "Does it involve analysing or transforming datasets/tables/metrics?" },
+    { "id": "infra_config", "q": "Does it involve infrastructure, CI/CD, deployment, or cloud configuration?" },
+    { "id": "multi_step_plan", "q": "Does it need a multi-step plan with several dependent stages?" },
+    { "id": "reviews_existing_work", "q": "Is the main job reviewing or critiquing existing code/text?" },
+    { "id": "trivial_one_liner", "q": "Could it be done correctly in a few lines or one short answer?" },
+    { "id": "high_stakes", "q": "Would a wrong result be costly (production, data loss, money)?" }
+  ]
+}

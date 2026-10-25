@@ -1,0 +1,18 @@
+[project]
+name = "panda-router"
+version = "0.1.0"
+description = "Small local task profiler + card matcher for routing tasks to LLMs"
+requires-python = ">=3.12"
+dependencies = [
+  "torch", "transformers", "datasets", "onnx", "onnxruntime", "optimum[onnxruntime]",
+  "scikit-learn", "numpy", "scipy", "jsonschema",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+include = ["panda_router*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
