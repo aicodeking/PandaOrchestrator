@@ -34,6 +34,7 @@ class OnnxProfiler(Profiler):
         if threads:
             opts.intra_op_num_threads = threads
         path = d / ("model.int8.onnx" if quantized else "model.onnx")
+        self.name = f"OnnxProfiler({d.resolve().name}/{path.name})"  # shown as router.profiler
         self.session = ort.InferenceSession(str(path), opts, providers=["CPUExecutionProvider"])
         self.output_names = [o.name for o in self.session.get_outputs()]
 

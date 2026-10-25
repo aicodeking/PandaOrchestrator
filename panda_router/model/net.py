@@ -24,10 +24,27 @@ def _prep_config(cfg, attn_implementation):
     return cfg
 
 
+def fp32_rotary(backbone: nn.Module) -> nn.Module:
+    """Force rotary frequencies to fp32 on every device. HF ModernBERT disables autocast for "cpu" when
+    running on MPS, so under MPS bf16 autocast `inv_freq @ position_ids` runs in bf16 and positions > 256
+    are quantised: models trained that way lose ~1 val point when served in fp32 (ONNX)."""
+    for mod in backbone.modules():
+        if type(mod).__name__.endswith("RotaryEmbedding") and not getattr(mod, "_fp32_patched", False):
+            fwd = mod.forward
+
+            def forward(x, *args, _fwd=fwd, **kw):
+                with torch.autocast(device_type=x.device.type, enabled=False):
+                    return _fwd(x, *args, **kw)
+
+            mod.forward = forward
+            mod._fp32_patched = True
+    return backbone
+
+
 class ProfilerModel(nn.Module):
     def __init__(self, backbone: nn.Module, dropout: float = 0.1):
         super().__init__()
-        self.backbone = backbone
+        self.backbone = fp32_rotary(backbone)
         h = backbone.config.hidden_size
         self.dropout = nn.Dropout(dropout)
         self.heads = nn.ModuleDict({

@@ -81,7 +81,9 @@ def test_http_errors(server):
 
 def test_load_profiler_falls_back(tmp_path):
     assert isinstance(load_profiler(None), HeuristicProfiler)
-    assert isinstance(load_profiler(tmp_path / "does-not-exist"), HeuristicProfiler)
+    assert isinstance(load_profiler(tmp_path / "does-not-exist", fallback=True), HeuristicProfiler)
+    with pytest.raises(RuntimeError):
+        load_profiler(tmp_path / "does-not-exist")
 
 
 def test_router_direct(tmp_path):

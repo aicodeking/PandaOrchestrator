@@ -1,0 +1,49 @@
+{
+  "profiler": "onnx:artifacts/abl32m_regret0",
+  "split": "test",
+  "n_pairs": 89,
+  "n_checks": 151,
+  "sign_ok": 1.0,
+  "per_key": {
+    "add_huge_log: checklist.input_gt_50k_tokens": {
+      "n": 13,
+      "sign_ok": 1.0
+    },
+    "add_huge_log: flags.long_context": {
+      "n": 13,
+      "sign_ok": 1.0
+    },
+    "add_scope: difficulty": {
+      "n": 29,
+      "sign_ok": 1.0
+    },
+    "add_screenshots: checklist.has_images": {
+      "n": 8,
+      "sign_ok": 1.0
+    },
+    "add_screenshots: flags.needs_vision": {
+      "n": 8,
+      "sign_ok": 1.0
+    },
+    "remove_acceptance: checklist.clear_acceptance_criteria": {
+      "n": 13,
+      "sign_ok": 1.0
+    },
+    "remove_acceptance: checklist.undefined_terms": {
+      "n": 2,
+      "sign_ok": 1.0
+    },
+    "remove_acceptance: flags.ambiguous_spec": {
+      "n": 13,
+      "sign_ok": 1.0
+    },
+    "simplify: checklist.trivial_one_liner": {
+      "n": 26,
+      "sign_ok": 1.0
+    },
+    "simplify: difficulty": {
+      "n": 26,
+      "sign_ok": 1.0
+    }
+  }
+}

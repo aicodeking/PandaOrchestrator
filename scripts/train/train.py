@@ -24,6 +24,10 @@ def main():
     ap.add_argument("--lr", type=float, default=None, help="default: 1e-4 (<=32m), 5e-5 (68m-150m), 3e-5 (400m)")
     ap.add_argument("--regret-weight", type=float, default=0.05, help="0 disables the regret loss (ablation)")
     ap.add_argument("--pair-weight", type=float, default=0.5, help="0 disables the minimal-pair loss (ablation)")
+    ap.add_argument("--single-teacher-weight", type=float, default=0.5,
+                    help="weight of the per-head label losses for meta.single_teacher records (pair loss unaffected)")
+    ap.add_argument("--anchors", default=None, help="checkpoints/anchors_train.jsonl (outcome-anchor aux loss)")
+    ap.add_argument("--anchor-weight", type=float, default=0.0)
     ap.add_argument("--distill-from", default=None, help="teacher cache .pt from scripts/train/cache_teacher.py")
     ap.add_argument("--distill-T", type=float, default=3.0)
     ap.add_argument("--distill-alpha", type=float, default=0.5)
@@ -39,7 +43,8 @@ def main():
                       batch_size=a.batch_size, lr=a.lr, regret_weight=a.regret_weight, pair_weight=a.pair_weight,
                       distill_from=a.distill_from, distill_T=a.distill_T, distill_alpha=a.distill_alpha,
                       patience=a.patience, max_len=a.max_len, max_steps=a.max_steps, limit_train=a.limit_train,
-                      device=a.device, bf16=not a.no_bf16, calibrate=not a.no_calibrate)
+                      device=a.device, bf16=not a.no_bf16, calibrate=not a.no_calibrate,
+                      single_teacher_weight=a.single_teacher_weight, anchors=a.anchors, anchor_weight=a.anchor_weight)
     s = train(cfg)
     print(json.dumps({k: s[k] for k in ("best_val_score", "epochs_run", "steps", "train_examples_per_s", "best_dir")}))
 

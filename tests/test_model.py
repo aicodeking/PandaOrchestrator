@@ -67,6 +67,36 @@ def test_head_losses_shapes_and_grads():
     assert all(v.grad is not None for v in out.values())
 
 
+def test_head_losses_row_weights():
+    out, y = _fake_out(4, requires_grad=False), _fake_y(4)
+    base = head_losses(out, y)
+    y["w"] = torch.ones(4)
+    assert all(torch.allclose(base[k], v) for k, v in head_losses(out, y).items())
+    y["w"] = torch.tensor([1.0, 1.0, 0.0, 0.0])
+    sub = head_losses({k: v[:2] for k, v in out.items()}, {k: v[:2] for k, v in y.items()})
+    assert all(torch.allclose(sub[k], v, atol=1e-6) for k, v in head_losses(out, y).items())
+
+
+def test_anchor_loss_masks_missing_rows():
+    from panda_router.model.losses import anchor_loss
+
+    out = _fake_out(3, requires_grad=False)
+    assert anchor_loss(out, torch.full((3,), float("nan"))) is None
+    out["difficulty"] = torch.tensor([[-9.0] * 9] * 3)  # expected level ~1
+    loss = anchor_loss(out, torch.tensor([1.0, float("nan"), float("nan")]))
+    assert float(loss) < 1e-3
+
+
+def test_encode_labels_weight_and_anchor(fake_dir):
+    from panda_router.train.data import encode_labels, load_jsonl
+
+    ex = load_jsonl(fake_dir / "train.jsonl")[0]
+    ex["meta"] = {**(ex.get("meta") or {}), "single_teacher": True}
+    lab = encode_labels(ex, 0.5, 4.2)
+    assert lab["w"] == np.float32(0.5) and lab["anchor"] == np.float32(4.2)
+    assert np.isnan(encode_labels({**ex, "meta": {}})["anchor"]) and encode_labels({**ex, "meta": {}})["w"] == 1.0
+
+
 def test_pair_loss_direction():
     out = _fake_out(2, requires_grad=False)
     out["difficulty"] = torch.tensor([[5.0] * 9, [-5.0] * 9])  # row0 hard, row1 easy
@@ -194,6 +224,18 @@ def test_fake_data_contract_and_pair_sampler(fake_dir, tiny_backbone):
     assert b["input_ids"].shape[1] in (64, 128, 256, 512)
 
 
+def test_rotary_runs_fp32_under_autocast(tiny_backbone):
+    from panda_router.model.net import ProfilerModel
+
+    model = ProfilerModel.from_backbone(str(tiny_backbone))
+    rot = [m for m in model.backbone.modules() if type(m).__name__.endswith("RotaryEmbedding")]
+    assert rot and all(getattr(m, "_fp32_patched", False) for m in rot)
+    x, pos = torch.zeros(1, 4, 8), torch.arange(300, 304)[None]
+    with torch.autocast(device_type="cpu", dtype=torch.bfloat16):
+        cos_ac = rot[0](x, pos)[0]
+    assert torch.allclose(cos_ac, rot[0](x, pos)[0])
+
+
 def test_train_export_onnx_profiler_end_to_end(fake_dir, tiny_backbone, tmp_path):
     from panda_router.model.onnx_profiler import OnnxProfiler, TorchProfiler, bench_latency
     from panda_router.train.export import export_artifacts
@@ -231,5 +273,8 @@ def test_train_export_onnx_profiler_end_to_end(fake_dir, tiny_backbone, tmp_path
     tp = TorchProfiler(ckpt).profile(task)
     op = OnnxProfiler(tmp_path / "art", quantized=False).profile(task)
     assert np.allclose(tp.difficulty, op.difficulty, atol=1e-4)
+    from panda_router.serve.router import profiler_name
+
+    assert profiler_name(OnnxProfiler(tmp_path / "art")) == "OnnxProfiler(art/model.int8.onnx)"
     lat = bench_latency(OnnxProfiler(tmp_path / "art"), [task], n=5, warmup=1)
     assert lat["p50_ms"] > 0

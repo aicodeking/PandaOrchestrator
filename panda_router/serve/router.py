@@ -17,14 +17,19 @@ class RequestError(ValueError):
     """Invalid client input (maps to HTTP 400)."""
 
 
-def load_profiler(path_or_none: str | Path | None) -> Profiler:
-    """ONNX profiler from an artifacts dir if given and loadable; otherwise the heuristic profiler."""
+def load_profiler(path_or_none: str | Path | None, fallback: bool = False) -> Profiler:
+    """ONNX profiler from an artifacts dir if given; the heuristic profiler if no dir is given.
+
+    An explicitly requested artifacts dir that fails to load raises, unless ``fallback=True``.
+    """
     if path_or_none:
         try:
-            from ..model.onnx_profiler import OnnxProfiler  # lazy: optional dependency, other worker's module
+            from ..model.onnx_profiler import OnnxProfiler  # lazy: optional dependency
 
             return OnnxProfiler(str(path_or_none))
-        except Exception as e:  # noqa: BLE001 - any load failure falls back to the heuristic baseline
+        except Exception as e:  # noqa: BLE001
+            if not fallback:
+                raise RuntimeError(f"cannot load ONNX profiler from {path_or_none}: {type(e).__name__}: {e}") from e
             print(f"[panda-router] ONNX profiler unavailable ({type(e).__name__}: {e}); using heuristic",
                   file=sys.stderr)
     return HeuristicProfiler()

@@ -14,10 +14,10 @@ from transformers import AutoTokenizer
 
 from ..model.corn import corn_level_probs
 from ..model.decode import decode_probs
-from ..model.losses import LossNormalizer, distill_losses, head_losses, pair_loss
+from ..model.losses import LossNormalizer, anchor_loss, distill_losses, head_losses, pair_loss
 from ..model.net import ProfilerModel, default_lr, save_checkpoint
 from ..model.soft_matcher import regret_loss, sample_pools
-from .data import PairAwareBatchSampler, ProfileDataset, stack_labels
+from .data import PairAwareBatchSampler, ProfileDataset, load_anchors, stack_labels
 from .metrics import compute_metrics
 
 
@@ -28,6 +28,7 @@ class TrainConfig:
     out: str = "checkpoints/run"
     epochs: int = 6
     seed: int = 0
+    init_seed: int = 0
     batch_size: int = 32
     eval_batch_size: int = 64
     lr: float | None = None
@@ -41,6 +42,9 @@ class TrainConfig:
     regret_cards: int = 6
     pair_weight: float = 0.5
     pair_margin: float = 0.5
+    single_teacher_weight: float = 0.5
+    anchors: str | None = None
+    anchor_weight: float = 0.0
     distill_from: str | None = None
     distill_T: float = 3.0
     distill_alpha: float = 0.5
@@ -51,6 +55,7 @@ class TrainConfig:
     limit_train: int | None = None
     limit_val: int | None = None
     calibrate: bool = True
+    empty_cache_every: int = 100
 
 
 def pick_device(pref: str | None = None) -> torch.device:
@@ -109,9 +114,14 @@ def train(cfg: TrainConfig) -> dict:
     tok = AutoTokenizer.from_pretrained(cfg.backbone)
     teacher = load_teacher_cache(cfg.distill_from) if cfg.distill_from else None
     data = Path(cfg.data_dir)
-    train_ds = ProfileDataset.from_file(data / "train.jsonl", tok, cfg.max_len, teacher, cfg.limit_train)
+    anchors = load_anchors(cfg.anchors) if cfg.anchors and cfg.anchor_weight > 0 else None
+    train_ds = ProfileDataset.from_file(data / "train.jsonl", tok, cfg.max_len, teacher, cfg.limit_train,
+                                        single_teacher_weight=cfg.single_teacher_weight, anchors=anchors)
     val_ds = ProfileDataset.from_file(data / "val.jsonl", tok, cfg.max_len, None, cfg.limit_val)
+    torch.manual_seed(cfg.init_seed)  # same head init for every seed, so seed runs can be souped
     model = ProfilerModel.from_backbone(cfg.backbone, cfg.dropout).to(device)
+    if cfg.seed != cfg.init_seed:
+        seed_everything(cfg.seed)
 
     sampler = PairAwareBatchSampler(train_ds, cfg.batch_size, seed=cfg.seed)
     steps_per_epoch = len(sampler)
@@ -160,6 +170,9 @@ def train(cfg: TrainConfig) -> dict:
                 if pl is not None:
                     parts["pair"] = pl
                     loss = loss + cfg.pair_weight * norm("pair", pl)
+            if anchors and (al := anchor_loss(o, y["anchor"])) is not None:
+                parts["anchor"] = al
+                loss = loss + cfg.anchor_weight * norm("anchor", al)
             if cfg.regret_weight > 0:
                 pool = sample_pools(len(idx), cfg.regret_cards, gen, device)
                 pred = {"difficulty": corn_level_probs(o["difficulty"]), "skills": corn_level_probs(o["skills"]),
@@ -176,11 +189,19 @@ def train(cfg: TrainConfig) -> dict:
             step += 1
             nb += 1
             n_seen += len(idx)
+            if device.type == "mps" and step % cfg.empty_cache_every == 0:
+                torch.mps.empty_cache()  # the MPS caching allocator otherwise grows across length buckets
+            if step % 50 == 0:
+                mem = round(torch.mps.driver_allocated_memory() / 2**30, 1) if device.type == "mps" else None
+                print(json.dumps({"step": step, "of": total, "ex_per_s": round(n_seen / (time.time() - t_start), 1),
+                                  "mps_gb": mem}), flush=True)
             sums["total"] = sums.get("total", 0.0) + float(loss.detach())
             for k, v in parts.items():
                 sums[k] = sums.get(k, 0.0) + float(v.detach())
         train_losses = {k: v / max(nb, 1) for k, v in sums.items()}
         metrics, _ = evaluate(model, val_ds, device, cfg.eval_batch_size, cfg.bf16)
+        if device.type == "mps":
+            torch.mps.empty_cache()
         rec = {"epoch": epoch, "step": step, "train": train_losses, "val": metrics,
                "elapsed_s": time.time() - t_start}
         history.append(rec)

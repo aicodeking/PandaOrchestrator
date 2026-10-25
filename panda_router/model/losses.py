@@ -9,22 +9,41 @@ from .corn import corn_level_probs, corn_loss, expected_level
 QUANTILES = (0.1, 0.5, 0.9)
 
 
-def pinball(pred: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-    """pred (B,3) quantiles, target (B,) -> mean pinball loss."""
+def pinball(pred: torch.Tensor, target: torch.Tensor, reduce: bool = True) -> torch.Tensor:
+    """pred (B,3) quantiles, target (B,) -> mean pinball loss (or per-row (B,))."""
     taus = torch.tensor(QUANTILES, device=pred.device, dtype=pred.dtype)
     diff = target.unsqueeze(-1) - pred
-    return torch.maximum(taus * diff, (taus - 1) * diff).mean()
+    per_row = torch.maximum(taus * diff, (taus - 1) * diff).mean(-1)
+    return per_row.mean() if reduce else per_row
+
+
+def _wmean(per_row: torch.Tensor, w: torch.Tensor | None) -> torch.Tensor:
+    if w is None:
+        return per_row.mean()
+    return (per_row * w).sum() / w.sum().clamp_min(1e-8)
 
 
 def head_losses(out: dict, y: dict) -> dict:
+    """Per-head label losses; rows are weighted by y["w"] if present (e.g. single-teacher labels < 1)."""
+    w = y.get("w")
     return {
-        "category": -(y["category"] * F.log_softmax(out["category"], -1)).sum(-1).mean(),
-        "difficulty": corn_loss(out["difficulty"], y["difficulty"]),
-        "skills": corn_loss(out["skills"], y["skills"]),
-        "flags": F.binary_cross_entropy_with_logits(out["flags"], y["flags"]),
-        "checklist": F.binary_cross_entropy_with_logits(out["checklist"], y["checklist"]),
-        "out_tokens": pinball(out["out_tokens"], y["out_tokens"]),
+        "category": _wmean(-(y["category"] * F.log_softmax(out["category"], -1)).sum(-1), w),
+        "difficulty": _wmean(corn_loss(out["difficulty"], y["difficulty"], reduce=False), w),
+        "skills": _wmean(corn_loss(out["skills"], y["skills"], reduce=False).mean(-1), w),
+        "flags": _wmean(F.binary_cross_entropy_with_logits(out["flags"], y["flags"], reduction="none").mean(-1), w),
+        "checklist": _wmean(F.binary_cross_entropy_with_logits(out["checklist"], y["checklist"],
+                                                               reduction="none").mean(-1), w),
+        "out_tokens": _wmean(pinball(out["out_tokens"], y["out_tokens"], reduce=False), w),
     }
+
+
+def anchor_loss(out: dict, anchor: torch.Tensor) -> torch.Tensor | None:
+    """Smooth-L1 between expected difficulty (1..10) and an outcome anchor (NaN = no anchor for that row)."""
+    m = torch.isfinite(anchor)
+    if not bool(m.any()):
+        return None
+    ed = expected_level(corn_level_probs(out["difficulty"]), 1.0)
+    return F.smooth_l1_loss(ed[m], anchor[m])
 
 
 def _kl_cat(p_t, p_s):

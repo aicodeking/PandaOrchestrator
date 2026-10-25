@@ -20,15 +20,22 @@ def load_jsonl(path) -> list[dict]:
         return [json.loads(line) for line in f if line.strip()]
 
 
+def load_anchors(path) -> dict:
+    """{record id: difficulty_1_10} from checkpoints/anchors_train.jsonl (scripts/train/anchors_train.py)."""
+    return {r["id"]: float(r["difficulty_1_10"]) for r in load_jsonl(path)}
+
+
 def _norm(v):
     v = np.asarray(v, dtype=np.float32)
     s = v.sum()
     return v / s if s > 0 else np.full_like(v, 1.0 / len(v))
 
 
-def encode_labels(ex: dict) -> dict:
+def encode_labels(ex: dict, single_teacher_weight: float = 1.0, anchor: float | None = None) -> dict:
+    """Label arrays plus `w` (per-row weight of the label losses) and `anchor` (outcome difficulty, NaN if none)."""
     lab = ex["labels"]
     ctx = (ex.get("task") or {}).get("context") or {}
+    single = bool((ex.get("meta") or {}).get("single_teacher"))
     return {
         "category": _norm([lab["category"].get(c, 0.0) for c in CATEGORIES]),
         "difficulty": _norm(lab["difficulty"]),
@@ -37,6 +44,8 @@ def encode_labels(ex: dict) -> dict:
         "checklist": np.asarray([lab["checklist"].get(c, 0.0) for c in CHECKLIST_IDS], np.float32),
         "out_tokens": np.float32(lab["out_tokens_log10"]),
         "in_tokens": np.float32(ctx.get("estimated_input_tokens") or DEFAULT_IN_TOKENS),
+        "w": np.float32(single_teacher_weight if single else 1.0),
+        "anchor": np.float32(np.nan if anchor is None else anchor),
     }
 
 
@@ -52,14 +61,16 @@ def bucket_len(n: int, max_len: int = 512) -> int:
 
 
 class ProfileDataset:
-    def __init__(self, examples: list[dict], tokenizer, max_len: int = 512, teacher: dict | None = None):
+    def __init__(self, examples: list[dict], tokenizer, max_len: int = 512, teacher: dict | None = None,
+                 single_teacher_weight: float = 1.0, anchors: dict | None = None):
         self.examples = examples
         self.max_len = max_len
         texts = [format_input(ex["task"]) for ex in examples]
         enc = tokenizer(texts, truncation=True, max_length=max_len)
         self.ids = enc["input_ids"]
         self.pad_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else 0
-        self.labels = [encode_labels(ex) for ex in examples]
+        anchors = anchors or {}
+        self.labels = [encode_labels(ex, single_teacher_weight, anchors.get(ex["id"])) for ex in examples]
         self.index = {ex["id"]: i for i, ex in enumerate(examples)}
         self.pairs: dict[int, tuple[int, dict]] = {}  # edited idx -> (original idx, expected_delta)
         for i, ex in enumerate(examples):
@@ -76,9 +87,9 @@ class ProfileDataset:
             self.teacher = {k: v[order] for k, v in teacher["outputs"].items()}
 
     @classmethod
-    def from_file(cls, path, tokenizer, max_len=512, teacher=None, limit: int | None = None):
+    def from_file(cls, path, tokenizer, max_len=512, teacher=None, limit: int | None = None, **kw):
         ex = load_jsonl(path)
-        return cls(ex[:limit] if limit else ex, tokenizer, max_len, teacher)
+        return cls(ex[:limit] if limit else ex, tokenizer, max_len, teacher, **kw)
 
     def __len__(self):
         return len(self.examples)
