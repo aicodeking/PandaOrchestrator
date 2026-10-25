@@ -1,0 +1,57 @@
+{
+  "fit": {
+    "models": {
+      "qwen3-coder-480b@openhands": {
+        "theta": -0.18770174354882957,
+        "n_instances": 6306,
+        "mean_success": 0.4794853445448311
+      },
+      "swe-agent-llama-405b@swe-agent": {
+        "theta": -4.724361638573041,
+        "n_instances": 100,
+        "mean_success": 0.2586062132661629
+      },
+      "swe-agent-llama-70b@swe-agent": {
+        "theta": -3.9722005331253483,
+        "n_instances": 3591,
+        "mean_success": 0.16668895068991335
+      },
+      "swe-agent-llama-8b@swe-agent": {
+        "theta": -5.190893566866533,
+        "n_instances": 528,
+        "mean_success": 0.15149272144090797
+      }
+    },
+    "n_instances": 8694,
+    "n_cells": 10525,
+    "n_trials": 147110,
+    "prior_b_sd": 2.0,
+    "prior_theta_sd": 3.0,
+    "scale_1_10": "linear map of b, 2nd..98th percentile over all fitted instances -> 1..10, clipped"
+  },
+  "n_gold_anchored": 92,
+  "spearman_teacher_merged_vs_irt": 0.003701347515741355,
+  "spearman_per_teacher_vs_irt": {
+    "codex": {
+      "n": 92,
+      "spearman": 0.08502051885709397
+    },
+    "grok": {
+      "n": 27,
+      "spearman": 0.014821816135669182
+    },
+    "ollama": {
+      "n": 73,
+      "spearman": -0.13953920274253762
+    }
+  },
+  "spearman_rebench_llm_score_vs_irt": {
+    "n": 92,
+    "spearman": 0.24480697840259538
+  },
+  "spearman_teacher_merged_vs_irt_ci95": [
+    -0.2147343231834318,
+    0.2155735236319294
+  ],
+  "n_paired": 92
+}

@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://panda-router.local/schemas/route_response.schema.json",
+  "title": "RouteResponse",
+  "description": "Router -> orchestrator (PLAN.md section 3.3). choice.model_id is always a pool member, or null when every candidate was filtered out.",
+  "type": "object",
+  "required": ["choice", "ranking", "filtered_out", "fallback", "router", "trace_id"],
+  "$defs": {
+    "prob": { "type": "number", "minimum": 0, "maximum": 1 },
+    "ranked": {
+      "type": "object",
+      "required": ["model_id", "p_success", "quality", "est_cost_usd", "est_latency_ms"],
+      "properties": {
+        "model_id": { "type": "string" },
+        "p_success": { "$ref": "#/$defs/prob" },
+        "quality": { "$ref": "#/$defs/prob" },
+        "utility": { "type": "number" },
+        "est_cost_usd": { "type": "number", "minimum": 0 },
+        "est_cost_to_success_usd": { "type": "number", "minimum": 0 },
+        "est_latency_ms": { "type": "number", "minimum": 0 }
+      }
+    }
+  },
+  "properties": {
+    "choice": {
+      "type": "object",
+      "required": ["model_id", "confidence", "decided_by"],
+      "properties": {
+        "model_id": { "type": ["string", "null"] },
+        "confidence": { "$ref": "#/$defs/prob" },
+        "decided_by": { "type": "string" },
+        "propensity": { "$ref": "#/$defs/prob" },
+        "explored": { "type": "boolean" }
+      }
+    },
+    "ranking": { "type": "array", "items": { "$ref": "#/$defs/ranked" } },
+    "filtered_out": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["model_id", "reason"],
+        "properties": { "model_id": { "type": "string" }, "reason": { "type": "string" } }
+      }
+    },
+    "difficulty": {
+      "type": "object",
+      "required": ["level", "distribution"],
+      "properties": {
+        "level": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "expected": { "type": "number" },
+        "distribution": { "type": "array", "items": { "$ref": "#/$defs/prob" }, "minItems": 10, "maxItems": 10 }
+      }
+    },
+    "category": {
+      "type": "object",
+      "required": ["label", "p"],
+      "properties": { "label": { "type": "string" }, "p": { "$ref": "#/$defs/prob" } }
+    },
+    "flags": { "type": "object", "additionalProperties": { "$ref": "#/$defs/prob" } },
+    "profile": { "type": "object" },
+    "fallback": {
+      "type": "object",
+      "required": ["triggered", "floor", "default_model"],
+      "properties": {
+        "triggered": { "type": "boolean" },
+        "floor": { "$ref": "#/$defs/prob" },
+        "default_model": { "type": ["string", "null"] },
+        "reason": { "type": "string" }
+      }
+    },
+    "escalation": {
+      "type": "object",
+      "properties": {
+        "parent_trace_id": { "type": ["string", "null"] },
+        "failed_models": { "type": "array", "items": { "type": "string" } },
+        "prior_difficulty": { "type": "array", "items": { "type": "number" } },
+        "posterior_difficulty": { "type": "array", "items": { "type": "number" } }
+      }
+    },
+    "router": {
+      "type": "object",
+      "required": ["version", "latency_ms", "pool_hash"],
+      "properties": {
+        "version": { "type": "string" },
+        "profiler": { "type": "string" },
+        "latency_ms": { "type": "number", "minimum": 0 },
+        "pool_hash": { "type": "string" }
+      }
+    },
+    "trace_id": { "type": "string" }
+  }
+}

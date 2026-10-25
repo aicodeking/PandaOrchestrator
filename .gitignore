@@ -10,3 +10,5 @@ checkpoints/
 *.safetensors
 *.bin
 .DS_Store
+data/gold/raw/
+data/gold/cache/

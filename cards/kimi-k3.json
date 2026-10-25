@@ -1,0 +1,105 @@
+{
+  "id": "kimi-k3",
+  "provider": "kimi",
+  "model": "kimi-k3",
+  "description": "Moonshot Kimi K3: 2.8T open-weight multimodal model for long-horizon coding, knowledge work and reasoning; 1M context.",
+  "strengths": [
+    "long_context",
+    "agentic_coding",
+    "vision",
+    "research"
+  ],
+  "weaknesses": [
+    "latency"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 8.0,
+      "se": 0.8
+    },
+    "debugging": {
+      "theta": 7.9,
+      "se": 0.8
+    },
+    "reasoning": {
+      "theta": 8.2,
+      "se": 0.8
+    },
+    "math": {
+      "theta": 8.1,
+      "se": 0.8
+    },
+    "writing": {
+      "theta": 7.9,
+      "se": 0.8
+    },
+    "research": {
+      "theta": 8.2,
+      "se": 0.8
+    },
+    "review": {
+      "theta": 7.8,
+      "se": 0.8
+    },
+    "planning": {
+      "theta": 7.9,
+      "se": 0.8
+    },
+    "ui_frontend": {
+      "theta": 7.8,
+      "se": 0.8
+    },
+    "data_analysis": {
+      "theta": 7.9,
+      "se": 0.8
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 1048576,
+    "max_output_tokens": 128000
+  },
+  "cost": {
+    "input_per_mtok": 3.0,
+    "output_per_mtok": 15.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 2500,
+    "tokens_per_sec": 40
+  },
+  "local": false,
+  "tags": [
+    "harness:kimi",
+    "tier:strong",
+    "open_weights"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "benchmark-informed",
+    "limits": "verified",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://platform.kimi.ai/docs/pricing/chat",
+    "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+    "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)",
+    "https://realswe.com/"
+  ],
+  "notes": "Native Kimi platform price table not machine-readable; Bedrock global price ($3/$15) used. DeepInfra $2.85/$14.25. Real-SWE 1.1 rank 13 (11.2%) suggests weaker on hard real tasks than SWE-bench implies."
+}

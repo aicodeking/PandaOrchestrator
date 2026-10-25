@@ -1,0 +1,103 @@
+{
+  "id": "kimi-k2.7-code",
+  "provider": "kimi",
+  "model": "kimi-k2.7-code",
+  "description": "Moonshot Kimi K2.7 Code: coding-specialised K2 model with long-context agentic coding; retiring end of 2026.",
+  "strengths": [
+    "coding",
+    "tool_use",
+    "cheap"
+  ],
+  "weaknesses": [
+    "vision",
+    "math",
+    "deprecated_2026_12"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 7.3,
+      "se": 1.5
+    },
+    "debugging": {
+      "theta": 7.0,
+      "se": 1.5
+    },
+    "reasoning": {
+      "theta": 6.8,
+      "se": 1.5
+    },
+    "math": {
+      "theta": 6.5,
+      "se": 1.5
+    },
+    "writing": {
+      "theta": 6.5,
+      "se": 1.5
+    },
+    "research": {
+      "theta": 6.4,
+      "se": 1.5
+    },
+    "review": {
+      "theta": 6.8,
+      "se": 1.5
+    },
+    "planning": {
+      "theta": 6.7,
+      "se": 1.5
+    },
+    "ui_frontend": {
+      "theta": 6.9,
+      "se": 1.5
+    },
+    "data_analysis": {
+      "theta": 6.5,
+      "se": 1.5
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 262144,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 0.95,
+    "output_per_mtok": 4.0,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.19
+  },
+  "latency": {
+    "ttft_ms_p50": 1500,
+    "tokens_per_sec": 35
+  },
+  "local": false,
+  "tags": [
+    "harness:kimi",
+    "tier:mid"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "estimated",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "estimated",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://www.kimi.com/ja/resources/kimi-k2-7-code-pricing",
+    "https://platform.kimi.ai/docs/pricing/chat"
+  ],
+  "notes": "No independent benchmark found; skills estimated. K2 series retiring by Dec 2026."
+}

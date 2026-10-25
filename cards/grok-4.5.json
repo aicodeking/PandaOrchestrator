@@ -1,0 +1,101 @@
+{
+  "id": "grok-4.5",
+  "provider": "grok",
+  "model": "grok-4.5",
+  "description": "xAI Grok 4.5: previous Grok generation; same price as 4.6 so usually dominated.",
+  "strengths": [
+    "coding",
+    "research"
+  ],
+  "weaknesses": [
+    "dominated_by_grok_4.6"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 7.7,
+      "se": 0.9
+    },
+    "debugging": {
+      "theta": 7.5,
+      "se": 0.9
+    },
+    "reasoning": {
+      "theta": 7.8,
+      "se": 0.9
+    },
+    "math": {
+      "theta": 7.9,
+      "se": 0.9
+    },
+    "writing": {
+      "theta": 7.3,
+      "se": 0.9
+    },
+    "research": {
+      "theta": 7.6,
+      "se": 0.9
+    },
+    "review": {
+      "theta": 7.4,
+      "se": 0.9
+    },
+    "planning": {
+      "theta": 7.4,
+      "se": 0.9
+    },
+    "ui_frontend": {
+      "theta": 7.4,
+      "se": 0.9
+    },
+    "data_analysis": {
+      "theta": 7.5,
+      "se": 0.9
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 500000,
+    "max_output_tokens": 128000
+  },
+  "cost": {
+    "input_per_mtok": 2.0,
+    "output_per_mtok": 6.0,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.3
+  },
+  "latency": {
+    "ttft_ms_p50": 2000,
+    "tokens_per_sec": 70
+  },
+  "local": false,
+  "tags": [
+    "harness:grok",
+    "tier:mid"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://docs.x.ai/developers/pricing",
+    "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)"
+  ],
+  "notes": "Vision support assumed."
+}

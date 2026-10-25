@@ -1,0 +1,103 @@
+{
+  "id": "glm-4.5-air",
+  "provider": "glm",
+  "model": "glm-4.5-air",
+  "description": "Z.ai GLM-4.5-Air: small open MoE for cheap simple tasks and routing.",
+  "strengths": [
+    "cheap",
+    "speed"
+  ],
+  "weaknesses": [
+    "hard_reasoning",
+    "vision",
+    "long_context"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 5.2,
+      "se": 1.5
+    },
+    "debugging": {
+      "theta": 5.0,
+      "se": 1.5
+    },
+    "reasoning": {
+      "theta": 5.2,
+      "se": 1.5
+    },
+    "math": {
+      "theta": 5.0,
+      "se": 1.5
+    },
+    "writing": {
+      "theta": 5.4,
+      "se": 1.5
+    },
+    "research": {
+      "theta": 4.8,
+      "se": 1.5
+    },
+    "review": {
+      "theta": 5.0,
+      "se": 1.5
+    },
+    "planning": {
+      "theta": 5.0,
+      "se": 1.5
+    },
+    "ui_frontend": {
+      "theta": 5.0,
+      "se": 1.5
+    },
+    "data_analysis": {
+      "theta": 5.0,
+      "se": 1.5
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 131072,
+    "max_output_tokens": 98304
+  },
+  "cost": {
+    "input_per_mtok": 0.2,
+    "output_per_mtok": 1.1,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.03
+  },
+  "latency": {
+    "ttft_ms_p50": 800,
+    "tokens_per_sec": 90
+  },
+  "local": false,
+  "tags": [
+    "harness:glm",
+    "tier:small",
+    "open_weights"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "estimated",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "estimated",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://docs.z.ai/guides/overview/pricing",
+    "https://anotherwrapper.com/tools/llm-pricing/glm-4.5-air/glm-5-turbo"
+  ],
+  "notes": "Skills estimated (AA HLE 7.0%, tau2 telecom 46.5%)."
+}

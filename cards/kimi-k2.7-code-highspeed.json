@@ -1,0 +1,102 @@
+{
+  "id": "kimi-k2.7-code-highspeed",
+  "provider": "kimi",
+  "model": "kimi-k2.7-code-highspeed",
+  "description": "Same weights as Kimi K2.7 Code served at ~180 tok/s (260 short-context) for 2x price.",
+  "strengths": [
+    "coding",
+    "speed"
+  ],
+  "weaknesses": [
+    "vision",
+    "math",
+    "deprecated_2026_12"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 7.3,
+      "se": 1.5
+    },
+    "debugging": {
+      "theta": 7.0,
+      "se": 1.5
+    },
+    "reasoning": {
+      "theta": 6.8,
+      "se": 1.5
+    },
+    "math": {
+      "theta": 6.5,
+      "se": 1.5
+    },
+    "writing": {
+      "theta": 6.5,
+      "se": 1.5
+    },
+    "research": {
+      "theta": 6.4,
+      "se": 1.5
+    },
+    "review": {
+      "theta": 6.8,
+      "se": 1.5
+    },
+    "planning": {
+      "theta": 6.7,
+      "se": 1.5
+    },
+    "ui_frontend": {
+      "theta": 6.9,
+      "se": 1.5
+    },
+    "data_analysis": {
+      "theta": 6.5,
+      "se": 1.5
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 262144,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 1.9,
+    "output_per_mtok": 8.0,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.38
+  },
+  "latency": {
+    "ttft_ms_p50": 800,
+    "tokens_per_sec": 180
+  },
+  "local": false,
+  "tags": [
+    "harness:kimi",
+    "tier:mid"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "estimated",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "estimated",
+    "latency": "benchmark-informed"
+  },
+  "sources": [
+    "https://www.kimi.com/ja/resources/kimi-k2-7-code-pricing",
+    "https://help.aliyun.com/en/model-studio/kimi-k2-7-code-highspeed"
+  ],
+  "notes": "Throughput from Alibaba Model Studio card; skills identical to kimi-k2.7-code (estimated)."
+}

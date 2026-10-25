@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://panda-router.local/schemas/route_request.schema.json",
+  "title": "RouteRequest",
+  "description": "Orchestrator -> router (PLAN.md section 3.2). `pool` is a list of card ids or inline ModelCards; omitted means every card in cards/.",
+  "type": "object",
+  "required": ["task"],
+  "properties": {
+    "task": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": { "type": "string" },
+        "kind_hint": { "type": ["string", "null"] },
+        "context": {
+          "type": "object",
+          "properties": {
+            "repo_languages": { "type": "array", "items": { "type": "string" } },
+            "files_in_scope": { "type": ["integer", "null"], "minimum": 0 },
+            "estimated_input_tokens": { "type": ["integer", "null"], "minimum": 0 },
+            "has_images": { "type": ["boolean", "null"] },
+            "requires_tools": { "type": ["boolean", "null"] }
+          }
+        }
+      }
+    },
+    "pool": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "type": "string" },
+          { "$ref": "model_card.schema.json" }
+        ]
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "max_cost_usd": { "type": ["number", "null"], "minimum": 0 },
+        "max_latency_ms": { "type": ["number", "null"], "minimum": 0 },
+        "local_only": { "type": "boolean" },
+        "require": { "type": "array", "items": { "enum": ["tools", "vision", "json_mode", "web"] } },
+        "exclude": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "mode": { "enum": ["cheapest_above_threshold", "max_utility", "max_quality"] },
+        "min_p_success": { "type": "number", "minimum": 0, "maximum": 1 },
+        "floor": { "type": "number", "minimum": 0, "maximum": 1 },
+        "default_model": { "type": "string" },
+        "weights": {
+          "type": "object",
+          "properties": {
+            "quality": { "type": "number", "minimum": 0 },
+            "cost": { "type": "number", "minimum": 0 },
+            "latency": { "type": "number", "minimum": 0 }
+          }
+        },
+        "explore_epsilon": { "type": "number", "minimum": 0, "maximum": 1 },
+        "explore_temperature": { "type": "number", "exclusiveMinimum": 0 },
+        "seed": { "type": "integer" }
+      }
+    },
+    "questions": { "type": "array", "items": { "enum": ["choice", "difficulty", "flags", "category", "profile"] } },
+    "return_top_k": { "type": "integer", "minimum": 1, "maximum": 50 }
+  }
+}

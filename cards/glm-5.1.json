@@ -1,0 +1,104 @@
+{
+  "id": "glm-5.1",
+  "provider": "glm",
+  "model": "glm-5.1",
+  "description": "Z.ai GLM-5.1 flagship for long-horizon autonomous coding; vendor claims parity with Claude Opus 4.6. Text only.",
+  "strengths": [
+    "long_horizon_agentic",
+    "coding",
+    "cheap_for_tier"
+  ],
+  "weaknesses": [
+    "vision",
+    "context_200k"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 7.7,
+      "se": 0.9
+    },
+    "debugging": {
+      "theta": 7.5,
+      "se": 0.9
+    },
+    "reasoning": {
+      "theta": 7.5,
+      "se": 0.9
+    },
+    "math": {
+      "theta": 7.4,
+      "se": 0.9
+    },
+    "writing": {
+      "theta": 7.3,
+      "se": 0.9
+    },
+    "research": {
+      "theta": 7.0,
+      "se": 0.9
+    },
+    "review": {
+      "theta": 7.4,
+      "se": 0.9
+    },
+    "planning": {
+      "theta": 7.6,
+      "se": 0.9
+    },
+    "ui_frontend": {
+      "theta": 7.4,
+      "se": 0.9
+    },
+    "data_analysis": {
+      "theta": 7.2,
+      "se": 0.9
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 200000,
+    "max_output_tokens": 128000
+  },
+  "cost": {
+    "input_per_mtok": 1.4,
+    "output_per_mtok": 4.4,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.26
+  },
+  "latency": {
+    "ttft_ms_p50": 2000,
+    "tokens_per_sec": 50
+  },
+  "local": false,
+  "tags": [
+    "harness:glm",
+    "tier:mid",
+    "open_weights"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://docs.z.ai/guides/overview/pricing",
+    "https://docs.z.ai/guides/llm/glm-5.1",
+    "https://models.litellm.ai/models/glm-5.1"
+  ],
+  "notes": "Theta anchored to Opus 4.6 (SWE-bench Verified ~80.8) per vendor claim."
+}

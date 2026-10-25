@@ -1,0 +1,101 @@
+{
+  "id": "codex-gpt-5.6-luna",
+  "provider": "codex",
+  "model": "gpt-5.6-luna",
+  "description": "OpenAI GPT-5.6 Luna: small efficient model, superseded by gpt-6-luna at lower price.",
+  "strengths": [
+    "cheap",
+    "coding"
+  ],
+  "weaknesses": [
+    "deep_reasoning"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 7.4,
+      "se": 0.8
+    },
+    "debugging": {
+      "theta": 7.1,
+      "se": 0.8
+    },
+    "reasoning": {
+      "theta": 7.1,
+      "se": 0.8
+    },
+    "math": {
+      "theta": 7.2,
+      "se": 0.8
+    },
+    "writing": {
+      "theta": 6.8,
+      "se": 0.8
+    },
+    "research": {
+      "theta": 6.7,
+      "se": 0.8
+    },
+    "review": {
+      "theta": 6.9,
+      "se": 0.8
+    },
+    "planning": {
+      "theta": 6.8,
+      "se": 0.8
+    },
+    "ui_frontend": {
+      "theta": 6.8,
+      "se": 0.8
+    },
+    "data_analysis": {
+      "theta": 7.0,
+      "se": 0.8
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 400000,
+    "max_output_tokens": 128000
+  },
+  "cost": {
+    "input_per_mtok": 0.2,
+    "output_per_mtok": 1.2,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.02
+  },
+  "latency": {
+    "ttft_ms_p50": 1800,
+    "tokens_per_sec": 80
+  },
+  "local": false,
+  "tags": [
+    "harness:codex",
+    "tier:mid"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "estimated",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://developers.openai.com/api/docs/pricing",
+    "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)"
+  ],
+  "notes": "Context window not verified; 400k assumed."
+}

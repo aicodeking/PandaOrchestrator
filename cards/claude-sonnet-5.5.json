@@ -1,0 +1,104 @@
+{
+  "id": "claude-sonnet-5.5",
+  "provider": "claude",
+  "model": "claude-sonnet-5-5",
+  "description": "Anthropic's balanced speed/intelligence model; strong all-round coder with good tool use.",
+  "strengths": [
+    "coding",
+    "tool_use",
+    "ui_frontend",
+    "writing"
+  ],
+  "weaknesses": [
+    "hardest_reasoning"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 8.6,
+      "se": 0.7
+    },
+    "debugging": {
+      "theta": 8.4,
+      "se": 0.7
+    },
+    "reasoning": {
+      "theta": 8.3,
+      "se": 0.7
+    },
+    "math": {
+      "theta": 7.9,
+      "se": 0.7
+    },
+    "writing": {
+      "theta": 8.5,
+      "se": 0.7
+    },
+    "research": {
+      "theta": 8.1,
+      "se": 0.7
+    },
+    "review": {
+      "theta": 8.4,
+      "se": 0.7
+    },
+    "planning": {
+      "theta": 8.2,
+      "se": 0.7
+    },
+    "ui_frontend": {
+      "theta": 8.4,
+      "se": 0.7
+    },
+    "data_analysis": {
+      "theta": 8.0,
+      "se": 0.7
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 1000000,
+    "max_output_tokens": 128000
+  },
+  "cost": {
+    "input_per_mtok": 2.0,
+    "output_per_mtok": 10.0,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.1
+  },
+  "latency": {
+    "ttft_ms_p50": 900,
+    "tokens_per_sec": 85
+  },
+  "local": false,
+  "tags": [
+    "harness:claude-code",
+    "tier:strong"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://platform.claude.com/docs/en/about-claude/pricing",
+    "https://platform.claude.com/docs/en/models/overview",
+    "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)"
+  ],
+  "notes": "SWE-bench Verified differs by harness (96.7 atlas vs 79.6 vals mini-swe-agent); se widened."
+}

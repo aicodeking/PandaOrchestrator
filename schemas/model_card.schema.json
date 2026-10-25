@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://panda-router.local/schemas/model_card.schema.json",
+  "title": "ModelCard",
+  "description": "One routable model. PLAN.md section 3.1 with `capabilities` replaced by `skills` (theta on the 0..10 skill-level scale, see CONTRACTS.md).",
+  "type": "object",
+  "required": ["id", "description", "limits", "cost"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$" },
+    "provider": { "type": "string" },
+    "model": { "type": "string" },
+    "description": { "type": "string", "minLength": 1 },
+    "strengths": { "type": "array", "items": { "type": "string" } },
+    "weaknesses": { "type": "array", "items": { "type": "string" } },
+    "skills": {
+      "type": "object",
+      "propertyNames": {
+        "enum": ["coding", "debugging", "reasoning", "math", "writing", "research", "review",
+                 "planning", "ui_frontend", "data_analysis"]
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": ["theta", "se"],
+        "properties": {
+          "theta": { "type": "number", "minimum": 0, "maximum": 10 },
+          "se": { "type": "number", "exclusiveMinimum": 0, "maximum": 5 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "discrimination": { "type": "number", "exclusiveMinimum": 0, "maximum": 5, "default": 1.2 },
+    "modalities": {
+      "type": "object",
+      "properties": {
+        "input": { "type": "array", "items": { "enum": ["text", "image", "audio", "video"] } },
+        "output": { "type": "array", "items": { "enum": ["text", "image", "audio"] } }
+      }
+    },
+    "features": {
+      "type": "object",
+      "properties": {
+        "tools": { "type": "boolean" },
+        "json_mode": { "type": "boolean" },
+        "web": { "type": "boolean" },
+        "reasoning_effort": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "required": ["context_tokens"],
+      "properties": {
+        "context_tokens": { "type": "integer", "minimum": 1 },
+        "max_output_tokens": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "cost": {
+      "type": "object",
+      "required": ["input_per_mtok", "output_per_mtok"],
+      "properties": {
+        "input_per_mtok": { "type": "number", "minimum": 0 },
+        "output_per_mtok": { "type": "number", "minimum": 0 },
+        "cached_input_per_mtok": { "type": "number", "minimum": 0 },
+        "currency": { "const": "USD" }
+      }
+    },
+    "latency": {
+      "type": "object",
+      "properties": {
+        "ttft_ms_p50": { "type": "number", "minimum": 0 },
+        "tokens_per_sec": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "local": { "type": "boolean", "default": false },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "card_version": { "type": "string" },
+    "provenance": { "enum": ["verified", "benchmark-informed", "estimated"] },
+    "field_provenance": {
+      "type": "object",
+      "additionalProperties": { "enum": ["verified", "benchmark-informed", "estimated"] }
+    },
+    "sources": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": false
+}

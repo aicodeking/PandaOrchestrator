@@ -1,0 +1,110 @@
+{
+  "id": "grok-4.6",
+  "provider": "grok",
+  "model": "grok-4.6",
+  "description": "xAI Grok 4.6: frontier model for coding, agentic tasks and knowledge work; 500k context, good price.",
+  "strengths": [
+    "coding",
+    "agentic",
+    "cheap_for_tier",
+    "vision"
+  ],
+  "weaknesses": [
+    "very_long_context_pricing"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 8.4,
+      "se": 0.8
+    },
+    "debugging": {
+      "theta": 8.2,
+      "se": 0.8
+    },
+    "reasoning": {
+      "theta": 8.4,
+      "se": 0.8
+    },
+    "math": {
+      "theta": 8.4,
+      "se": 0.8
+    },
+    "writing": {
+      "theta": 7.8,
+      "se": 0.8
+    },
+    "research": {
+      "theta": 8.2,
+      "se": 0.8
+    },
+    "review": {
+      "theta": 8.0,
+      "se": 0.8
+    },
+    "planning": {
+      "theta": 8.0,
+      "se": 0.8
+    },
+    "ui_frontend": {
+      "theta": 8.0,
+      "se": 0.8
+    },
+    "data_analysis": {
+      "theta": 8.1,
+      "se": 0.8
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true,
+    "reasoning_effort": [
+      "low",
+      "medium",
+      "high",
+      "xhigh"
+    ]
+  },
+  "limits": {
+    "context_tokens": 500000,
+    "max_output_tokens": 128000
+  },
+  "cost": {
+    "input_per_mtok": 2.0,
+    "output_per_mtok": 6.0,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.5
+  },
+  "latency": {
+    "ttft_ms_p50": 2000,
+    "tokens_per_sec": 70
+  },
+  "local": false,
+  "tags": [
+    "harness:grok",
+    "tier:strong"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://docs.x.ai/developers/pricing",
+    "https://docs.x.ai/developers/models/grok-4.6",
+    "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)"
+  ],
+  "notes": ">200k-token prompts billed $4/$12."
+}

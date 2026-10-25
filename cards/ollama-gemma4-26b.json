@@ -1,0 +1,105 @@
+{
+  "id": "ollama-gemma4-26b",
+  "provider": "ollama",
+  "model": "gemma4:26b",
+  "description": "Local Gemma 4 26B-A4B MoE via Ollama: free, private, slowish; fine for simple edits, chat and summaries.",
+  "strengths": [
+    "free",
+    "private",
+    "offline"
+  ],
+  "weaknesses": [
+    "hard_reasoning",
+    "long_horizon_agentic",
+    "complex_coding"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 5.0,
+      "se": 1.5
+    },
+    "debugging": {
+      "theta": 4.6,
+      "se": 1.5
+    },
+    "reasoning": {
+      "theta": 5.0,
+      "se": 1.5
+    },
+    "math": {
+      "theta": 4.8,
+      "se": 1.5
+    },
+    "writing": {
+      "theta": 5.4,
+      "se": 1.5
+    },
+    "research": {
+      "theta": 4.4,
+      "se": 1.5
+    },
+    "review": {
+      "theta": 4.8,
+      "se": 1.5
+    },
+    "planning": {
+      "theta": 4.8,
+      "se": 1.5
+    },
+    "ui_frontend": {
+      "theta": 4.8,
+      "se": 1.5
+    },
+    "data_analysis": {
+      "theta": 4.8,
+      "se": 1.5
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 131072,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 800,
+    "tokens_per_sec": 45
+  },
+  "local": true,
+  "tags": [
+    "harness:ollama",
+    "tier:small",
+    "local",
+    "open_weights"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "estimated",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "benchmark-informed",
+    "skills": "estimated",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://ollama.com/library/gemma4:26b",
+    "https://ai.google.dev/gemma/docs/core/model_card_4"
+  ],
+  "notes": "Model supports 256k, but Ollama sizes context from VRAM (default 4k under 24GiB); 131072 assumes OLLAMA_CONTEXT_LENGTH is raised. Throughput is a laptop estimate."
+}

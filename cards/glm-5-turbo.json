@@ -1,0 +1,101 @@
+{
+  "id": "glm-5-turbo",
+  "provider": "glm",
+  "model": "glm-5-turbo",
+  "description": "Z.ai GLM-5-Turbo: faster API-only GLM-5 variant tuned for agentic tool calling.",
+  "strengths": [
+    "tool_use",
+    "speed"
+  ],
+  "weaknesses": [
+    "vision",
+    "hard_reasoning"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 7.0,
+      "se": 1.5
+    },
+    "debugging": {
+      "theta": 6.8,
+      "se": 1.5
+    },
+    "reasoning": {
+      "theta": 6.9,
+      "se": 1.5
+    },
+    "math": {
+      "theta": 6.6,
+      "se": 1.5
+    },
+    "writing": {
+      "theta": 6.7,
+      "se": 1.5
+    },
+    "research": {
+      "theta": 6.5,
+      "se": 1.5
+    },
+    "review": {
+      "theta": 6.7,
+      "se": 1.5
+    },
+    "planning": {
+      "theta": 6.8,
+      "se": 1.5
+    },
+    "ui_frontend": {
+      "theta": 6.7,
+      "se": 1.5
+    },
+    "data_analysis": {
+      "theta": 6.6,
+      "se": 1.5
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 203000,
+    "max_output_tokens": 131000
+  },
+  "cost": {
+    "input_per_mtok": 1.2,
+    "output_per_mtok": 4.0,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.24
+  },
+  "latency": {
+    "ttft_ms_p50": 1200,
+    "tokens_per_sec": 80
+  },
+  "local": false,
+  "tags": [
+    "harness:glm",
+    "tier:mid"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "estimated",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "estimated",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://docs.z.ai/guides/overview/pricing",
+    "https://modelcap.ai/compare/z-ai-glm-4-5-air-vs-z-ai-glm-5-turbo"
+  ],
+  "notes": "ModelCap index 53.5 vs GLM-4.5-Air 47.4; skills estimated."
+}

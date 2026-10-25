@@ -1,0 +1,111 @@
+{
+  "id": "claude-fable-5.1",
+  "provider": "claude",
+  "model": "claude-fable-5-1",
+  "description": "Anthropic's top reasoning model for demanding reasoning and long-horizon agentic work; slow and expensive.",
+  "strengths": [
+    "deep_reasoning",
+    "long_horizon_agentic",
+    "math",
+    "planning"
+  ],
+  "weaknesses": [
+    "cost",
+    "latency"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 9.0,
+      "se": 0.6
+    },
+    "debugging": {
+      "theta": 9.1,
+      "se": 0.6
+    },
+    "reasoning": {
+      "theta": 9.5,
+      "se": 0.6
+    },
+    "math": {
+      "theta": 9.3,
+      "se": 0.6
+    },
+    "writing": {
+      "theta": 9.0,
+      "se": 0.6
+    },
+    "research": {
+      "theta": 9.2,
+      "se": 0.6
+    },
+    "review": {
+      "theta": 9.1,
+      "se": 0.6
+    },
+    "planning": {
+      "theta": 9.4,
+      "se": 0.6
+    },
+    "ui_frontend": {
+      "theta": 8.6,
+      "se": 0.6
+    },
+    "data_analysis": {
+      "theta": 8.9,
+      "se": 0.6
+    }
+  },
+  "discrimination": 1.3,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true,
+    "reasoning_effort": [
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max"
+    ]
+  },
+  "limits": {
+    "context_tokens": 1000000,
+    "max_output_tokens": 128000
+  },
+  "cost": {
+    "input_per_mtok": 10.0,
+    "output_per_mtok": 50.0,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.25
+  },
+  "latency": {
+    "ttft_ms_p50": 2500,
+    "tokens_per_sec": 45
+  },
+  "local": false,
+  "tags": [
+    "harness:claude-code",
+    "tier:frontier"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://platform.claude.com/docs/en/about-claude/pricing",
+    "https://platform.claude.com/docs/en/models/overview",
+    "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)"
+  ]
+}

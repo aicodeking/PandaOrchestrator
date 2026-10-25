@@ -1,0 +1,103 @@
+{
+  "id": "codex-gpt-5.6-terra",
+  "provider": "codex",
+  "model": "gpt-5.6-terra",
+  "description": "OpenAI GPT-5.6 Terra: strong coder and reasoner in the Codex harness, mid-high price.",
+  "strengths": [
+    "coding",
+    "debugging",
+    "math",
+    "tool_use"
+  ],
+  "weaknesses": [
+    "cost_vs_gpt6"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 8.4,
+      "se": 0.7
+    },
+    "debugging": {
+      "theta": 8.3,
+      "se": 0.7
+    },
+    "reasoning": {
+      "theta": 8.4,
+      "se": 0.7
+    },
+    "math": {
+      "theta": 8.5,
+      "se": 0.7
+    },
+    "writing": {
+      "theta": 7.8,
+      "se": 0.7
+    },
+    "research": {
+      "theta": 8.0,
+      "se": 0.7
+    },
+    "review": {
+      "theta": 8.1,
+      "se": 0.7
+    },
+    "planning": {
+      "theta": 8.1,
+      "se": 0.7
+    },
+    "ui_frontend": {
+      "theta": 7.9,
+      "se": 0.7
+    },
+    "data_analysis": {
+      "theta": 8.1,
+      "se": 0.7
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 400000,
+    "max_output_tokens": 128000
+  },
+  "cost": {
+    "input_per_mtok": 2.0,
+    "output_per_mtok": 12.0,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.2
+  },
+  "latency": {
+    "ttft_ms_p50": 2500,
+    "tokens_per_sec": 60
+  },
+  "local": false,
+  "tags": [
+    "harness:codex",
+    "tier:strong"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "estimated",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://developers.openai.com/api/docs/pricing",
+    "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)"
+  ],
+  "notes": "Context window not verified; 400k assumed (long-context pricing tier exists)."
+}

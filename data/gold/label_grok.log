@@ -1,0 +1,201 @@
+[grok] pass 0: 360 tasks
+[grok] call 132s
+[grok] +5/5
+[grok] call 138s
+[grok] +5/5
+[grok] call 176s
+[grok] +5/5
+[grok] call 182s
+[grok] +5/5
+[grok] call 133s
+[grok] +5/5
+[grok] call 184s
+[grok] +5/5
+[grok] call 197s
+[grok] +5/5
+[grok] call 213s
+[grok] +5/5
+[grok] call 122s
+[grok] +5/5
+[grok] call 164s
+[grok] +5/5
+[grok] call 216s
+[grok] +5/5
+[grok] call 178s
+[grok] +5/5
+[grok] call 177s
+[grok] +5/5
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] call 158s
+[grok] +5/5
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] call 123s
+[grok] +5/5
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] call 167s
+[grok] +5/5
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40
+[grok] attempt 0 failed: exit 1: Internal error: {
+  "message": "API error (status 402 Payment Required): Grok Build usage balance exhausted",
+  "http_status": 402
+}
+Error: Internal error: {
+  "message": "API error (status 40

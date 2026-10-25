@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://panda-router.local/schemas/route_outcome.schema.json",
+  "title": "RouteOutcome",
+  "description": "Orchestrator -> router log after the worker finishes (PLAN.md section 3.5).",
+  "type": "object",
+  "required": ["trace_id", "model_id", "success"],
+  "properties": {
+    "trace_id": { "type": "string", "minLength": 1 },
+    "model_id": { "type": "string", "minLength": 1 },
+    "propensity": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+    "success": { "type": "boolean" },
+    "signals": {
+      "type": "object",
+      "properties": {
+        "tests_passed": { "type": ["boolean", "null"] },
+        "review_verdict": { "type": ["string", "null"] },
+        "retries": { "type": ["integer", "null"], "minimum": 0 },
+        "user_override": { "type": ["string", "null"] }
+      }
+    },
+    "quality": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+    "actual_cost_usd": { "type": ["number", "null"], "minimum": 0 },
+    "actual_latency_ms": { "type": ["number", "null"], "minimum": 0 },
+    "tokens": {
+      "type": "object",
+      "properties": {
+        "in": { "type": "integer", "minimum": 0 },
+        "out": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}
