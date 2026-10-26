@@ -1,0 +1,103 @@
+{
+  "id": "openrouter-glm-5.3",
+  "provider": "openrouter",
+  "model": "z-ai/glm-5.3",
+  "description": "Z.ai: GLM 5.3 via OpenRouter. GLM-5.3 is a large-scale reasoning model from Z.ai, built for complex software engineering and long-horizon agent tasks. It supports text input and output with a 1M-token context window, and improves",
+  "strengths": [
+    "coding",
+    "long_horizon_agentic",
+    "cheap_for_tier",
+    "long_context"
+  ],
+  "weaknesses": [
+    "vision"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 8.0,
+      "se": 0.7
+    },
+    "debugging": {
+      "theta": 7.8,
+      "se": 0.7
+    },
+    "reasoning": {
+      "theta": 7.9,
+      "se": 0.7
+    },
+    "math": {
+      "theta": 7.8,
+      "se": 0.7
+    },
+    "writing": {
+      "theta": 7.7,
+      "se": 0.7
+    },
+    "research": {
+      "theta": 7.6,
+      "se": 0.7
+    },
+    "review": {
+      "theta": 7.8,
+      "se": 0.7
+    },
+    "planning": {
+      "theta": 7.9,
+      "se": 0.7
+    },
+    "ui_frontend": {
+      "theta": 7.8,
+      "se": 0.7
+    },
+    "data_analysis": {
+      "theta": 7.7,
+      "se": 0.7
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 1048576,
+    "max_output_tokens": 943718
+  },
+  "cost": {
+    "input_per_mtok": 0.079,
+    "output_per_mtok": 1.4,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.078
+  },
+  "latency": {
+    "ttft_ms_p50": 1800,
+    "tokens_per_sec": 60
+  },
+  "local": false,
+  "tags": [
+    "harness:openrouter",
+    "tier:strong"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://openrouter.ai/api/v1/models",
+    "https://openrouter.ai/rankings",
+    "https://openrouter.ai/api/v1/models (benchmarks.artificial_analysis, Artificial Analysis indices)"
+  ],
+  "notes": "AA coding 74.8, intelligence 44.8, agentic 53.1; between grok-4.5 (7.7) and kimi-k3 (8.0)/grok-4.6 (8.4). Listed input $0.079/M looks like a promotional/cheapest-provider price, may change. Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured."
+}

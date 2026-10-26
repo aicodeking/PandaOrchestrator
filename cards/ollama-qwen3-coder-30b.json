@@ -1,0 +1,108 @@
+{
+  "id": "ollama-qwen3-coder-30b",
+  "provider": "ollama",
+  "model": "qwen3-coder:30b",
+  "description": "Qwen3-Coder 30B-A3B via Ollama: fast local coding model (non-thinking, tools), text-only.",
+  "strengths": [
+    "free",
+    "private",
+    "offline",
+    "fast_local",
+    "agentic_coding"
+  ],
+  "weaknesses": [
+    "no_vision",
+    "research",
+    "writing"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 5.8,
+      "se": 1.5
+    },
+    "debugging": {
+      "theta": 5.4,
+      "se": 1.5
+    },
+    "reasoning": {
+      "theta": 5.3,
+      "se": 1.5
+    },
+    "math": {
+      "theta": 5.1,
+      "se": 1.5
+    },
+    "writing": {
+      "theta": 6.8,
+      "se": 1.5
+    },
+    "research": {
+      "theta": 5.0,
+      "se": 1.5
+    },
+    "review": {
+      "theta": 5.6,
+      "se": 1.5
+    },
+    "planning": {
+      "theta": 5.6,
+      "se": 1.5
+    },
+    "ui_frontend": {
+      "theta": 5.6,
+      "se": 1.5
+    },
+    "data_analysis": {
+      "theta": 5.6,
+      "se": 1.5
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 131072,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 300,
+    "tokens_per_sec": 80
+  },
+  "local": true,
+  "tags": [
+    "harness:ollama",
+    "tier:small",
+    "local",
+    "open_weights",
+    "not-installed",
+    "size:large"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "estimated",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "estimated",
+    "skills": "estimated",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://ollama.com/library/qwen3-coder:30b",
+    "https://ollama.com/library/qwen3-coder/tags"
+  ],
+  "notes": "NOT INSTALLED: pull with `ollama pull qwen3-coder:30b`. Download 19GB (30.5B MoE (A3B, ~3.3B active), Q4_K_M default tag), needs ~23GB RAM plus KV cache; fits the 48GB M4 Max. Library context 256K; limit set to 131072 because Ollama sizes context from VRAM (assumes OLLAMA_CONTEXT_LENGTH raised). Vendor claims strong SWE-bench-style results for its size; older generation than qwen3.6, rated near glm-4.7-flash for coding but weaker elsewhere. Q4 quantization already accounted for. Latency estimated for M4 Max 48GB by scaling measured gemma4:26b (78 tok/s, ~4B active) by active-weight bytes; not measured. Page checked 2026-10-25."
+}

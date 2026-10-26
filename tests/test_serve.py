@@ -89,8 +89,8 @@ def test_load_profiler_falls_back(tmp_path):
 def test_router_direct(tmp_path):
     r = Router(db_path=tmp_path / "x.sqlite", log_routes=False)
     resp = r.route({"task": TASK, "constraints": {"local_only": True}})
-    assert resp["choice"]["model_id"] == "ollama-gemma4-26b"
-    assert r.record_outcome({"trace_id": resp["trace_id"], "model_id": "ollama-gemma4-26b", "success": True})["ok"]
+    assert resp["choice"]["model_id"].startswith("ollama-")
+    assert r.record_outcome({"trace_id": resp["trace_id"], "model_id": resp["choice"]["model_id"], "success": True})["ok"]
 
 
 def test_cli_route(tmp_path):

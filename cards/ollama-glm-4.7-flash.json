@@ -1,0 +1,107 @@
+{
+  "id": "ollama-glm-4.7-flash",
+  "provider": "ollama",
+  "model": "glm-4.7-flash",
+  "description": "Z.ai GLM-4.7-Flash 30B MoE via Ollama: fast local agentic/coding model with thinking and tools; text-only.",
+  "strengths": [
+    "free",
+    "private",
+    "offline",
+    "agentic_coding",
+    "fast_local"
+  ],
+  "weaknesses": [
+    "no_vision"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 5.8,
+      "se": 0.9
+    },
+    "debugging": {
+      "theta": 5.4,
+      "se": 0.9
+    },
+    "reasoning": {
+      "theta": 6.0,
+      "se": 0.9
+    },
+    "math": {
+      "theta": 5.8,
+      "se": 0.9
+    },
+    "writing": {
+      "theta": 6.2,
+      "se": 0.9
+    },
+    "research": {
+      "theta": 5.2,
+      "se": 0.9
+    },
+    "review": {
+      "theta": 5.6,
+      "se": 0.9
+    },
+    "planning": {
+      "theta": 5.6,
+      "se": 0.9
+    },
+    "ui_frontend": {
+      "theta": 5.6,
+      "se": 0.9
+    },
+    "data_analysis": {
+      "theta": 5.6,
+      "se": 0.9
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 131072,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 350,
+    "tokens_per_sec": 70
+  },
+  "local": true,
+  "tags": [
+    "harness:ollama",
+    "tier:small",
+    "local",
+    "open_weights",
+    "not-installed",
+    "size:large",
+    "thinking"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "estimated",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://ollama.com/library/glm-4.7-flash",
+    "https://ollama.com/library/glm-4.7-flash/tags"
+  ],
+  "notes": "NOT INSTALLED: pull with `ollama pull glm-4.7-flash`. Download 19GB (29.9B MoE (A3B-class), Q4_K_M default tag), needs ~23GB RAM plus KV cache; fits the 48GB M4 Max. Library context 198K; limit set to 131072 because Ollama sizes context from VRAM (assumes OLLAMA_CONTEXT_LENGTH raised). Z.ai/Ollama page: SWE-bench Verified 59.2 (vs 22.0 and 34.0 for the two comparison models), tau2-bench 79.5. Placed between glm-4.5-air (5.2) and glm-4.7 (6.5), minus Q4 penalty. Q4 quantization already accounted for. Latency estimated for M4 Max 48GB by scaling measured gemma4:26b (78 tok/s, ~4B active) by active-weight bytes; not measured. Thinking is on by default: pass think=false for fast answers. Only a 'latest' tag (no size tags). Active params assumed ~3B for latency. Page checked 2026-10-25."
+}

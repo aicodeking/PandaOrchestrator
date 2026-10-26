@@ -1,0 +1,104 @@
+{
+  "id": "openrouter-gpt-6-astra",
+  "provider": "openrouter",
+  "model": "openai/gpt-6-astra",
+  "description": "OpenAI: GPT-6 Astra via OpenRouter. GPT-6 Astra is OpenAI's flagship model for demanding end-to-end work. It is suited for advanced analysis, software engineering, deep research, scientific work, and document creation, with particular strengths in long-horizon",
+  "strengths": [
+    "hard_reasoning",
+    "coding",
+    "long_horizon_agentic",
+    "vision"
+  ],
+  "weaknesses": [
+    "very_expensive"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 8.8,
+      "se": 0.8
+    },
+    "debugging": {
+      "theta": 8.6,
+      "se": 0.8
+    },
+    "reasoning": {
+      "theta": 8.9,
+      "se": 0.8
+    },
+    "math": {
+      "theta": 8.9,
+      "se": 0.8
+    },
+    "writing": {
+      "theta": 8.5,
+      "se": 0.8
+    },
+    "research": {
+      "theta": 8.4,
+      "se": 0.8
+    },
+    "review": {
+      "theta": 8.6,
+      "se": 0.8
+    },
+    "planning": {
+      "theta": 8.8,
+      "se": 0.8
+    },
+    "ui_frontend": {
+      "theta": 8.6,
+      "se": 0.8
+    },
+    "data_analysis": {
+      "theta": 8.5,
+      "se": 0.8
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "image",
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 1050000,
+    "max_output_tokens": 128000
+  },
+  "cost": {
+    "input_per_mtok": 10.0,
+    "output_per_mtok": 50.0,
+    "currency": "USD",
+    "cached_input_per_mtok": 1.0
+  },
+  "latency": {
+    "ttft_ms_p50": 3500,
+    "tokens_per_sec": 45
+  },
+  "local": false,
+  "tags": [
+    "harness:openrouter",
+    "tier:frontier"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://openrouter.ai/api/v1/models",
+    "https://openrouter.ai/rankings",
+    "https://openrouter.ai/api/v1/models (benchmarks.artificial_analysis, Artificial Analysis indices)"
+  ],
+  "notes": "AA intelligence 52.7, coding 76.9, agentic 51.0. Same price as claude-fable-5.1 ($10/$50) but AA scores below fable (53.4/81.6 -> 9.0). Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured."
+}

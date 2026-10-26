@@ -1,0 +1,102 @@
+{
+  "id": "openrouter-deepseek-v4-pro",
+  "provider": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "description": "DeepSeek: DeepSeek V4 Pro 0423 via OpenRouter. DeepSeek V4 Pro is a large-scale Mixture-of-Experts model from DeepSeek with 1.6T total parameters and 49B activated parameters, supporting a 1M-token context window. It is designed for advanced reasoning, coding,",
+  "strengths": [
+    "cheap_for_tier",
+    "long_context"
+  ],
+  "weaknesses": [
+    "long_horizon_agentic"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 6.9,
+      "se": 0.7
+    },
+    "debugging": {
+      "theta": 6.7,
+      "se": 0.7
+    },
+    "reasoning": {
+      "theta": 6.8,
+      "se": 0.7
+    },
+    "math": {
+      "theta": 7.0,
+      "se": 0.7
+    },
+    "writing": {
+      "theta": 6.6,
+      "se": 0.7
+    },
+    "research": {
+      "theta": 6.5,
+      "se": 0.7
+    },
+    "review": {
+      "theta": 6.7,
+      "se": 0.7
+    },
+    "planning": {
+      "theta": 6.7,
+      "se": 0.7
+    },
+    "ui_frontend": {
+      "theta": 6.7,
+      "se": 0.7
+    },
+    "data_analysis": {
+      "theta": 6.6,
+      "se": 0.7
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 1048576,
+    "max_output_tokens": 384000
+  },
+  "cost": {
+    "input_per_mtok": 0.95526,
+    "output_per_mtok": 1.91052,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.079605
+  },
+  "latency": {
+    "ttft_ms_p50": 2000,
+    "tokens_per_sec": 60
+  },
+  "local": false,
+  "tags": [
+    "harness:openrouter",
+    "tier:small",
+    "open_weights"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://openrouter.ai/api/v1/models",
+    "https://openrouter.ai/rankings",
+    "https://openrouter.ai/api/v1/models (benchmarks.artificial_analysis, Artificial Analysis indices)"
+  ],
+  "notes": "AA coding index 59.4, intelligence 30.4, agentic 26.3; anchored below kimi-k2.7-code (60.8 -> 7.3) given lower agentic index. Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured."
+}

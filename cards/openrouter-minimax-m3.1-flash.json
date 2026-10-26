@@ -1,0 +1,105 @@
+{
+  "id": "openrouter-minimax-m3.1-flash",
+  "provider": "openrouter",
+  "model": "minimax/minimax-m3.1-flash",
+  "description": "MiniMax: MiniMax M3.1 Flash via OpenRouter. MiniMax-M3.1-Flash is a multimodal model from MiniMax. Compared with M3, it delivers significant improvements across multiple benchmarks, particularly in complex agentic tasks, coding, and cybersecurity. It is built for complex,",
+  "strengths": [
+    "cheap_for_tier",
+    "agentic",
+    "long_context",
+    "vision"
+  ],
+  "weaknesses": [
+    "writing_style"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 7.8,
+      "se": 0.9
+    },
+    "debugging": {
+      "theta": 7.6,
+      "se": 0.9
+    },
+    "reasoning": {
+      "theta": 7.7,
+      "se": 0.9
+    },
+    "math": {
+      "theta": 7.6,
+      "se": 0.9
+    },
+    "writing": {
+      "theta": 7.5,
+      "se": 0.9
+    },
+    "research": {
+      "theta": 7.4,
+      "se": 0.9
+    },
+    "review": {
+      "theta": 7.6,
+      "se": 0.9
+    },
+    "planning": {
+      "theta": 7.6,
+      "se": 0.9
+    },
+    "ui_frontend": {
+      "theta": 7.6,
+      "se": 0.9
+    },
+    "data_analysis": {
+      "theta": 7.5,
+      "se": 0.9
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image",
+      "video"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 1048576,
+    "max_output_tokens": 524288
+  },
+  "cost": {
+    "input_per_mtok": 0.15,
+    "output_per_mtok": 0.6,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.015
+  },
+  "latency": {
+    "ttft_ms_p50": 1200,
+    "tokens_per_sec": 100
+  },
+  "local": false,
+  "tags": [
+    "harness:openrouter",
+    "tier:mid"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://openrouter.ai/api/v1/models",
+    "https://openrouter.ai/rankings",
+    "https://openrouter.ai/api/v1/models (benchmarks.artificial_analysis, Artificial Analysis indices)"
+  ],
+  "notes": "AA intelligence 42.7 (no coding index); vendor claims gains in agentic coding. Very high usage (~13.7T tokens/7d). Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured."
+}

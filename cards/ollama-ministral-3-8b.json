@@ -1,0 +1,111 @@
+{
+  "id": "ollama-ministral-3-8b",
+  "provider": "ollama",
+  "model": "ministral-3:8b",
+  "description": "Ministral 3 8B via Ollama (also 'latest'): small, fast vision+tools model for trivial tasks.",
+  "strengths": [
+    "free",
+    "private",
+    "offline",
+    "multimodal",
+    "low_ram",
+    "fast_local"
+  ],
+  "weaknesses": [
+    "hard_reasoning",
+    "complex_coding",
+    "long_horizon_agentic"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 4.0,
+      "se": 1.5
+    },
+    "debugging": {
+      "theta": 3.6,
+      "se": 1.5
+    },
+    "reasoning": {
+      "theta": 4.0,
+      "se": 1.5
+    },
+    "math": {
+      "theta": 3.8,
+      "se": 1.5
+    },
+    "writing": {
+      "theta": 4.4,
+      "se": 1.5
+    },
+    "research": {
+      "theta": 3.4,
+      "se": 1.5
+    },
+    "review": {
+      "theta": 3.8,
+      "se": 1.5
+    },
+    "planning": {
+      "theta": 3.8,
+      "se": 1.5
+    },
+    "ui_frontend": {
+      "theta": 3.8,
+      "se": 1.5
+    },
+    "data_analysis": {
+      "theta": 3.8,
+      "se": 1.5
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 131072,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 250,
+    "tokens_per_sec": 33
+  },
+  "local": true,
+  "tags": [
+    "harness:ollama",
+    "tier:tiny",
+    "local",
+    "open_weights",
+    "not-installed",
+    "size:small",
+    "vision"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "estimated",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "estimated",
+    "skills": "estimated",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://ollama.com/library/ministral-3:8b",
+    "https://ollama.com/library/ministral-3/tags"
+  ],
+  "notes": "NOT INSTALLED: pull with `ollama pull ministral-3:8b`. Download 6.0GB (8.92B dense, Q4_K_M default tag), needs ~8GB RAM plus KV cache; fits the 48GB M4 Max. Library context 256K; limit set to 131072 because Ollama sizes context from VRAM (assumes OLLAMA_CONTEXT_LENGTH raised). No independent benchmark found; one step below ministral-3:14b. Q4 quantization already accounted for. Latency estimated for M4 Max 48GB by scaling measured gemma4:26b (78 tok/s, ~4B active) by active-weight bytes; not measured. Page checked 2026-10-25."
+}

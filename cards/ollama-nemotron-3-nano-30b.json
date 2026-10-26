@@ -1,0 +1,107 @@
+{
+  "id": "ollama-nemotron-3-nano-30b",
+  "provider": "ollama",
+  "model": "nemotron-3-nano:30b",
+  "description": "Older version of ollama-nemotron-3.5-lightning-30b (nemotron-3-nano:30b); same price/size. Routed only when ollama-nemotron-3.5-lightning-30b is not eligible.",
+  "strengths": [
+    "free",
+    "private",
+    "offline",
+    "fast_local",
+    "long_context"
+  ],
+  "weaknesses": [
+    "no_vision",
+    "complex_coding"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 5.2,
+      "se": 1.5
+    },
+    "debugging": {
+      "theta": 4.8,
+      "se": 1.5
+    },
+    "reasoning": {
+      "theta": 5.5,
+      "se": 1.5
+    },
+    "math": {
+      "theta": 5.3,
+      "se": 1.5
+    },
+    "writing": {
+      "theta": 5.6,
+      "se": 1.5
+    },
+    "research": {
+      "theta": 4.6,
+      "se": 1.5
+    },
+    "review": {
+      "theta": 5.0,
+      "se": 1.5
+    },
+    "planning": {
+      "theta": 5.0,
+      "se": 1.5
+    },
+    "ui_frontend": {
+      "theta": 5.0,
+      "se": 1.5
+    },
+    "data_analysis": {
+      "theta": 5.0,
+      "se": 1.5
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 131072,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 350,
+    "tokens_per_sec": 75
+  },
+  "local": true,
+  "tags": [
+    "harness:ollama",
+    "tier:small",
+    "local",
+    "open_weights",
+    "size:large",
+    "thinking",
+    "not-installed"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "estimated",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "estimated",
+    "skills": "estimated",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://ollama.com/library/nemotron-3-nano"
+  ],
+  "notes": "NOT INSTALLED: `ollama pull nemotron-3-nano:30b` (~18GB, 32B A3B hybrid MoE). Tools, no vision. Rebuilt 2026-10-26 from ollama-nemotron-3.5-lightning-30b with skills -0.4; superseded by it."
+}

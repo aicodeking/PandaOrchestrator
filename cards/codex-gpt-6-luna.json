@@ -109,5 +109,8 @@
     "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)",
     "https://openrouter.ai/openai/gpt-6-luna"
   ],
-  "notes": "Max input 922k tokens; prompts >272k tokens billed 2x input / 1.5x output."
+  "notes": "Max input 922k tokens; prompts >272k tokens billed 2x input / 1.5x output.",
+  "supersedes": [
+    "codex-gpt-5.6-luna"
+  ]
 }

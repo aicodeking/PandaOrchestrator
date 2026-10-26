@@ -1,0 +1,112 @@
+{
+  "id": "ollama-gemma4-e4b",
+  "provider": "ollama",
+  "model": "gemma4:e4b",
+  "description": "Gemma 4 E4B (also 'latest'): small, fast, multimodal (image+audio) local model for trivial tasks.",
+  "strengths": [
+    "free",
+    "private",
+    "offline",
+    "multimodal",
+    "low_ram",
+    "fast_local"
+  ],
+  "weaknesses": [
+    "hard_reasoning",
+    "complex_coding",
+    "long_horizon_agentic"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 3.8,
+      "se": 1.2
+    },
+    "debugging": {
+      "theta": 3.4,
+      "se": 1.2
+    },
+    "reasoning": {
+      "theta": 4.0,
+      "se": 1.2
+    },
+    "math": {
+      "theta": 3.8,
+      "se": 1.2
+    },
+    "writing": {
+      "theta": 4.2,
+      "se": 1.2
+    },
+    "research": {
+      "theta": 3.2,
+      "se": 1.2
+    },
+    "review": {
+      "theta": 3.6,
+      "se": 1.2
+    },
+    "planning": {
+      "theta": 3.6,
+      "se": 1.2
+    },
+    "ui_frontend": {
+      "theta": 3.6,
+      "se": 1.2
+    },
+    "data_analysis": {
+      "theta": 3.6,
+      "se": 1.2
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 131072,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 200,
+    "tokens_per_sec": 55
+  },
+  "local": true,
+  "tags": [
+    "harness:ollama",
+    "tier:tiny",
+    "local",
+    "open_weights",
+    "not-installed",
+    "size:small",
+    "vision",
+    "thinking"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "estimated",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://ollama.com/library/gemma4:e4b",
+    "https://ollama.com/library/gemma4/tags"
+  ],
+  "notes": "NOT INSTALLED: pull with `ollama pull gemma4:e4b`. Download 6.6-9.5GB (7.52B (effective 4B), Q4_K_M default tag), needs ~9GB RAM plus KV cache; fits the 48GB M4 Max. Library context 128K; limit set to 131072 because Ollama sizes context from VRAM (assumes OLLAMA_CONTEXT_LENGTH raised). Gemma 4 model card: LiveCodeBench v6 52.0% for E4B vs 77.1% for 26B-A4B (carded 5.0) -> ~3.8. Q4 quantization already accounted for. Latency estimated for M4 Max 48GB by scaling measured gemma4:26b (78 tok/s, ~4B active) by active-weight bytes; not measured. Thinking is on by default: pass think=false for fast answers. Default 'latest' tag. Audio input supported by Ollama but not modeled in card modalities. Page checked 2026-10-25."
+}

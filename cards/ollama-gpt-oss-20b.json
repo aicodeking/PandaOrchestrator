@@ -1,0 +1,108 @@
+{
+  "id": "ollama-gpt-oss-20b",
+  "provider": "ollama",
+  "model": "gpt-oss:20b",
+  "description": "OpenAI gpt-oss 20B MoE via Ollama: fast local reasoning model with tool calling; text-only.",
+  "strengths": [
+    "free",
+    "private",
+    "offline",
+    "fast_local",
+    "reasoning"
+  ],
+  "weaknesses": [
+    "no_vision",
+    "long_horizon_agentic"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 5.8,
+      "se": 0.9
+    },
+    "debugging": {
+      "theta": 5.4,
+      "se": 0.9
+    },
+    "reasoning": {
+      "theta": 6.4,
+      "se": 0.9
+    },
+    "math": {
+      "theta": 6.2,
+      "se": 0.9
+    },
+    "writing": {
+      "theta": 6.2,
+      "se": 0.9
+    },
+    "research": {
+      "theta": 5.2,
+      "se": 0.9
+    },
+    "review": {
+      "theta": 5.6,
+      "se": 0.9
+    },
+    "planning": {
+      "theta": 5.6,
+      "se": 0.9
+    },
+    "ui_frontend": {
+      "theta": 5.6,
+      "se": 0.9
+    },
+    "data_analysis": {
+      "theta": 5.6,
+      "se": 0.9
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 131072,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 250,
+    "tokens_per_sec": 95
+  },
+  "local": true,
+  "tags": [
+    "harness:ollama",
+    "tier:small",
+    "local",
+    "open_weights",
+    "not-installed",
+    "size:medium",
+    "thinking"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "estimated",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://ollama.com/library/gpt-oss:20b",
+    "https://ollama.com/library/gpt-oss/tags"
+  ],
+  "notes": "NOT INSTALLED: pull with `ollama pull gpt-oss:20b`. Download 14GB (20.9B MoE (~3.6B active), MXFP4 default tag), needs ~16GB RAM plus KV cache; fits the 48GB M4 Max. Library context 128K; limit set to 131072 because Ollama sizes context from VRAM (assumes OLLAMA_CONTEXT_LENGTH raised). OpenAI model card: SWE-bench Verified ~60.7% (high reasoning), Codeforces Elo ~2516 with tools, GPQA ~71.5%; native MXFP4 so no extra quant penalty. Rated between glm-4.5-air (5.2) and glm-4.7 (6.5). Reasoning effort configurable. Q4 quantization already accounted for. Latency estimated for M4 Max 48GB by scaling measured gemma4:26b (78 tok/s, ~4B active) by active-weight bytes; not measured. Thinking is on by default: pass think=false for fast answers. Native MXFP4 weights (not Q4). 120b exists (65GB) but does not fit comfortably in 48GB; not carded. Page checked 2026-10-25."
+}

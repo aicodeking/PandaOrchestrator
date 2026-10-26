@@ -1,0 +1,107 @@
+{
+  "id": "ollama-phi4-14b",
+  "provider": "ollama",
+  "model": "phi4:14b",
+  "description": "Microsoft Phi-4 14B via Ollama: good at reasoning and math for its size, small 16K context, no tools.",
+  "strengths": [
+    "free",
+    "private",
+    "offline",
+    "math"
+  ],
+  "weaknesses": [
+    "short_context",
+    "no_tools",
+    "complex_coding"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 4.4,
+      "se": 1.5
+    },
+    "debugging": {
+      "theta": 4.0,
+      "se": 1.5
+    },
+    "reasoning": {
+      "theta": 4.6,
+      "se": 1.5
+    },
+    "math": {
+      "theta": 4.4,
+      "se": 1.5
+    },
+    "writing": {
+      "theta": 4.8,
+      "se": 1.5
+    },
+    "research": {
+      "theta": 3.8,
+      "se": 1.5
+    },
+    "review": {
+      "theta": 4.2,
+      "se": 1.5
+    },
+    "planning": {
+      "theta": 4.2,
+      "se": 1.5
+    },
+    "ui_frontend": {
+      "theta": 4.2,
+      "se": 1.5
+    },
+    "data_analysis": {
+      "theta": 4.2,
+      "se": 1.5
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": false,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 16384,
+    "max_output_tokens": 4096
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 350,
+    "tokens_per_sec": 20
+  },
+  "local": true,
+  "tags": [
+    "harness:ollama",
+    "tier:small",
+    "local",
+    "open_weights",
+    "not-installed",
+    "size:medium"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "estimated",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "estimated",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://ollama.com/library/phi4:14b",
+    "https://ollama.com/library/phi4/tags"
+  ],
+  "notes": "NOT INSTALLED: pull with `ollama pull phi4:14b`. Download 9.1GB (14.7B dense, Q4_K_M default tag), needs ~11GB RAM plus KV cache; fits the 48GB M4 Max. Library context 16K; limit set to 16384 because Ollama sizes context from VRAM (assumes OLLAMA_CONTEXT_LENGTH raised). No independent benchmark found; STEM-leaning, rated low for coding and agentic work. Q4 quantization already accounted for. Latency estimated for M4 Max 48GB by scaling measured gemma4:26b (78 tok/s, ~4B active) by active-weight bytes; not measured. Ollama page shows no tools capability; 16K context is small. Page checked 2026-10-25."
+}

@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import difflib
 import hashlib
 import json
 import random
+import re
 import time
 import uuid
 from pathlib import Path
@@ -43,6 +45,64 @@ def estimate_input_tokens(task: dict) -> int:
     return len(task.get("text") or "") // 4 + INPUT_OVERHEAD_TOKENS
 
 
+def _alias_key(name: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", name.lower())
+
+
+def _alias_index(cards: dict[str, dict]) -> dict[str, str | None]:
+    """Normalised id / model / slug tail -> card id; None marks a key shared by several cards."""
+    index: dict[str, str | None] = {}
+    for cid, card in cards.items():
+        names = {cid, card.get("model") or ""}
+        names |= {n.rsplit("/", 1)[-1] for n in names}
+        for key in {_alias_key(n) for n in names if n}:
+            index[key] = cid if index.get(key, cid) == cid else None
+    return index
+
+
+FUZZY_CUTOFF = 0.75
+
+
+def _digits(key: str) -> str:
+    return re.sub(r"[^0-9]", "", key)
+
+
+def resolve_alias(name: str, cards: dict[str, dict], index: dict[str, str | None]) -> str | None:
+    """Map a caller's model name to a card id.
+
+    1. exact card id; 2. case/separator-insensitive match on id, model or slug tail
+    ('claude/sonnet-5-5' -> 'claude-sonnet-5.5'); 3. closest spelling among keys with the
+    same version digits ('claude-sonet-5.5' -> 'claude-sonnet-5.5'). Digits must match exactly so
+    'gpt-6-sol' never turns into 'gpt-6.1-sol'. Ambiguous or nothing close -> None."""
+    if name in cards:
+        return name
+    tail = name.rsplit("/", 1)[-1]
+    by_model = [cid for cid, c in cards.items() if c.get("model") in (name, tail)]
+    if len(by_model) == 1:  # exact model/slug ('qwen3.8:27b' is the Ollama card, not OpenRouter)
+        return by_model[0]
+    keys = {_alias_key(name), _alias_key(tail)} - {""}
+    for key in keys:
+        if key in index:
+            if index[key]:
+                return index[key]
+            # shared key: a vendor prefix ('ollama/...', 'openrouter/...') may pick one
+            prefix = _alias_key(name.split("/", 1)[0]) if "/" in name else ""
+            hits = [cid for cid, c in cards.items() if prefix and prefix in (_alias_key(c.get("provider") or ""),
+                    _alias_key(cid.split("-", 1)[0])) and key in _alias_index({cid: c})]
+            return hits[0] if len(hits) == 1 else None  # still ambiguous: refuse to guess
+    best, best_score = None, FUZZY_CUTOFF
+    for key in keys:
+        for cand, cid in index.items():
+            if cid is None or _digits(cand) != _digits(key):
+                continue
+            score = difflib.SequenceMatcher(None, key, cand).ratio()
+            if score > best_score:
+                best, best_score = cid, score
+            elif score == best_score and cid != best:
+                best = None  # tie between different cards: refuse to guess
+    return best
+
+
 def _norm(x: np.ndarray) -> np.ndarray:
     m = float(x.max()) if x.size else 0.0
     return x / m if m > 0 else np.zeros_like(x)
@@ -72,17 +132,19 @@ class Matcher:
             self._resolved[key] = (known, self._pools.get(list(known.values())), [])
             return self._resolved[key][1:]
         cards, unknown, seen = [], [], set()
+        index = _alias_index(known)
         for item in pool_spec:
             if isinstance(item, dict):
                 validate_card(item)
                 card = item
-            elif item in known:
-                card = known[item]
+            elif (cid := resolve_alias(item, known, index)) is not None:
+                # answer with the caller's exact string; `card_id` keeps the matched card
+                card = known[cid] if cid == item else {**known[cid], "id": item, "card_id": cid}
             else:
                 unknown.append(item)
                 continue
-            if card["id"] not in seen:
-                seen.add(card["id"])
+            if (card_key := card.get("card_id", card["id"])) not in seen:
+                seen.add(card_key)
                 cards.append(card)
         if not cards:
             raise ValueError(f"empty pool after resolution (unknown ids: {unknown})")
@@ -183,6 +245,17 @@ class Matcher:
                 filtered_out.append({"model_id": mid, "reason": ";".join(r)})
             else:
                 cand.append(i)
+
+        # --- newer version wins: drop a candidate when a card that `supersedes` it is also a candidate
+        # and costs no more for this task. A pricier successor competes normally (the older one is
+        # picked only if it is cheaper and still clears the policy threshold).
+        card_ids = [c.get("card_id", c["id"]) for c in pool.cards]
+        newer = {old: i for i in cand for old in pool.cards[i].get("supersedes", ())}
+        superseded = {i: newer[card_ids[i]] for i in cand
+                      if card_ids[i] in newer and cost[newer[card_ids[i]]] <= cost[i] + 1e-12}
+        for i, j in superseded.items():
+            filtered_out.append({"model_id": pool.ids[i], "reason": f"superseded_by:{pool.ids[j]}"})
+        cand = [i for i in cand if i not in superseded]
         cand_idx = np.array(cand, dtype=int)
 
         # --- utility over candidates.
@@ -213,7 +286,7 @@ class Matcher:
             elif mode == "cheapest_above_threshold":
                 above = [i for i in eligible if p[i] >= min_p]
                 if above:
-                    greedy = min(above, key=lambda i: (cts[i], cost[i], -p[i], i))
+                    greedy = min(above, key=lambda i: (cts[i], cost[i], latency[i], -p[i], i))  # free ties (local) -> fastest
                     decided_by = "policy:cheapest_above_threshold"
                 else:
                     greedy = max(eligible, key=lambda i: (p[i], -cost[i], -i))
@@ -252,7 +325,8 @@ class Matcher:
             order = [chosen] + [i for i in order if i != chosen]
 
         def row(i):
-            return {"model_id": pool.ids[i], "p_success": round(float(p[i]), 4),
+            return {"model_id": pool.ids[i], "card_id": pool.cards[i].get("card_id", pool.ids[i]),
+                    "p_success": round(float(p[i]), 4),
                     "quality": round(float(quality[i]), 4), "utility": round(float(util[i]), 4),
                     "est_cost_usd": round(float(cost[i]), 6), "est_cost_to_success_usd": round(float(cts[i]), 6),
                     "est_latency_ms": round(float(latency[i]), 1)}

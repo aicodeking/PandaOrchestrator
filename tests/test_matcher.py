@@ -74,8 +74,9 @@ def test_roster_complete_and_local_card():
                 "glm-5.1", "glm-5-turbo", "glm-4.7", "glm-4.5-air", "grok-4.6", "grok-4.5", "ollama-gemma4-26b"}
     assert expected <= set(cards)
     local = [c for c in cards.values() if c.get("local")]
-    assert [c["id"] for c in local] == ["ollama-gemma4-26b"]
-    assert local[0]["cost"]["input_per_mtok"] == 0 and local[0]["cost"]["output_per_mtok"] == 0
+    assert "ollama-gemma4-26b" in {c["id"] for c in local}
+    assert all(c["cost"]["input_per_mtok"] == 0 and c["cost"]["output_per_mtok"] == 0 for c in local)
+    assert not any(c["model"].endswith(":free") for c in cards.values())  # free tiers live in cards/optional/
 
 
 def test_invalid_card_rejected(m):
@@ -280,7 +281,7 @@ def test_exploration_logs_propensity(m):
 # ----------------------------------------------------------------------------- latency
 def test_latency_under_2ms_for_20_cards(m):
     extra = [mk_card(f"x{i}", 5 + i * 0.3) for i in range(3)]
-    pool = list(load_cards().values()) + extra
+    pool = list(load_cards().values())[:17] + extra
     assert len(pool) >= 20
     r = req(pool=pool)
     prof = make_profile()
@@ -292,3 +293,56 @@ def test_latency_under_2ms_for_20_cards(m):
         m.route(r, prof)
         times.append((time.perf_counter() - t) * 1000)
     assert statistics.median(times) < 2.0, statistics.median(times)
+
+
+def test_pool_aliases_resolve_and_echo_caller_ids(m):
+    pool = ["claude/sonnet-5-5", "anthropic/claude-sonnet-5.5", "claude-sonet-5.5-latest-typo", "deepseek/deepseek-v4-flash",
+            "Gemma4:26B", "gpt-6-sol", "gpt-9-sol", "totally-unknown-model"]
+    resp = m.route(req(pool=pool, return_top_k=50), make_profile())
+    got = {r["model_id"]: r["card_id"] for r in resp["ranking"]}
+    assert got["claude/sonnet-5-5"] == "claude-sonnet-5.5"          # caller's string echoed, real card used
+    assert got["deepseek/deepseek-v4-flash"] == "openrouter-deepseek-v4-flash"
+    assert got["Gemma4:26B"] == "ollama-gemma4-26b"
+    assert got["gpt-6-sol"] == "openrouter-gpt-6-sol"               # not gpt-6.1-sol
+    assert "anthropic/claude-sonnet-5.5" not in got                 # same card as the first alias
+    unknown = {f["model_id"] for f in resp["filtered_out"] if f["reason"] == "unknown_model"}
+    assert {"gpt-9-sol", "totally-unknown-model"} <= unknown        # wrong version / nothing close
+
+
+def test_alias_shared_key_needs_exact_model_or_prefix():
+    from panda_router.matcher.policy import _alias_index, resolve_alias
+    cards = load_cards()
+    idx = _alias_index(cards)
+    assert resolve_alias("qwen3.8:27b", cards, idx) == "ollama-qwen3.8-27b"          # exact pull name
+    assert resolve_alias("qwen/qwen3.8-27b", cards, idx) == "openrouter-qwen3.8-27b"  # exact slug
+    assert resolve_alias("ollama/qwen3.8-27b", cards, idx) == "ollama-qwen3.8-27b"    # vendor prefix
+    assert resolve_alias("qwen3.8-27b", cards, idx) is None                           # truly ambiguous
+
+
+def test_newer_version_wins_older_only_when_alone(m):
+    easy = make_profile(diff=2)
+    both = m.route(req(pool=["grok-4.5", "grok-4.6"]), easy)
+    assert both["choice"]["model_id"] == "grok-4.6"
+    assert {"model_id": "grok-4.5", "reason": "superseded_by:grok-4.6"} in both["filtered_out"]
+    assert m.route(req(pool=["grok-4.5"]), easy)["choice"]["model_id"] == "grok-4.5"
+    # successor filtered out (excluded) -> the older version is allowed back in
+    excl = m.route(req(pool=["grok-4.5", "grok-4.6"], constraints={"exclude": ["grok-4.6"]}), easy)
+    assert excl["choice"]["model_id"] == "grok-4.5"
+    # works with caller aliases too, and the reason names the caller's string
+    alias = m.route(req(pool=["x-ai/grok-4-5", "grok/4.6"]), easy)
+    assert alias["choice"]["model_id"] == "grok/4.6"
+    assert {"model_id": "x-ai/grok-4-5", "reason": "superseded_by:grok/4.6"} in alias["filtered_out"]
+
+
+def test_supersedes_links_point_to_real_cards():
+    cards = load_cards()
+    for c in cards.values():
+        for old in c.get("supersedes", ()):
+            assert old in cards and old != c["id"], (c["id"], old)
+
+
+def test_pricier_successor_competes_normally(m):
+    easy = make_profile(diff=2)
+    r = m.route(req(pool=["glm-4.7", "glm-5.1"]), easy)   # 5.1 costs ~2x: no automatic win
+    assert not any(f["reason"].startswith("superseded_by") for f in r["filtered_out"])
+    assert r["choice"]["model_id"] == "glm-4.7"            # cheaper and good enough for an easy task

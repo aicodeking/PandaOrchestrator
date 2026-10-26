@@ -1,0 +1,105 @@
+{
+  "id": "openrouter-qwen3.8-27b",
+  "provider": "openrouter",
+  "model": "qwen/qwen3.8-27b",
+  "description": "Qwen: Qwen3.8 27B via OpenRouter. Qwen3.8 27B is an open-weight dense vision-language model from Qwen. It is suited for coding, professional workflows, research, multimodal interaction, and long-running agent tasks, with flexible thinking that can be",
+  "strengths": [
+    "cheap_for_tier",
+    "multimodal",
+    "long_context"
+  ],
+  "weaknesses": [
+    "hard_reasoning"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 7.0,
+      "se": 0.7
+    },
+    "debugging": {
+      "theta": 6.8,
+      "se": 0.7
+    },
+    "reasoning": {
+      "theta": 6.9,
+      "se": 0.7
+    },
+    "math": {
+      "theta": 6.8,
+      "se": 0.7
+    },
+    "writing": {
+      "theta": 6.7,
+      "se": 0.7
+    },
+    "research": {
+      "theta": 6.6,
+      "se": 0.7
+    },
+    "review": {
+      "theta": 6.8,
+      "se": 0.7
+    },
+    "planning": {
+      "theta": 6.8,
+      "se": 0.7
+    },
+    "ui_frontend": {
+      "theta": 6.8,
+      "se": 0.7
+    },
+    "data_analysis": {
+      "theta": 6.7,
+      "se": 0.7
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image",
+      "video"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 1000000,
+    "max_output_tokens": 235929
+  },
+  "cost": {
+    "input_per_mtok": 0.2,
+    "output_per_mtok": 2.5,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.09
+  },
+  "latency": {
+    "ttft_ms_p50": 1200,
+    "tokens_per_sec": 90
+  },
+  "local": false,
+  "tags": [
+    "harness:openrouter",
+    "tier:mid",
+    "open_weights"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://openrouter.ai/api/v1/models",
+    "https://openrouter.ai/rankings",
+    "https://openrouter.ai/api/v1/models (benchmarks.artificial_analysis, Artificial Analysis indices)"
+  ],
+  "notes": "AA coding 68.1, intelligence 33.7, agentic 45.8. 27B dense open weights. Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured."
+}

@@ -1,0 +1,105 @@
+{
+  "id": "openrouter-mimo-v2.6-flash",
+  "provider": "openrouter",
+  "model": "xiaomi/mimo-v2.6-flash",
+  "description": "Xiaomi: MiMo-V2.6-Flash via OpenRouter. MiMo-V2.6-Flash is an open-source foundation model developed by Xiaomi. Built on a Mixture-of-Experts architecture with 309B total parameters and 15B activated per token, it employs a hybrid attention mechanism for",
+  "strengths": [
+    "ultra_cheap",
+    "multimodal",
+    "long_context"
+  ],
+  "weaknesses": [
+    "hard_coding"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 7.2,
+      "se": 0.9
+    },
+    "debugging": {
+      "theta": 7.0,
+      "se": 0.9
+    },
+    "reasoning": {
+      "theta": 7.1,
+      "se": 0.9
+    },
+    "math": {
+      "theta": 7.0,
+      "se": 0.9
+    },
+    "writing": {
+      "theta": 6.9,
+      "se": 0.9
+    },
+    "research": {
+      "theta": 6.8,
+      "se": 0.9
+    },
+    "review": {
+      "theta": 7.0,
+      "se": 0.9
+    },
+    "planning": {
+      "theta": 7.0,
+      "se": 0.9
+    },
+    "ui_frontend": {
+      "theta": 7.0,
+      "se": 0.9
+    },
+    "data_analysis": {
+      "theta": 6.9,
+      "se": 0.9
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image",
+      "video",
+      "audio"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 1050000,
+    "max_output_tokens": 131072
+  },
+  "cost": {
+    "input_per_mtok": 0.14,
+    "output_per_mtok": 0.28,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.0028
+  },
+  "latency": {
+    "ttft_ms_p50": 1000,
+    "tokens_per_sec": 130
+  },
+  "local": false,
+  "tags": [
+    "harness:openrouter",
+    "tier:mid"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://openrouter.ai/api/v1/models",
+    "https://openrouter.ai/rankings",
+    "https://openrouter.ai/api/v1/models (benchmarks.artificial_analysis, Artificial Analysis indices)"
+  ],
+  "notes": "AA intelligence 37.9 (no coding index); similar to gpt-5.6-luna (37.3 -> 7.4), slightly lower. Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured."
+}

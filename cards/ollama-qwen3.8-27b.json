@@ -1,0 +1,114 @@
+{
+  "id": "ollama-qwen3.8-27b",
+  "provider": "ollama",
+  "model": "qwen3.8:27b",
+  "description": "Qwen3.8 27B dense vision-language model, local via Ollama: strongest general local pick on this machine; thinking on by default.",
+  "strengths": [
+    "free",
+    "private",
+    "offline",
+    "multimodal",
+    "long_context"
+  ],
+  "weaknesses": [
+    "slow_on_laptop",
+    "hard_reasoning"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 6.7,
+      "se": 0.9
+    },
+    "debugging": {
+      "theta": 6.3,
+      "se": 0.9
+    },
+    "reasoning": {
+      "theta": 7.0,
+      "se": 0.9
+    },
+    "math": {
+      "theta": 6.8,
+      "se": 0.9
+    },
+    "writing": {
+      "theta": 7.1,
+      "se": 0.9
+    },
+    "research": {
+      "theta": 6.1,
+      "se": 0.9
+    },
+    "review": {
+      "theta": 6.5,
+      "se": 0.9
+    },
+    "planning": {
+      "theta": 6.5,
+      "se": 0.9
+    },
+    "ui_frontend": {
+      "theta": 6.5,
+      "se": 0.9
+    },
+    "data_analysis": {
+      "theta": 6.5,
+      "se": 0.9
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 131072,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 700,
+    "tokens_per_sec": 11
+  },
+  "local": true,
+  "tags": [
+    "harness:ollama",
+    "tier:mid",
+    "local",
+    "open_weights",
+    "not-installed",
+    "size:large",
+    "vision",
+    "thinking"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "estimated",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://ollama.com/library/qwen3.8:27b",
+    "https://ollama.com/library/qwen3.8/tags"
+  ],
+  "notes": "NOT INSTALLED: pull with `ollama pull qwen3.8:27b`. Download 18GB (27.3B dense, Q4_K_M default tag), needs ~22GB RAM plus KV cache; fits the 48GB M4 Max. Library context 256K; limit set to 131072 because Ollama sizes context from VRAM (assumes OLLAMA_CONTEXT_LENGTH raised). Anchored to openrouter-qwen3.8-27b (AA coding 68.1, intelligence 33.7, agentic 45.8 -> theta 7.0) minus 0.3 for Q4_K_M. Q4 quantization already accounted for. Latency estimated for M4 Max 48GB by scaling measured gemma4:26b (78 tok/s, ~4B active) by active-weight bytes; not measured. Thinking is on by default: pass think=false for fast answers. Page checked 2026-10-25.",
+  "supersedes": [
+    "ollama-qwen3.6-27b",
+    "ollama-qwen3.5-27b"
+  ]
+}

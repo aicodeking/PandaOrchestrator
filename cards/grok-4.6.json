@@ -106,5 +106,8 @@
     "https://docs.x.ai/developers/models/grok-4.6",
     "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)"
   ],
-  "notes": ">200k-token prompts billed $4/$12."
+  "notes": ">200k-token prompts billed $4/$12.",
+  "supersedes": [
+    "grok-4.5"
+  ]
 }

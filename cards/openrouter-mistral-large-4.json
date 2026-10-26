@@ -1,0 +1,104 @@
+{
+  "id": "openrouter-mistral-large-4",
+  "provider": "openrouter",
+  "model": "mistralai/mistral-large-4-0",
+  "description": "Mistral: Mistral Large 4 via OpenRouter. Mistral Large 4 is a frontier multimodal (text and image input) model from Mistral AI built for reasoning, coding, and agentic workloads. It offers a 1M-token context window with up",
+  "strengths": [
+    "multilingual",
+    "writing",
+    "vision",
+    "long_context"
+  ],
+  "weaknesses": [
+    "hard_agentic_coding"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 7.2,
+      "se": 0.9
+    },
+    "debugging": {
+      "theta": 7.0,
+      "se": 0.9
+    },
+    "reasoning": {
+      "theta": 7.1,
+      "se": 0.9
+    },
+    "math": {
+      "theta": 7.0,
+      "se": 0.9
+    },
+    "writing": {
+      "theta": 7.2,
+      "se": 0.9
+    },
+    "research": {
+      "theta": 6.8,
+      "se": 0.9
+    },
+    "review": {
+      "theta": 7.0,
+      "se": 0.9
+    },
+    "planning": {
+      "theta": 7.0,
+      "se": 0.9
+    },
+    "ui_frontend": {
+      "theta": 7.0,
+      "se": 0.9
+    },
+    "data_analysis": {
+      "theta": 6.9,
+      "se": 0.9
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 1048576,
+    "max_output_tokens": 262144
+  },
+  "cost": {
+    "input_per_mtok": 1.36,
+    "output_per_mtok": 4.18,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.14
+  },
+  "latency": {
+    "ttft_ms_p50": 1200,
+    "tokens_per_sec": 70
+  },
+  "local": false,
+  "tags": [
+    "harness:openrouter",
+    "tier:mid"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://openrouter.ai/api/v1/models",
+    "https://openrouter.ai/rankings",
+    "https://openrouter.ai/api/v1/models (benchmarks.artificial_analysis, Artificial Analysis indices)"
+  ],
+  "notes": "AA intelligence 38.4 (no coding index); similar to gpt-5.6-luna (37.3 -> 7.4). Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured."
+}

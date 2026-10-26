@@ -1,0 +1,109 @@
+{
+  "id": "ollama-gemma4-31b",
+  "provider": "ollama",
+  "model": "gemma4:31b",
+  "description": "Gemma 4 31B dense via Ollama: best Gemma 4 for quality, but slower than gemma4:26b on this machine.",
+  "strengths": [
+    "free",
+    "private",
+    "offline",
+    "multimodal"
+  ],
+  "weaknesses": [
+    "slow_on_laptop",
+    "long_horizon_agentic"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 5.6,
+      "se": 1.0
+    },
+    "debugging": {
+      "theta": 5.2,
+      "se": 1.0
+    },
+    "reasoning": {
+      "theta": 5.8,
+      "se": 1.0
+    },
+    "math": {
+      "theta": 5.6,
+      "se": 1.0
+    },
+    "writing": {
+      "theta": 6.0,
+      "se": 1.0
+    },
+    "research": {
+      "theta": 5.0,
+      "se": 1.0
+    },
+    "review": {
+      "theta": 5.4,
+      "se": 1.0
+    },
+    "planning": {
+      "theta": 5.4,
+      "se": 1.0
+    },
+    "ui_frontend": {
+      "theta": 5.4,
+      "se": 1.0
+    },
+    "data_analysis": {
+      "theta": 5.4,
+      "se": 1.0
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 131072,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 800,
+    "tokens_per_sec": 10
+  },
+  "local": true,
+  "tags": [
+    "harness:ollama",
+    "tier:small",
+    "local",
+    "open_weights",
+    "not-installed",
+    "size:large",
+    "vision",
+    "thinking"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "estimated",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://ollama.com/library/gemma4:31b",
+    "https://ollama.com/library/gemma4/tags"
+  ],
+  "notes": "NOT INSTALLED: pull with `ollama pull gemma4:31b`. Download 19-20GB (30.7B dense, Q4_K_M default tag), needs ~24GB RAM plus KV cache; fits the 48GB M4 Max. Library context 256K; limit set to 131072 because Ollama sizes context from VRAM (assumes OLLAMA_CONTEXT_LENGTH raised). Gemma 4 model card: LiveCodeBench v6 80.0% (31B) vs 77.1% (26B-A4B), Codeforces ELO 2150 vs 1718; gemma4:26b is carded at 5.0 so 31b = 5.6. Q4 quantization already accounted for. Latency estimated for M4 Max 48GB by scaling measured gemma4:26b (78 tok/s, ~4B active) by active-weight bytes; not measured. Thinking is on by default: pass think=false for fast answers. Page: https://ai.google.dev/gemma/docs/core/model_card_4. Page checked 2026-10-25."
+}

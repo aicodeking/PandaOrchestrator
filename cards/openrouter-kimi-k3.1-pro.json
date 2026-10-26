@@ -1,0 +1,106 @@
+{
+  "id": "openrouter-kimi-k3.1-pro",
+  "provider": "openrouter",
+  "model": "moonshotai/kimi-k3.1-pro",
+  "description": "MoonshotAI: Kimi K3.1 Pro via OpenRouter. Kimi K3.1 Pro is Moonshot AI's flagship open-weight multimodal reasoning model and a post-trained successor to Kimi K3, with a 1M-token context window. It is built for long-horizon coding, 3D",
+  "strengths": [
+    "coding",
+    "long_horizon_agentic",
+    "long_context",
+    "vision"
+  ],
+  "weaknesses": [
+    "pricey"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 8.8,
+      "se": 0.9
+    },
+    "debugging": {
+      "theta": 8.6,
+      "se": 0.9
+    },
+    "reasoning": {
+      "theta": 8.9,
+      "se": 0.9
+    },
+    "math": {
+      "theta": 8.6,
+      "se": 0.9
+    },
+    "writing": {
+      "theta": 8.5,
+      "se": 0.9
+    },
+    "research": {
+      "theta": 8.4,
+      "se": 0.9
+    },
+    "review": {
+      "theta": 8.6,
+      "se": 0.9
+    },
+    "planning": {
+      "theta": 8.7,
+      "se": 0.9
+    },
+    "ui_frontend": {
+      "theta": 8.6,
+      "se": 0.9
+    },
+    "data_analysis": {
+      "theta": 8.5,
+      "se": 0.9
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image",
+      "video"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 1048576,
+    "max_output_tokens": 943718
+  },
+  "cost": {
+    "input_per_mtok": 2.0,
+    "output_per_mtok": 10.0,
+    "currency": "USD",
+    "cached_input_per_mtok": 0.2
+  },
+  "latency": {
+    "ttft_ms_p50": 2500,
+    "tokens_per_sec": 45
+  },
+  "local": false,
+  "tags": [
+    "harness:openrouter",
+    "tier:frontier",
+    "open_weights"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "benchmark-informed",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "benchmark-informed",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://openrouter.ai/api/v1/models",
+    "https://openrouter.ai/rankings",
+    "https://openrouter.ai/api/v1/models (benchmarks.artificial_analysis, Artificial Analysis indices)"
+  ],
+  "notes": "AA intelligence 55.1 (no coding index) vs kimi-k3 43.6 -> 8.0 and sonnet-5.5 56 -> 8.6; successor to kimi-k3, 1M context. Cost per token 2/10 vs kimi-k3 card 3/15. Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured."
+}

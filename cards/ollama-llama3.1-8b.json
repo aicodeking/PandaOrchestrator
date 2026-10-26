@@ -1,0 +1,108 @@
+{
+  "id": "ollama-llama3.1-8b",
+  "provider": "ollama",
+  "model": "llama3.1:8b",
+  "description": "Meta Llama 3.1 8B via Ollama: the most-pulled model family (120M pulls) but a 2024 generation; trivial tasks only.",
+  "strengths": [
+    "free",
+    "private",
+    "offline",
+    "low_ram",
+    "fast_local"
+  ],
+  "weaknesses": [
+    "hard_reasoning",
+    "complex_coding",
+    "no_vision"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 3.4,
+      "se": 1.5
+    },
+    "debugging": {
+      "theta": 3.0,
+      "se": 1.5
+    },
+    "reasoning": {
+      "theta": 3.4,
+      "se": 1.5
+    },
+    "math": {
+      "theta": 3.2,
+      "se": 1.5
+    },
+    "writing": {
+      "theta": 3.8,
+      "se": 1.5
+    },
+    "research": {
+      "theta": 2.8,
+      "se": 1.5
+    },
+    "review": {
+      "theta": 3.2,
+      "se": 1.5
+    },
+    "planning": {
+      "theta": 3.2,
+      "se": 1.5
+    },
+    "ui_frontend": {
+      "theta": 3.2,
+      "se": 1.5
+    },
+    "data_analysis": {
+      "theta": 3.2,
+      "se": 1.5
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 131072,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 200,
+    "tokens_per_sec": 38
+  },
+  "local": true,
+  "tags": [
+    "harness:ollama",
+    "tier:tiny",
+    "local",
+    "open_weights",
+    "not-installed",
+    "size:small"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "estimated",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "estimated",
+    "skills": "estimated",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://ollama.com/library/llama3.1:8b",
+    "https://ollama.com/library/llama3.1/tags"
+  ],
+  "notes": "NOT INSTALLED: pull with `ollama pull llama3.1:8b`. Download 4.9GB (8.03B dense, Q4_K_M default tag), needs ~7GB RAM plus KV cache; fits the 48GB M4 Max. Library context 128K; limit set to 131072 because Ollama sizes context from VRAM (assumes OLLAMA_CONTEXT_LENGTH raised). No current benchmark; 2024 model, rated below gemma4:e4b. Q4 quantization already accounted for. Latency estimated for M4 Max 48GB by scaling measured gemma4:26b (78 tok/s, ~4B active) by active-weight bytes; not measured. Page checked 2026-10-25."
+}

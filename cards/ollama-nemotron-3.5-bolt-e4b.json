@@ -1,0 +1,111 @@
+{
+  "id": "ollama-nemotron-3.5-bolt-e4b",
+  "provider": "ollama",
+  "model": "nemotron-3.5-bolt:e4b",
+  "description": "NVIDIA Nemotron 3.5 Bolt E4B via Ollama: compact vision-language model for local coding, reasoning and tool use.",
+  "strengths": [
+    "free",
+    "private",
+    "offline",
+    "multimodal",
+    "low_ram",
+    "fast_local"
+  ],
+  "weaknesses": [
+    "hard_reasoning",
+    "complex_coding"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 4.0,
+      "se": 1.5
+    },
+    "debugging": {
+      "theta": 3.6,
+      "se": 1.5
+    },
+    "reasoning": {
+      "theta": 4.2,
+      "se": 1.5
+    },
+    "math": {
+      "theta": 4.0,
+      "se": 1.5
+    },
+    "writing": {
+      "theta": 4.4,
+      "se": 1.5
+    },
+    "research": {
+      "theta": 3.4,
+      "se": 1.5
+    },
+    "review": {
+      "theta": 3.8,
+      "se": 1.5
+    },
+    "planning": {
+      "theta": 3.8,
+      "se": 1.5
+    },
+    "ui_frontend": {
+      "theta": 3.8,
+      "se": 1.5
+    },
+    "data_analysis": {
+      "theta": 3.8,
+      "se": 1.5
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 131072,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 220,
+    "tokens_per_sec": 50
+  },
+  "local": true,
+  "tags": [
+    "harness:ollama",
+    "tier:tiny",
+    "local",
+    "open_weights",
+    "not-installed",
+    "size:small",
+    "vision",
+    "thinking"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "estimated",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "estimated",
+    "skills": "estimated",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://ollama.com/library/nemotron-3.5-bolt:e4b",
+    "https://ollama.com/library/nemotron-3.5-bolt/tags"
+  ],
+  "notes": "NOT INSTALLED: pull with `ollama pull nemotron-3.5-bolt:e4b`. Download 7.2-7.9GB (7.52B (effective 4B, Gemma4 arch), Q4_K_M default tag), needs ~9GB RAM plus KV cache; fits the 48GB M4 Max. Library context 128K; limit set to 131072 because Ollama sizes context from VRAM (assumes OLLAMA_CONTEXT_LENGTH raised). No independent benchmark found; Gemma 4 E4B architecture (carded 3.8), small bump for NVIDIA post-training. Q4 quantization already accounted for. Latency estimated for M4 Max 48GB by scaling measured gemma4:26b (78 tok/s, ~4B active) by active-weight bytes; not measured. Thinking is on by default: pass think=false for fast answers. Only 2 days old at card time; latest tag is a 74B-A9B (25GB), not carded. Page checked 2026-10-25."
+}

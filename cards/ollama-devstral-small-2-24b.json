@@ -1,0 +1,109 @@
+{
+  "id": "ollama-devstral-small-2-24b",
+  "provider": "ollama",
+  "model": "devstral-small-2:24b",
+  "description": "Devstral Small 2 24B via Ollama: Mistral's agentic coding model (vision, tools); coding-focused, weaker at general reasoning.",
+  "strengths": [
+    "free",
+    "private",
+    "offline",
+    "agentic_coding",
+    "multimodal"
+  ],
+  "weaknesses": [
+    "writing",
+    "research"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 6.0,
+      "se": 1.5
+    },
+    "debugging": {
+      "theta": 5.6,
+      "se": 1.5
+    },
+    "reasoning": {
+      "theta": 5.6,
+      "se": 1.5
+    },
+    "math": {
+      "theta": 5.4,
+      "se": 1.5
+    },
+    "writing": {
+      "theta": 7.0,
+      "se": 1.5
+    },
+    "research": {
+      "theta": 5.2,
+      "se": 1.5
+    },
+    "review": {
+      "theta": 5.8,
+      "se": 1.5
+    },
+    "planning": {
+      "theta": 5.8,
+      "se": 1.5
+    },
+    "ui_frontend": {
+      "theta": 5.8,
+      "se": 1.5
+    },
+    "data_analysis": {
+      "theta": 5.8,
+      "se": 1.5
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 131072,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 600,
+    "tokens_per_sec": 12
+  },
+  "local": true,
+  "tags": [
+    "harness:ollama",
+    "tier:mid",
+    "local",
+    "open_weights",
+    "not-installed",
+    "size:large",
+    "vision"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "estimated",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "estimated",
+    "skills": "estimated",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://ollama.com/library/devstral-small-2:24b",
+    "https://ollama.com/library/devstral-small-2/tags"
+  ],
+  "notes": "NOT INSTALLED: pull with `ollama pull devstral-small-2:24b`. Download 15GB (24B dense, Q4_K_M default tag), needs ~18GB RAM plus KV cache; fits the 48GB M4 Max. Library context 384K; limit set to 131072 because Ollama sizes context from VRAM (assumes OLLAMA_CONTEXT_LENGTH raised). Library page claims strong SWE-bench results (number not verified here); coding set 6.0, other axes lower since it is code-specialised. Q4 quantization already accounted for. Latency estimated for M4 Max 48GB by scaling measured gemma4:26b (78 tok/s, ~4B active) by active-weight bytes; not measured. Page cites SWE-bench; exact score not extracted. Page checked 2026-10-25."
+}

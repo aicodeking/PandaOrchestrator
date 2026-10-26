@@ -100,5 +100,8 @@
     "https://docs.z.ai/guides/llm/glm-5.1",
     "https://models.litellm.ai/models/glm-5.1"
   ],
-  "notes": "Theta anchored to Opus 4.6 (SWE-bench Verified ~80.8) per vendor claim."
+  "notes": "Theta anchored to Opus 4.6 (SWE-bench Verified ~80.8) per vendor claim.",
+  "supersedes": [
+    "glm-4.7"
+  ]
 }

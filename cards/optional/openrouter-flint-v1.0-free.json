@@ -1,0 +1,103 @@
+{
+  "id": "openrouter-flint-v1.0-free",
+  "provider": "openrouter",
+  "model": "recursive/flint-v1.0:free",
+  "description": "Recursive: Flint (free) via OpenRouter. Flint is an open-weight mixture-of-experts model from Recursive, with about 2.5B active parameters out of 40B total, built by Recursive's autoresearch system Eureka Machine for coding agents. It is suited",
+  "strengths": [
+    "free",
+    "coding_agents",
+    "open_weights"
+  ],
+  "weaknesses": [
+    "unproven",
+    "rate_limited"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 6.0,
+      "se": 1.8
+    },
+    "debugging": {
+      "theta": 5.8,
+      "se": 1.8
+    },
+    "reasoning": {
+      "theta": 5.9,
+      "se": 1.8
+    },
+    "math": {
+      "theta": 5.8,
+      "se": 1.8
+    },
+    "writing": {
+      "theta": 5.7,
+      "se": 1.8
+    },
+    "research": {
+      "theta": 5.6,
+      "se": 1.8
+    },
+    "review": {
+      "theta": 5.8,
+      "se": 1.8
+    },
+    "planning": {
+      "theta": 5.8,
+      "se": 1.8
+    },
+    "ui_frontend": {
+      "theta": 5.8,
+      "se": 1.8
+    },
+    "data_analysis": {
+      "theta": 5.7,
+      "se": 1.8
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 262144,
+    "max_output_tokens": 235929
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 2000,
+    "tokens_per_sec": 60
+  },
+  "local": false,
+  "tags": [
+    "harness:openrouter",
+    "tier:small",
+    "free",
+    "open_weights"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "estimated",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "verified",
+    "skills": "estimated",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://openrouter.ai/api/v1/models",
+    "https://openrouter.ai/rankings"
+  ],
+  "notes": "40B MoE (2.5B active) built for coding agents; free tier is rate limited and prompts may be logged by provider. No benchmarks found. Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured."
+}

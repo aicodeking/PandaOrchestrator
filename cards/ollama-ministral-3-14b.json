@@ -1,0 +1,109 @@
+{
+  "id": "ollama-ministral-3-14b",
+  "provider": "ollama",
+  "model": "ministral-3:14b",
+  "description": "Ministral 3 14B via Ollama: compact vision+tools model for simple tasks.",
+  "strengths": [
+    "free",
+    "private",
+    "offline",
+    "multimodal",
+    "low_ram"
+  ],
+  "weaknesses": [
+    "hard_reasoning",
+    "complex_coding"
+  ],
+  "skills": {
+    "coding": {
+      "theta": 4.6,
+      "se": 1.5
+    },
+    "debugging": {
+      "theta": 4.2,
+      "se": 1.5
+    },
+    "reasoning": {
+      "theta": 4.6,
+      "se": 1.5
+    },
+    "math": {
+      "theta": 4.4,
+      "se": 1.5
+    },
+    "writing": {
+      "theta": 5.0,
+      "se": 1.5
+    },
+    "research": {
+      "theta": 4.0,
+      "se": 1.5
+    },
+    "review": {
+      "theta": 4.4,
+      "se": 1.5
+    },
+    "planning": {
+      "theta": 4.4,
+      "se": 1.5
+    },
+    "ui_frontend": {
+      "theta": 4.4,
+      "se": 1.5
+    },
+    "data_analysis": {
+      "theta": 4.4,
+      "se": 1.5
+    }
+  },
+  "discrimination": 1.2,
+  "modalities": {
+    "input": [
+      "text",
+      "image"
+    ],
+    "output": [
+      "text"
+    ]
+  },
+  "features": {
+    "tools": true,
+    "json_mode": true
+  },
+  "limits": {
+    "context_tokens": 131072,
+    "max_output_tokens": 32768
+  },
+  "cost": {
+    "input_per_mtok": 0.0,
+    "output_per_mtok": 0.0,
+    "currency": "USD"
+  },
+  "latency": {
+    "ttft_ms_p50": 350,
+    "tokens_per_sec": 20
+  },
+  "local": true,
+  "tags": [
+    "harness:ollama",
+    "tier:small",
+    "local",
+    "open_weights",
+    "not-installed",
+    "size:medium",
+    "vision"
+  ],
+  "card_version": "2026-10-25",
+  "provenance": "estimated",
+  "field_provenance": {
+    "cost": "verified",
+    "limits": "estimated",
+    "skills": "estimated",
+    "latency": "estimated"
+  },
+  "sources": [
+    "https://ollama.com/library/ministral-3:14b",
+    "https://ollama.com/library/ministral-3/tags"
+  ],
+  "notes": "NOT INSTALLED: pull with `ollama pull ministral-3:14b`. Download 9.1GB (13.9B dense, Q4_K_M default tag), needs ~12GB RAM plus KV cache; fits the 48GB M4 Max. Library context 256K; limit set to 131072 because Ollama sizes context from VRAM (assumes OLLAMA_CONTEXT_LENGTH raised). No independent benchmark found; rated just below gemma4:26b. Q4 quantization already accounted for. Latency estimated for M4 Max 48GB by scaling measured gemma4:26b (78 tok/s, ~4B active) by active-weight bytes; not measured. Page checked 2026-10-25."
+}

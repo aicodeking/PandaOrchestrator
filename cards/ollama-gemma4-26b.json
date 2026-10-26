@@ -79,27 +79,29 @@
     "currency": "USD"
   },
   "latency": {
-    "ttft_ms_p50": 800,
-    "tokens_per_sec": 45
+    "ttft_ms_p50": 300,
+    "tokens_per_sec": 78
   },
   "local": true,
   "tags": [
     "harness:ollama",
     "tier:small",
     "local",
-    "open_weights"
+    "open_weights",
+    "vision",
+    "thinking"
   ],
   "card_version": "2026-10-25",
   "provenance": "estimated",
   "field_provenance": {
     "cost": "verified",
-    "limits": "benchmark-informed",
+    "limits": "estimated",
     "skills": "estimated",
-    "latency": "estimated"
+    "latency": "verified"
   },
   "sources": [
     "https://ollama.com/library/gemma4:26b",
     "https://ai.google.dev/gemma/docs/core/model_card_4"
   ],
-  "notes": "Model supports 256k, but Ollama sizes context from VRAM (default 4k under 24GiB); 131072 assumes OLLAMA_CONTEXT_LENGTH is raised. Throughput is a laptop estimate."
+  "notes": "Model supports 262144 (ollama show), but Ollama sizes context from VRAM (default 4k under 24GiB); 131072 assumes OLLAMA_CONTEXT_LENGTH is raised. Latency measured locally 2026-10-25: 3 short prompts, warm, think=false, 77-81 tok/s, ttft ~110-380ms prompt eval (cold load ~10s). Thinking is on by default in Ollama: pass think=false for fast routing-style answers."
 }
