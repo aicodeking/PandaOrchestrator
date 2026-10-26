@@ -1,0 +1,53 @@
+{
+  "profiler": "torch:checkpoints/v2_32_a1r0/best",
+  "heldout_issue": {
+    "n": 980,
+    "spearman": 0.1216,
+    "ci95": [
+      0.0607,
+      0.1783
+    ],
+    "mean_pred": 4.992,
+    "sd_pred": 0.618
+  },
+  "heldout_issue_nsys100": {
+    "n": 258,
+    "spearman": 0.1085,
+    "ci95": [
+      -0.0084,
+      0.2251
+    ],
+    "mean_pred": 4.852,
+    "sd_pred": 0.574
+  },
+  "heldout_report": {
+    "n": 980,
+    "spearman": 0.1253,
+    "ci95": [
+      0.0638,
+      0.1806
+    ],
+    "mean_pred": 4.89,
+    "sd_pred": 0.631
+  },
+  "heldout_report_nsys100": {
+    "n": 258,
+    "spearman": 0.1155,
+    "ci95": [
+      -0.0034,
+      0.2304
+    ],
+    "mean_pred": 4.739,
+    "sd_pred": 0.585
+  },
+  "all_report": {
+    "n": 2594,
+    "spearman": 0.6467,
+    "ci95": [
+      0.6183,
+      0.6741
+    ],
+    "mean_pred": 4.907,
+    "sd_pred": 0.988
+  }
+}

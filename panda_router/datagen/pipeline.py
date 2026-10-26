@@ -14,7 +14,7 @@ BT_WEIGHT = 0.5  # weight of the calibrated BT point in the final difficulty sof
 
 def load_pool(include_pairs: bool = True) -> tuple[list[dict], list[dict]]:
     originals, seen = [], set()
-    for name in ("real.jsonl", "synthetic.jsonl"):
+    for name in ("real.jsonl", "synthetic.jsonl", "hard.jsonl"):
         for r in read_jsonl(paths.POOL / name):
             if r["id"] not in seen:
                 seen.add(r["id"])
@@ -110,15 +110,15 @@ def bt_calibration(records_answers: dict[str, list[dict]]) -> tuple[dict[str, fl
 
 
 def assemble(originals: list[dict], pairs: list[dict], single_teacher_pairs: bool = False) -> tuple[list[dict], list[dict], dict]:
-    """Originals need >= 2 full-label teachers. With `single_teacher_pairs`, minimal pairs labelled
-    by only one teacher are kept too (meta.single_teacher=true, meta.agreement=null)."""
+    """Originals need >= 2 full-label teachers. With `single_teacher_pairs`, minimal pairs and hard-tail
+    tasks (`hrd-` ids) labelled by only one teacher are kept too (meta.single_teacher=true, meta.agreement=null)."""
     ans = load_all_answers()
     report = {"missing_teacher": 0, "single_teacher_pairs": 0}
     per_task = {}
     pair_ids = {r["id"] for r in pairs}
     for r in originals + pairs:
         names, a, extra = answers_for(r["id"], ans)
-        if len(a) >= 2 or (single_teacher_pairs and len(a) == 1 and r["id"] in pair_ids):
+        if len(a) >= 2 or (single_teacher_pairs and len(a) == 1 and (r["id"] in pair_ids or r["id"].startswith("hrd-"))):
             per_task[r["id"]] = (names, a, extra)
             report["single_teacher_pairs"] += len(a) == 1
         else:

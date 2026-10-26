@@ -97,6 +97,46 @@ def test_encode_labels_weight_and_anchor(fake_dir):
     assert np.isnan(encode_labels({**ex, "meta": {}})["anchor"]) and encode_labels({**ex, "meta": {}})["w"] == 1.0
 
 
+def test_outcome_row_trains_difficulty_only(fake_dir):
+    from panda_router.model.losses import anchor_loss, distill_losses
+    from panda_router.train.data import encode_labels, load_jsonl
+
+    ex = load_jsonl(fake_dir / "train.jsonl")[0]
+    row = {"id": "oa-x", "source": "outcome-anchor", "task": ex["task"], "outcome": {"difficulty": 7.5, "w": 0.3}}
+    lab = encode_labels(row)
+    assert lab["w"] == 0.0 and lab["anchor"] == np.float32(7.5) and lab["anchor_w"] == np.float32(0.3)
+    with pytest.raises(ValueError):
+        encode_labels({"id": "bad", "task": ex["task"]})
+    # anchor weights: a zero-weight row does not move the loss
+    out = _fake_out(2, requires_grad=False)
+    out["difficulty"] = torch.tensor([[-9.0] * 9] * 2)  # expected level ~1
+    assert float(anchor_loss(out, torch.tensor([1.0, 9.0]), torch.tensor([1.0, 0.0]))) < 1e-3
+    # distillation: a zero-weight row is ignored
+    t = _fake_out(2, requires_grad=False)
+    s2 = {k: v.clone() for k, v in t.items()}
+    s2 = {k: torch.cat([v[:1], v[1:] + 3.0]) for k, v in s2.items()}  # row 1 differs from the teacher
+    kd = distill_losses(s2, t, 3.0, torch.tensor([1.0, 0.0]))
+    assert all(float(v) < 1e-5 for v in kd.values())
+
+
+def test_cheapest_score_picks_cheapest_feasible_and_relaxes():
+    from panda_router.model.soft_matcher import cheapest_score
+
+    pool = CardPool(theta=torch.zeros(1, 3, len(SKILL_AXES)), se=torch.ones(1, 3, len(SKILL_AXES)), a=torch.ones(1, 3),
+                    price_in=torch.tensor([[1.0, 5.0, 10.0]]), price_out=torch.tensor([[1.0, 5.0, 10.0]]),
+                    w_q=torch.ones(1, 1), w_c=torch.ones(1, 1))
+    args = (torch.tensor([3.0]), torch.tensor([1000.0]), pool)
+    # card 0 infeasible (P 0.5), card 1 feasible and cheaper than card 2
+    assert int(cheapest_score(torch.tensor([[0.5, 0.9, 0.95]]), *args).argmax()) == 1
+    # nothing clears min_p: relax to the highest P
+    assert int(cheapest_score(torch.tensor([[0.5, 0.6, 0.4]]), *args).argmax()) == 1
+    lab = {"difficulty": torch.full((2, 10), 0.1), "skills": torch.full((2, len(SKILL_AXES), 11), 1 / 11),
+           "out_p50": torch.full((2,), 3.0)}
+    pools = sample_pools(2, 5, torch.Generator().manual_seed(0))
+    r = regret_loss(lab, lab, torch.full((2,), 2000.0), pools, mode="cheapest", reduce=False)
+    assert r.shape == (2,) and bool((r >= -1e-6).all())
+
+
 def test_pair_loss_direction():
     out = _fake_out(2, requires_grad=False)
     out["difficulty"] = torch.tensor([[5.0] * 9, [-5.0] * 9])  # row0 hard, row1 easy
@@ -109,15 +149,22 @@ def test_pair_loss_direction():
 # ---------------------------------------------------------------- soft matcher
 def np_p_success(diff, skills, theta, se, a, lam=0.5, n_quad=20):
     """Direct numpy transcription of the CONTRACTS.md formula (loops): z = theta_eff - pen ~ N(mu, sd)
-    with delta-method sd, Gauss-Hermite over z, exact sum over difficulty levels."""
+    with moment-matched hinge, Gauss-Hermite over z, exact sum over difficulty levels."""
     x, wx = np.polynomial.hermite.hermgauss(n_quad)
     e = np.array([sum(l * p for l, p in enumerate(s)) for s in skills])
     w = e / e.sum() if e.sum() > 1e-6 else np.eye(len(e))[SKILL_AXES.index("reasoning")]
     out = []
     for m in range(theta.shape[0]):
-        gap = e - theta[m]
-        mu = float(np.dot(w, theta[m])) - lam * float(np.dot(w, np.maximum(0.0, gap)))
-        sd = math.sqrt(sum((w[k] * (1 + lam * (gap[k] > 0)) * se[m, k]) ** 2 for k in range(len(w))))
+        mu, var = 0.0, 0.0
+        for k in range(len(w)):  # per-axis moment-matched hinge h = max(0, e - theta), theta ~ N(theta, se)
+            mm, s_ = e[k] - theta[m, k], max(float(se[m, k]), 1e-9)
+            t = mm / s_
+            cdf, pdf = 0.5 * (1 + math.erf(t / math.sqrt(2))), math.exp(-t * t / 2) / math.sqrt(2 * math.pi)
+            eh = mm * cdf + s_ * pdf
+            vh = max((mm * mm + s_ * s_) * cdf + mm * s_ * pdf - eh * eh, 0.0)
+            mu += w[k] * (theta[m, k] - lam * eh)
+            var += w[k] ** 2 * (s_ * s_ + lam * lam * vh + 2 * lam * s_ * s_ * cdf)
+        sd = math.sqrt(max(var, 1e-12))
         total = 0.0
         for xq, wgt in zip(x, wx):
             z = mu + sd * math.sqrt(2) * xq

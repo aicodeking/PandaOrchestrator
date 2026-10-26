@@ -1,81 +1,81 @@
 # Panda Router training data: statistics
 
-Generated 2026-10-25 08:29 by `scripts/datagen/run.py build`. Format: `schemas/CONTRACTS.md`.
+Generated 2026-10-26 05:32 by `scripts/datagen/run.py build`. Format: `schemas/CONTRACTS.md`.
 
 ## Totals
 
-- Labelled records: **3893** (originals 2807, minimal pairs 1086)
-- Real-seed share of originals: **63.4%** (1779/2807)
-- Splits: train 3314, val 279, test 300
+- Labelled records: **4895** (originals 3809, minimal pairs 1086)
+- Real-seed share of originals: **47.1%** (1793/3809)
+- Splits: train 4167, val 364, test 364
 - Records with a third (Ollama gemma4:26b) opinion: 167
-- Mean per-record agreement (meta.agreement, over full-label teachers): 0.902
-- Minimal pairs labelled by a single teacher (meta.single_teacher=true, kept so pairs reach the target): 691
-- Records per full-label teacher set: codex 682, codex+grok 3014, codex+kimi 97, codex+kimi+grok 100
-- Near-duplicates dropped (cos > 0.95): 27; clusters: 563; pool tasks not (yet) labelled by enough teachers (excluded): 4144
+- Mean per-record agreement (meta.agreement, over full-label teachers): 0.901
+- Minimal pairs labelled by a single teacher (meta.single_teacher=true, kept so pairs reach the target): 1391
+- Records per full-label teacher set: codex 1381, codex+deepseek 283, codex+grok 3016, codex+grok+deepseek 17, codex+kimi 97, codex+kimi+grok 101
+- Near-duplicates dropped (cos > 0.95): 28; clusters: 629; pool tasks not (yet) labelled by enough teachers (excluded): 3841
 
 ## Per source
 
 | key | n | % |
 |---|---|---|
-| minimal-pair | 1086 | 27.9 |
-| synthetic | 1028 | 26.4 |
-| wildchat | 721 | 18.5 |
-| swe-rebench | 653 | 16.8 |
-| swe-smith | 405 | 10.4 |
+| synthetic | 2016 | 41.2 |
+| minimal-pair | 1086 | 22.2 |
+| wildchat | 727 | 14.9 |
+| swe-rebench | 657 | 13.4 |
+| swe-smith | 409 | 8.4 |
 
 ## Per source incl. minimal-pair origin
 
 | key | n | % |
 |---|---|---|
-| synthetic | 1028 | 26.4 |
-| wildchat | 721 | 18.5 |
-| swe-rebench | 653 | 16.8 |
-| swe-smith | 405 | 10.4 |
-| minimal-pair(synthetic) | 381 | 9.8 |
-| minimal-pair(wildchat) | 282 | 7.2 |
-| minimal-pair(swe-rebench) | 253 | 6.5 |
-| minimal-pair(swe-smith) | 170 | 4.4 |
+| synthetic | 2016 | 41.2 |
+| wildchat | 727 | 14.9 |
+| swe-rebench | 657 | 13.4 |
+| swe-smith | 409 | 8.4 |
+| minimal-pair(synthetic) | 381 | 7.8 |
+| minimal-pair(wildchat) | 282 | 5.8 |
+| minimal-pair(swe-rebench) | 253 | 5.2 |
+| minimal-pair(swe-smith) | 170 | 3.5 |
 
 ## Per split and source
 
 | split | minimal-pair | swe-rebench | swe-smith | synthetic | wildchat |
 |---|---|---|---|---|---|
-| train | 929 | 544 | 302 | 924 | 615 |
-| val | 68 | 56 | 96 | 36 | 23 |
-| test | 89 | 53 | 7 | 68 | 83 |
+| train | 930 | 571 | 332 | 1730 | 604 |
+| val | 78 | 33 | 57 | 138 | 58 |
+| test | 78 | 53 | 20 | 148 | 65 |
 
 ## Per primary category (argmax of soft label)
 
 | key | n | % |
 |---|---|---|
-| bugfix | 1540 | 39.6 |
-| implementation | 619 | 15.9 |
-| chat_simple | 391 | 10.0 |
-| planning | 253 | 6.5 |
-| docs_writing | 206 | 5.3 |
-| research | 185 | 4.8 |
-| code_review | 170 | 4.4 |
-| data_analysis | 149 | 3.8 |
-| ui_frontend | 87 | 2.2 |
-| test_writing | 82 | 2.1 |
-| refactor | 81 | 2.1 |
-| math_reasoning | 69 | 1.8 |
-| devops_infra | 61 | 1.6 |
+| bugfix | 1825 | 37.3 |
+| implementation | 820 | 16.8 |
+| chat_simple | 396 | 8.1 |
+| planning | 360 | 7.4 |
+| code_review | 264 | 5.4 |
+| docs_writing | 250 | 5.1 |
+| research | 222 | 4.5 |
+| data_analysis | 185 | 3.8 |
+| math_reasoning | 170 | 3.5 |
+| refactor | 109 | 2.2 |
+| test_writing | 106 | 2.2 |
+| ui_frontend | 97 | 2.0 |
+| devops_infra | 91 | 1.9 |
 
 ## Per difficulty (rounded expected difficulty of the final soft label)
 
 | key | n | % |
 |---|---|---|
-| 6 | 749 | 19.2 |
-| 5 | 728 | 18.7 |
-| 7 | 636 | 16.3 |
-| 4 | 604 | 15.5 |
-| 3 | 442 | 11.4 |
-| 8 | 355 | 9.1 |
-| 2 | 248 | 6.4 |
-| 9 | 63 | 1.6 |
-| 1 | 58 | 1.5 |
-| 10 | 10 | 0.3 |
+| 6 | 842 | 17.2 |
+| 5 | 816 | 16.7 |
+| 7 | 782 | 16.0 |
+| 4 | 663 | 13.5 |
+| 8 | 576 | 11.8 |
+| 3 | 477 | 9.7 |
+| 2 | 268 | 5.5 |
+| 9 | 250 | 5.1 |
+| 10 | 160 | 3.3 |
+| 1 | 61 | 1.2 |
 
 ## Teacher agreement (raw point answers, per teacher pair)
 
@@ -83,12 +83,12 @@ Teachers: codex = gpt-5.6-luna, kimi = Kimi CLI default, grok = grok-4.7-build-f
 
 ### codex vs grok
 
-- n = 3114
-- Primary category accuracy: **0.8738**
-- Difficulty Spearman: **0.8892**, MAE 0.827, means {'codex': 5.45, 'grok': 4.92}
-- Strong disagreement (|Δdiff| ≥ 3 or different primary category) rate: 0.1368
-- Flag Cohen's κ mean: **0.818**; checklist κ mean: 0.757
-- out_tokens (log10) Spearman: 0.9135
+- n = 3134
+- Primary category accuracy: **0.8746**
+- Difficulty Spearman: **0.8894**, MAE 0.827, means {'codex': 5.44, 'grok': 4.92}
+- Strong disagreement (|Δdiff| ≥ 3 or different primary category) rate: 0.1359
+- Flag Cohen's κ mean: **0.817**; checklist κ mean: 0.757
+- out_tokens (log10) Spearman: 0.9133
 
 | flag | κ |
 |---|---|
@@ -96,104 +96,104 @@ Teachers: codex = gpt-5.6-luna, kimi = Kimi CLI default, grok = grok-4.7-build-f
 | needs_vision | 0.939 |
 | long_context | 1.0 |
 | needs_review | 0.708 |
-| ambiguous_spec | 0.532 |
-| multi_file | 0.876 |
-| needs_web | 0.724 |
+| ambiguous_spec | 0.53 |
+| multi_file | 0.874 |
+| needs_web | 0.72 |
 
 | checklist id | κ |
 |---|---|
-| edits_code | 0.905 |
+| edits_code | 0.904 |
 | touches_gt3_files | 0.576 |
 | new_feature | 0.812 |
 | has_failing_behavior | 0.925 |
-| needs_root_cause | 0.753 |
+| needs_root_cause | 0.755 |
 | needs_run_commands | 0.942 |
-| needs_browser_or_web | 0.701 |
+| needs_browser_or_web | 0.698 |
 | has_images | 0.965 |
 | input_gt_50k_tokens | 1.0 |
-| concurrency_or_distributed | 0.86 |
-| security_sensitive | 0.882 |
+| concurrency_or_distributed | 0.861 |
+| security_sensitive | 0.883 |
 | formal_math_or_proof | 0.716 |
-| domain_expertise | 0.443 |
-| clear_acceptance_criteria | 0.634 |
-| undefined_terms | 0.436 |
-| design_decisions | 0.661 |
+| domain_expertise | 0.442 |
+| clear_acceptance_criteria | 0.631 |
+| undefined_terms | 0.435 |
+| design_decisions | 0.662 |
 | visual_ui_work | 0.846 |
 | writes_prose | 0.857 |
-| data_processing | 0.764 |
-| infra_config | 0.812 |
-| multi_step_plan | 0.642 |
-| reviews_existing_work | 0.638 |
-| trivial_one_liner | 0.633 |
-| high_stakes | 0.759 |
+| data_processing | 0.763 |
+| infra_config | 0.811 |
+| multi_step_plan | 0.641 |
+| reviews_existing_work | 0.64 |
+| trivial_one_liner | 0.635 |
+| high_stakes | 0.76 |
 
 | skill axis | Spearman |
 |---|---|
 | coding | 0.865 |
 | debugging | 0.926 |
 | reasoning | 0.879 |
-| math | 0.766 |
+| math | 0.765 |
 | writing | 0.868 |
 | research | 0.679 |
-| review | 0.732 |
-| planning | 0.865 |
+| review | 0.733 |
+| planning | 0.866 |
 | ui_frontend | 0.877 |
 | data_analysis | 0.804 |
 
 ### codex vs kimi
 
-- n = 197
-- Primary category accuracy: **0.8274**
-- Difficulty Spearman: **0.9143**, MAE 1.249, means {'codex': 6.04, 'kimi': 4.85}
-- Strong disagreement (|Δdiff| ≥ 3 or different primary category) rate: 0.198
-- Flag Cohen's κ mean: **0.706**; checklist κ mean: 0.693
-- out_tokens (log10) Spearman: 0.9135
+- n = 198
+- Primary category accuracy: **0.8283**
+- Difficulty Spearman: **0.9151**, MAE 1.247, means {'codex': 6.03, 'kimi': 4.84}
+- Strong disagreement (|Δdiff| ≥ 3 or different primary category) rate: 0.197
+- Flag Cohen's κ mean: **0.704**; checklist κ mean: 0.693
+- out_tokens (log10) Spearman: 0.9139
 
 | flag | κ |
 |---|---|
 | needs_tools | 0.919 |
 | needs_vision | 1.0 |
 | long_context | 1.0 |
-| needs_review | 0.553 |
-| ambiguous_spec | 0.14 |
-| multi_file | 0.531 |
+| needs_review | 0.546 |
+| ambiguous_spec | 0.141 |
+| multi_file | 0.525 |
 | needs_web | 0.799 |
 
 | checklist id | κ |
 |---|---|
-| edits_code | 0.826 |
-| touches_gt3_files | 0.517 |
-| new_feature | 0.777 |
+| edits_code | 0.827 |
+| touches_gt3_files | 0.518 |
+| new_feature | 0.778 |
 | has_failing_behavior | 0.939 |
-| needs_root_cause | 0.748 |
+| needs_root_cause | 0.739 |
 | needs_run_commands | 0.919 |
 | needs_browser_or_web | 0.75 |
 | has_images | 0.969 |
 | input_gt_50k_tokens | 1.0 |
 | concurrency_or_distributed | 0.722 |
-| security_sensitive | 0.816 |
+| security_sensitive | 0.821 |
 | formal_math_or_proof | 0.644 |
-| domain_expertise | 0.507 |
+| domain_expertise | 0.5 |
 | clear_acceptance_criteria | 0.614 |
-| undefined_terms | 0.163 |
-| design_decisions | 0.488 |
+| undefined_terms | 0.165 |
+| design_decisions | 0.491 |
 | visual_ui_work | 0.858 |
-| writes_prose | 0.733 |
+| writes_prose | 0.734 |
 | data_processing | 0.588 |
-| infra_config | 0.797 |
-| multi_step_plan | 0.45 |
-| reviews_existing_work | 0.575 |
+| infra_config | 0.798 |
+| multi_step_plan | 0.453 |
+| reviews_existing_work | 0.576 |
 | trivial_one_liner | 0.552 |
-| high_stakes | 0.688 |
+| high_stakes | 0.68 |
 
 | skill axis | Spearman |
 |---|---|
-| coding | 0.833 |
-| debugging | 0.905 |
-| reasoning | 0.886 |
-| math | 0.747 |
-| writing | 0.851 |
-| research | 0.742 |
+| coding | 0.831 |
+| debugging | 0.902 |
+| reasoning | 0.885 |
+| math | 0.746 |
+| writing | 0.852 |
+| research | 0.739 |
 | review | 0.739 |
 | planning | 0.868 |
 | ui_frontend | 0.861 |
@@ -201,49 +201,49 @@ Teachers: codex = gpt-5.6-luna, kimi = Kimi CLI default, grok = grok-4.7-build-f
 
 ### kimi vs grok
 
-- n = 100
-- Primary category accuracy: **0.87**
-- Difficulty Spearman: **0.9254**, MAE 0.7, means {'kimi': 4.93, 'grok': 5.55}
-- Strong disagreement (|Δdiff| ≥ 3 or different primary category) rate: 0.13
-- Flag Cohen's κ mean: **0.742**; checklist κ mean: 0.737
-- out_tokens (log10) Spearman: 0.9558
+- n = 101
+- Primary category accuracy: **0.8713**
+- Difficulty Spearman: **0.9256**, MAE 0.713, means {'kimi': 4.91, 'grok': 5.54}
+- Strong disagreement (|Δdiff| ≥ 3 or different primary category) rate: 0.1287
+- Flag Cohen's κ mean: **0.738**; checklist κ mean: 0.736
+- out_tokens (log10) Spearman: 0.9537
 
 | flag | κ |
 |---|---|
 | needs_tools | 0.98 |
 | needs_vision | 1.0 |
 | long_context | 1.0 |
-| needs_review | 0.627 |
-| ambiguous_spec | 0.286 |
-| multi_file | 0.434 |
+| needs_review | 0.612 |
+| ambiguous_spec | 0.287 |
+| multi_file | 0.424 |
 | needs_web | 0.864 |
 
 | checklist id | κ |
 |---|---|
-| edits_code | 0.88 |
-| touches_gt3_files | 0.592 |
-| new_feature | 0.798 |
-| has_failing_behavior | 0.9 |
-| needs_root_cause | 0.657 |
+| edits_code | 0.881 |
+| touches_gt3_files | 0.593 |
+| new_feature | 0.799 |
+| has_failing_behavior | 0.901 |
+| needs_root_cause | 0.64 |
 | needs_run_commands | 0.98 |
 | needs_browser_or_web | 0.864 |
 | has_images | 1.0 |
 | input_gt_50k_tokens | 1.0 |
-| concurrency_or_distributed | 0.805 |
-| security_sensitive | 0.872 |
+| concurrency_or_distributed | 0.806 |
+| security_sensitive | 0.879 |
 | formal_math_or_proof | 0.521 |
-| domain_expertise | 0.723 |
-| clear_acceptance_criteria | 0.584 |
-| undefined_terms | 0.265 |
-| design_decisions | 0.609 |
+| domain_expertise | 0.705 |
+| clear_acceptance_criteria | 0.585 |
+| undefined_terms | 0.266 |
+| design_decisions | 0.613 |
 | visual_ui_work | 0.864 |
-| writes_prose | 0.732 |
+| writes_prose | 0.735 |
 | data_processing | 0.775 |
 | infra_config | 0.742 |
-| multi_step_plan | 0.559 |
+| multi_step_plan | 0.563 |
 | reviews_existing_work | 0.668 |
 | trivial_one_liner | 0.595 |
-| high_stakes | 0.7 |
+| high_stakes | 0.684 |
 
 | skill axis | Spearman |
 |---|---|
@@ -251,10 +251,10 @@ Teachers: codex = gpt-5.6-luna, kimi = Kimi CLI default, grok = grok-4.7-build-f
 | debugging | 0.912 |
 | reasoning | 0.929 |
 | math | 0.798 |
-| writing | 0.905 |
-| research | 0.65 |
-| review | 0.774 |
-| planning | 0.894 |
+| writing | 0.907 |
+| research | 0.652 |
+| review | 0.773 |
+| planning | 0.893 |
 | ui_frontend | 0.81 |
 | data_analysis | 0.796 |
 
@@ -293,10 +293,11 @@ Fraction where the merged teacher label of the edited task moved as expected vs 
 | teacher/purpose | calls | ok | mean secs (ok) |
 |---|---|---|---|
 | codex/generate | 141 | 139 | 155.7 |
-| codex/label | 305 | 303 | 188.7 |
+| codex/generate-hard | 70 | 70 | 87.5 |
+| codex/label | 566 | 560 | 188.2 |
 | codex/minimal_pair | 32 | 32 | 126.8 |
 | codex/pairwise | 83 | 83 | 97.4 |
-| deepseek/label | 1 | 0 | 0.0 |
+| deepseek/label | 34 | 20 | 139.2 |
 | grok/label | 905 | 211 | 276.7 |
 | grok/label_test | 2 | 2 | 299.2 |
 | grok/minimal_pair | 26 | 26 | 251.1 |
@@ -305,7 +306,7 @@ Fraction where the merged teacher label of the edited task moved as expected vs 
 | kimi/minimal_pair | 1 | 1 | 332.3 |
 | ollama/tiebreak | 18 | 18 | 148.7 |
 
-- Total calls 1907, failed 1068, wall clock first→last call 3.15 h
+- Total calls 2271, failed 1085, wall clock first→last call 24.23 h
 - Batch sizes: generation 20 tasks/call, labelling 15 tasks/call (Ollama 4), pairwise 40 judgments/call, minimal pairs 20 edits/call.
 
 ## Label construction
@@ -358,3 +359,26 @@ Fraction where the merged teacher label of the edited task moved as expected vs 
   target).
 - The installed `datasets==2.14.4` is incompatible with `pyarrow==26`, so the raw parquet shards are fetched with
   `huggingface_hub` into `data/raw/hf/`.
+
+## Data v2 changes (2026-10-26)
+
+- **Leak fix**: real SWE rows' `files_in_scope` / `estimated_input_tokens` now come from the issue text only (distinct file paths / repo modules named in the text, omitted when none; tokens = len/4 + 4000 fixed repo allowance). Spearman(files_in_scope, multi_file) on SWE rows: train/val/test 0.93 -> 0.08 (222/1066 rows name a file), gold 0.87 -> 0.11.
+- **Hard tail**: 700 synthetic tasks (`hrd-*`: 400 hard 7-10, 150 deceptively simple, 150 scary-sounding easy), labelled by Codex only (single_teacher=true) because no second teacher was available (Grok 402 balance exhausted, Kimi 5h limit, opencode free DeepSeek limit hit after 315 labels).
+- DeepSeek (opencode free) added 315 second labels before its limit; the ~3,840 remaining pool tasks stay excluded (Codex labels cached for when a 2nd teacher returns).
+
+| difficulty | v1 n | v1 % | v2 n | v2 % |
+|---|---|---|---|---|
+| 1 | 58 | 1.5 | 61 | 1.2 |
+| 2 | 248 | 6.4 | 268 | 5.5 |
+| 3 | 442 | 11.4 | 477 | 9.7 |
+| 4 | 604 | 15.5 | 663 | 13.5 |
+| 5 | 728 | 18.7 | 816 | 16.7 |
+| 6 | 749 | 19.2 | 842 | 17.2 |
+| 7 | 636 | 16.3 | 782 | 16.0 |
+| 8 | 355 | 9.1 | 576 | 11.8 |
+| 9 | 63 | 1.6 | 250 | 5.1 |
+| 10 | 10 | 0.3 | 160 | 3.3 |
+
+Share of difficulty 7-10: v1 27.3% -> v2 36.1%.
+
+Codex vs DeepSeek (n=300): category agree 0.837, difficulty Spearman 0.887, mean diff codex 6.63 vs deepseek 6.15.

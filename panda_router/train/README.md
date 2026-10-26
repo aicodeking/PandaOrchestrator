@@ -39,6 +39,24 @@ $P scripts/train/export.py --ckpt checkpoints/s68m_soup --data-dir data --out ar
 $P scripts/train/bench.py --artifacts artifacts/profiler-32m --data-dir data
 ```
 
+## v2 sequence (data v2 + outcome anchors), `scripts/train/run_v2.sh`
+
+```sh
+$P scripts/train/outcome_anchors.py            # checkpoints/outcome/{train,val,heldout}.jsonl (repo-held-out split)
+sh scripts/train/run_v2.sh sweep               # 32M: anchor weight x regret mode (sweep2: weight 0.3, repo-centred)
+sh scripts/train/run_v2.sh teacher             # 150M direct, 512 tokens, then teacher cache incl. anchor rows
+sh scripts/train/run_v2.sh distill             # 68M / 32M students from the 150M cache
+$P scripts/train/export.py --ckpt checkpoints/v2_t150m/best --data-dir data --out artifacts/<name> --per-channel
+$P scripts/eval/outcome_eval.py --profiler onnx:artifacts/<name> --out eval_reports/v2/outcome_<name>.json
+$P scripts/eval/hard_tasks.py --profilers onnx:artifacts/panda-router-v1 onnx:artifacts/<name> --out eval_reports/v2/hard_tasks.md
+```
+
+- Outcome-anchor rows (`--outcome-anchors`, needs `--anchor-weight > 0`) have no teacher labels: their label and
+  distillation losses are masked (`w = 0`) and they train the difficulty head only, through a smooth-L1 anchor loss
+  weighted by outcome trust `clip((0.5/se)^2, 0.05, 1)`. `--outcome-val` logs held-out-task Spearman per epoch.
+- `--regret-mode cheapest` trains a smooth `cheapest_above_threshold` objective (`soft_matcher.cheapest_score`).
+- `--per-channel` int8 lets the 150M pass the 1-point tolerance at stage 0 (per-tensor did not, at any stage).
+
 Ablations: pass `--regret-weight 0` and/or `--pair-weight 0` and compare `val_score` in
 `train_summary.json`. Run the gold-set eval to decide what to keep.
 

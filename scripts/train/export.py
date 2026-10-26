@@ -19,8 +19,9 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--max-drop", type=float, default=1.0, help="max per-head int8 drop in points (0..100 scale)")
     ap.add_argument("--opset", type=int, default=17)
+    ap.add_argument("--per-channel", action="store_true", help="per-channel int8 weights (better for 150M)")
     a = ap.parse_args()
-    m = export_artifacts(a.ckpt, a.out, a.data_dir, a.max_drop, a.opset)
+    m = export_artifacts(a.ckpt, a.out, a.data_dir, a.max_drop, a.opset, per_channel=a.per_channel)
     print(json.dumps({k: m[k] for k in ("int8_drops_points", "int8_within_tolerance", "torch_vs_onnx_max_abs",
                                         "size_mb")}, indent=2))
 

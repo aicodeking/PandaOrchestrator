@@ -5,15 +5,18 @@ For task axis weights w (w_k = E[skill_k] / sum E[skill]) and model i with per-a
     z_i   = sum_k w_k theta_k - lambda * sum_k w_k max(0, E[skill_k] - theta_k)     (lambda = 0.5)
     P_i   = E_{b ~ difficulty, z ~ N(mu_i, sd_i)} sigmoid(a_i (z - b))
 
-z is a linear-plus-hinge function of theta. We approximate it as Normal with
-mu_i = z evaluated at the card means and sd_i from the delta method
-(dz/dtheta_k = w_k (1 + lambda [E[skill_k] > theta_k])), then integrate exactly over the
-10 difficulty levels and with 20-node Gauss-Hermite quadrature over z. Fully deterministic.
+z is a linear-plus-hinge function of theta. We approximate it as Normal, moment-matched per axis:
+with h_k = max(0, g_k - theta_k) and m = g_k - theta_k-mean, s = se_k, E[h] = m Phi(m/s) + s phi(m/s),
+E[h^2] = (m^2 + s^2) Phi(m/s) + m s phi(m/s), and Cov(theta_k, h_k) = -s^2 Phi(m/s) (Stein). Axes are
+independent, so mu_i and sd_i are sums of the per-axis means/variances of w_k (theta_k - lambda h_k).
+We then integrate exactly over the 10 difficulty levels and with 20-node Gauss-Hermite quadrature over z.
+Fully deterministic.
 """
 
 from __future__ import annotations
 
 import numpy as np
+from scipy.special import ndtr
 
 from ..taxonomy import SKILL_AXES
 
@@ -46,12 +49,15 @@ def axis_weights(exp_skill: np.ndarray) -> np.ndarray:
 def ability_moments(w: np.ndarray, exp_skill: np.ndarray, theta: np.ndarray, se: np.ndarray,
                     lam: float = LAMBDA) -> tuple[np.ndarray, np.ndarray]:
     """Mean and sd of the effective ability z for each model (rows of theta/se)."""
-    gap = exp_skill[None, :] - theta
-    pen = lam * (np.maximum(gap, 0.0) * w).sum(axis=1)
-    mu = theta @ w - pen
-    deriv = w[None, :] * (1.0 + lam * (gap > 0))
-    sd = np.sqrt(((deriv * se) ** 2).sum(axis=1))
-    return mu, sd
+    m = exp_skill[None, :] - theta
+    s = np.maximum(se, 1e-9)
+    t = m / s
+    cdf, pdf = ndtr(t), np.exp(-0.5 * t * t) / np.sqrt(2.0 * np.pi)
+    eh = m * cdf + s * pdf
+    var_h = np.maximum((m * m + s * s) * cdf + m * s * pdf - eh * eh, 0.0)
+    mu = ((theta - lam * eh) * w).sum(axis=1)
+    var = ((s * s + lam * lam * var_h + 2.0 * lam * s * s * cdf) * w * w).sum(axis=1)
+    return mu, np.sqrt(var)
 
 
 def _sigmoid(x: np.ndarray) -> np.ndarray:

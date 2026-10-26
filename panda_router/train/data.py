@@ -31,11 +31,27 @@ def _norm(v):
     return v / s if s > 0 else np.full_like(v, 1.0 / len(v))
 
 
+def _unlabelled() -> dict:
+    """Placeholder labels for outcome-anchor rows (difficulty-only); their label-loss weight is 0."""
+    return {"category": {}, "difficulty": [1.0] * N_DIFFICULTY, "skills": {}, "flags": {}, "checklist": {},
+            "out_tokens_log10": 3.0}
+
+
 def encode_labels(ex: dict, single_teacher_weight: float = 1.0, anchor: float | None = None) -> dict:
-    """Label arrays plus `w` (per-row weight of the label losses) and `anchor` (outcome difficulty, NaN if none)."""
-    lab = ex["labels"]
+    """Label arrays plus `w` (per-row weight of the label losses), `anchor` (outcome difficulty, NaN if none)
+    and `anchor_w` (its trust weight). Rows with `outcome` and no `labels` (scripts/train/outcome_anchors.py)
+    train the difficulty head only, through the anchor loss."""
+    lab = ex.get("labels")
+    outcome = ex.get("outcome")
+    if lab is None and outcome is None:
+        raise ValueError(f"{ex.get('id')}: neither labels nor outcome")
+    anchor_w = 1.0
+    if outcome is not None:
+        anchor, anchor_w = float(outcome["difficulty"]), float(outcome.get("w", 1.0))
     ctx = (ex.get("task") or {}).get("context") or {}
     single = bool((ex.get("meta") or {}).get("single_teacher"))
+    w = 0.0 if lab is None else (single_teacher_weight if single else 1.0)
+    lab = lab or _unlabelled()
     return {
         "category": _norm([lab["category"].get(c, 0.0) for c in CATEGORIES]),
         "difficulty": _norm(lab["difficulty"]),
@@ -44,8 +60,9 @@ def encode_labels(ex: dict, single_teacher_weight: float = 1.0, anchor: float | 
         "checklist": np.asarray([lab["checklist"].get(c, 0.0) for c in CHECKLIST_IDS], np.float32),
         "out_tokens": np.float32(lab["out_tokens_log10"]),
         "in_tokens": np.float32(ctx.get("estimated_input_tokens") or DEFAULT_IN_TOKENS),
-        "w": np.float32(single_teacher_weight if single else 1.0),
+        "w": np.float32(w),
         "anchor": np.float32(np.nan if anchor is None else anchor),
+        "anchor_w": np.float32(anchor_w),
     }
 
 
@@ -87,9 +104,11 @@ class ProfileDataset:
             self.teacher = {k: v[order] for k, v in teacher["outputs"].items()}
 
     @classmethod
-    def from_file(cls, path, tokenizer, max_len=512, teacher=None, limit: int | None = None, **kw):
+    def from_file(cls, path, tokenizer, max_len=512, teacher=None, limit: int | None = None, extra=None, **kw):
+        """`extra`: optional jsonl of outcome-anchor rows appended after the (limited) labelled rows."""
         ex = load_jsonl(path)
-        return cls(ex[:limit] if limit else ex, tokenizer, max_len, teacher, **kw)
+        ex = ex[:limit] if limit else ex
+        return cls(ex + (load_jsonl(extra) if extra else []), tokenizer, max_len, teacher, **kw)
 
     def __len__(self):
         return len(self.examples)

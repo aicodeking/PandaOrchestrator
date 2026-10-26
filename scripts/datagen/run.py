@@ -19,7 +19,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from panda_router.datagen import generate, minimal_pairs, pipeline, real  # noqa: E402
+from panda_router.datagen import generate, hard, minimal_pairs, pipeline, real  # noqa: E402
 from panda_router.datagen.common import sha_int  # noqa: E402
 
 
@@ -38,14 +38,17 @@ def main() -> None:
     p.add_argument("--smith", type=int, default=900)
     p.add_argument("--wild", type=int, default=1700)
     p.add_argument("--download", action="store_true")
+    sub.add_parser("fix-context", help="rewrite SWE contexts from issue text only (leak fix)")
     p = sub.add_parser("generate")
     p.add_argument("--batches", type=int, required=True)
     p.add_argument("--start", type=int, default=0)
     p.add_argument("--teachers", default="codex,kimi")
+    sub.add_parser("hard", help="generate hard / deceptive / scary-easy synthetic tasks")
     p = sub.add_parser("label")
     p.add_argument("--what", choices=["originals", "pairs", "all"], default="all")
     p.add_argument("--teachers", default="codex,grok")
     p.add_argument("--real-limit", type=int, default=None)
+    p.add_argument("--need-second", action="store_true", help="only tasks with < 2 full-label teacher answers so far")
     p.add_argument("--synthetic-batches", type=int, default=None, help="only label synthetic tasks from batches < N")
     p = sub.add_parser("pairs")
     p.add_argument("--n", type=int, required=True)
@@ -62,13 +65,20 @@ def main() -> None:
         if a.download:
             real.download()
         print(real.build(a.rebench, a.smith, a.wild))
+    elif a.cmd == "fix-context":
+        print(real.refresh_contexts())
     elif a.cmd == "generate":
         asyncio.run(generate.generate(a.batches, a.start, teachers_=tuple(a.teachers.split(","))))
+    elif a.cmd == "hard":
+        asyncio.run(hard.generate())
     elif a.cmd == "label":
         originals, pairs = pipeline.load_pool()
         originals = _select(originals, a.real_limit)
         if a.synthetic_batches is not None:
             originals = [r for r in originals if r["source"] != "synthetic" or r["meta"]["gen_batch"] < a.synthetic_batches]
+        if a.need_second:
+            ans = pipeline.load_all_answers()
+            originals = [r for r in originals if len(pipeline.answers_for(r["id"], ans)[1]) < 2]
         ids = {r["id"] for r in originals}
         tasks = {"originals": originals, "pairs": [p for p in pairs if p["pair_of"] in ids],
                  "all": originals + [p for p in pairs if p["pair_of"] in ids]}[a.what]

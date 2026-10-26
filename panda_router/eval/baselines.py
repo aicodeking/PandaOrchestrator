@@ -114,6 +114,19 @@ def load_profiler(spec: str, train_path: str | Path | None = None, k: int = 10) 
             raise FileNotFoundError(f"kNN baseline needs labelled training data at {train_path}")
         cache = ROOT / "eval_reports" / "cache" / f"knn_{train_path.stem}_{len(rows)}.npz"
         return KNNProfiler(rows, k=k, cache_path=cache)
+    if spec == "fixed_average":  # same mean training profile for every task: the floor any profiler must beat
+        from .gold import read_jsonl
+
+        rows = read_jsonl(Path(train_path or ROOT / "data" / "train.jsonl"))
+        mean = label_profile(average_labels([r["labels"] for r in rows if "labels" in r]))
+
+        class _Fixed(Profiler):
+            name = "fixed_average"
+
+            def profile(self, task: dict) -> TaskProfile:
+                return mean
+
+        return _Fixed()
     if spec.startswith("onnx:"):
         from ..model import OnnxProfiler
 

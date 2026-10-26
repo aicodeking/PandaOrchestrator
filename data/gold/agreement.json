@@ -1,57 +1,80 @@
 {
-  "n": 285,
-  "dropped_lt_min_teachers": 75,
+  "n": 329,
+  "dropped_lt_min_teachers": 30,
+  "dropped_duplicate_of_train": [
+    "gold-wil-b090490cce"
+  ],
+  "swe_repo_in_train": {
+    "false": 75,
+    "true": 58
+  },
   "by_source": {
-    "swe-rebench": 92,
-    "swe-smith": 23,
-    "wildchat": 170
+    "swe-rebench": 109,
+    "swe-smith": 24,
+    "wildchat": 196
   },
   "teacher_sets": {
     "codex+ollama": 205,
+    "codex+deepseek": 45,
     "codex+grok+ollama": 25,
-    "codex+grok": 55
+    "codex+grok": 54
   },
   "top_category": {
-    "bugfix": 102,
-    "chat_simple": 48,
-    "implementation": 37,
-    "planning": 17,
-    "math_reasoning": 15,
+    "bugfix": 116,
+    "chat_simple": 55,
+    "implementation": 44,
+    "planning": 19,
+    "math_reasoning": 19,
+    "docs_writing": 14,
+    "data_analysis": 12,
     "research": 11,
-    "docs_writing": 11,
     "refactor": 10,
-    "data_analysis": 9,
-    "ui_frontend": 8,
-    "code_review": 7,
-    "devops_infra": 5,
-    "test_writing": 5
+    "code_review": 10,
+    "ui_frontend": 7,
+    "devops_infra": 6,
+    "test_writing": 6
   },
   "difficulty_expected_hist": {
-    "5": 63,
-    "3": 66,
-    "6": 51,
-    "7": 8,
-    "4": 54,
-    "2": 34,
-    "1": 9
+    "5": 76,
+    "3": 77,
+    "6": 54,
+    "7": 9,
+    "4": 64,
+    "2": 38,
+    "1": 11
   },
-  "difficulty_expected_mean": 4.221,
-  "mean_agreement": 0.8839,
+  "difficulty_expected_mean": 4.198,
+  "mean_agreement": 0.8887,
   "pairs": {
-    "codex~grok": {
-      "n": 80,
-      "category_agree": 0.8875,
-      "category_kappa": 0.8589,
-      "difficulty_spearman": 0.8582,
-      "difficulty_mae": 0.6875,
-      "difficulty_within1": 0.875,
+    "codex~deepseek": {
+      "n": 45,
+      "category_agree": 0.8889,
+      "category_kappa": 0.8654,
+      "difficulty_spearman": 0.8434,
+      "difficulty_mae": 0.6444,
+      "difficulty_within1": 0.8889,
       "difficulty_mean": [
-        4.412,
-        4.2
+        4.244,
+        3.867
       ],
-      "skill_mae": 0.5538,
-      "flag_agree": 0.9339,
-      "checklist_agree": 0.9266
+      "skill_mae": 0.4956,
+      "flag_agree": 0.9206,
+      "checklist_agree": 0.9176
+    },
+    "codex~grok": {
+      "n": 79,
+      "category_agree": 0.8861,
+      "category_kappa": 0.8562,
+      "difficulty_spearman": 0.8588,
+      "difficulty_mae": 0.6962,
+      "difficulty_within1": 0.8734,
+      "difficulty_mean": [
+        4.405,
+        4.19
+      ],
+      "skill_mae": 0.5557,
+      "flag_agree": 0.9349,
+      "checklist_agree": 0.9256
     },
     "codex~ollama": {
       "n": 230,

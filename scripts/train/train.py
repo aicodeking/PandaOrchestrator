@@ -28,6 +28,10 @@ def main():
                     help="weight of the per-head label losses for meta.single_teacher records (pair loss unaffected)")
     ap.add_argument("--anchors", default=None, help="checkpoints/anchors_train.jsonl (outcome-anchor aux loss)")
     ap.add_argument("--anchor-weight", type=float, default=0.0)
+    ap.add_argument("--outcome-anchors", default=None,
+                    help="difficulty-only outcome rows, e.g. checkpoints/outcome/train.jsonl (needs --anchor-weight > 0)")
+    ap.add_argument("--outcome-val", default=None, help="held-out outcome rows; Spearman is logged per epoch")
+    ap.add_argument("--regret-mode", default="max_utility", choices=["max_utility", "cheapest"])
     ap.add_argument("--distill-from", default=None, help="teacher cache .pt from scripts/train/cache_teacher.py")
     ap.add_argument("--distill-T", type=float, default=3.0)
     ap.add_argument("--distill-alpha", type=float, default=0.5)
@@ -44,7 +48,8 @@ def main():
                       distill_from=a.distill_from, distill_T=a.distill_T, distill_alpha=a.distill_alpha,
                       patience=a.patience, max_len=a.max_len, max_steps=a.max_steps, limit_train=a.limit_train,
                       device=a.device, bf16=not a.no_bf16, calibrate=not a.no_calibrate,
-                      single_teacher_weight=a.single_teacher_weight, anchors=a.anchors, anchor_weight=a.anchor_weight)
+                      single_teacher_weight=a.single_teacher_weight, anchors=a.anchors, anchor_weight=a.anchor_weight,
+                      outcome_anchors=a.outcome_anchors, outcome_val=a.outcome_val, regret_mode=a.regret_mode)
     s = train(cfg)
     print(json.dumps({k: s[k] for k in ("best_val_score", "epochs_run", "steps", "train_examples_per_s", "best_dir")}))
 

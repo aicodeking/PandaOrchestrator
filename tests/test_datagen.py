@@ -231,3 +231,26 @@ def test_validate_splits(tmp_path):
 
 def test_categories_cover_taxonomy():
     assert set(label.CATEGORY_DEFS) == set(CATEGORIES) and set(label.FLAG_DEFS) == set(FLAGS)
+
+
+# --- context features must not depend on the reference patch -------------------------------------
+
+def test_swe_context_comes_from_issue_text_only():
+    import inspect
+
+    from panda_router.datagen import real
+    from panda_router.eval import gold
+
+    assert "patch" not in inspect.getsource(real._swe_rows)
+    assert "patch" not in inspect.getsource(gold._swe_example)
+    assert list(inspect.signature(real.issue_context).parameters) == ["text", "repo"]
+
+
+def test_issue_context_counts_named_files_and_defaults_to_none():
+    from panda_router.datagen.real import REPO_CONTEXT_TOKENS, issue_context
+
+    text = "Crash in src/pkg/core.py and pkg/utils.py, see https://github.com/x/y/blob/main/ignored.py"
+    ctx = issue_context(text, "x/pkg")
+    assert ctx["files_in_scope"] == 2
+    assert ctx["estimated_input_tokens"] == int(len(text) / 4 + REPO_CONTEXT_TOKENS)
+    assert "files_in_scope" not in issue_context("It crashes when I call it twice", "x/pkg")

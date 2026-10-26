@@ -32,20 +32,23 @@ CANDIDATES = GOLD / "candidates.jsonl"
 ANSWERS = GOLD / "teacher_answers.jsonl"
 GOLD_PATH = GOLD / "gold.jsonl"
 
-TEACHERS = ("codex", "grok", "kimi", "ollama")
+TEACHERS = ("codex", "grok", "kimi", "ollama", "deepseek")
 BATCH = 5
 CODEX_MODEL = os.environ.get("PANDA_CODEX_MODEL", "gpt-5.6-luna")
 OLLAMA_MODEL = os.environ.get("PANDA_OLLAMA_MODEL", "gemma4:26b")
 GROK_MODEL = os.environ.get("PANDA_GROK_MODEL", "grok-4.7-build-fast")
+DEEPSEEK_MODEL = os.environ.get("PANDA_DEEPSEEK_MODEL", "opencode/deepseek-v4.1-flash-free")  # via `opencode run`
 OLLAMA_URL = os.environ.get("PANDA_OLLAMA_URL", "http://localhost:11434/api/generate")
 TIMEOUT_S = int(os.environ.get("PANDA_TEACHER_TIMEOUT", "1500"))
 # gemma4 thinks by default (~3000 thinking tokens per batch at ~26 tok/s); thinking is disabled so the shared
 # local GPU can finish 70+ batches. Earlier thinking-mode answers are kept in the file but ignored.
-MODEL_TAG = {"codex": CODEX_MODEL, "kimi": "kimi-cli", "ollama": f"{OLLAMA_MODEL}/no-think", "grok": GROK_MODEL}
+MODEL_TAG = {"codex": CODEX_MODEL, "kimi": "kimi-cli", "ollama": f"{OLLAMA_MODEL}/no-think", "grok": GROK_MODEL,
+           "deepseek": DEEPSEEK_MODEL}
 CONCURRENCY = {"codex": int(os.environ.get("GOLD_CODEX_CONC", "4")),
                "kimi": int(os.environ.get("GOLD_KIMI_CONC", "4")),
                "ollama": int(os.environ.get("GOLD_OLLAMA_CONC", "1")),
-               "grok": int(os.environ.get("GOLD_GROK_CONC", "4"))}
+               "grok": int(os.environ.get("GOLD_GROK_CONC", "4")),
+               "deepseek": int(os.environ.get("GOLD_DEEPSEEK_CONC", "3"))}
 
 CAREFUL = ("Think carefully about every task before answering. These labels form a held-out GOLD evaluation set "
            "of real tasks, so accuracy matters far more than speed: read each task fully, consider what a competent "
@@ -162,23 +165,29 @@ def _clip(text: str) -> str:
     return text
 
 
-def _n_patch_files(patch: str) -> int:
-    return max(1, len(re.findall(r"^diff --git ", patch or "", re.M)))
-
-
 def _has_images(text: str) -> bool:
     return bool(re.search(r"!\[[^\]]*\]\(|\.(png|jpe?g|gif|webp)\b|screenshot", text, re.I))
 
 
+def refresh_contexts() -> int:
+    """Rewrite SWE candidates' task.context from the issue text only (idempotent; labels are keyed by id)."""
+    from ..datagen.real import issue_body, issue_context
+
+    rows = read_jsonl(CANDIDATES)
+    for r in rows:
+        if r["source"] != "wildchat":
+            r["task"]["context"] = issue_context(issue_body(r["task"]["text"]), r["meta"].get("repo"))
+    write_jsonl(CANDIDATES, rows)
+    return sum(r["source"] != "wildchat" for r in rows)
+
+
 def _swe_example(prefix: str, source: str, r: dict, extra_meta: dict | None = None) -> dict:
+    from ..datagen.real import issue_context
+
     text = _clip(scrub(r["problem_statement"]))
-    nfiles = _n_patch_files(r.get("patch") or "")
     return {
         "id": f"gold-{prefix}-{short_hash(r['instance_id'])}", "source": source, "pair_of": None,
-        "task": {"text": f"Repository: {r['repo']}\n\n{text}", "context": {
-            "repo_languages": ["python"], "files_in_scope": nfiles,
-            "estimated_input_tokens": int(len(text) / 4 + 2500 * nfiles),
-            "has_images": _has_images(text), "requires_tools": True}},
+        "task": {"text": f"Repository: {r['repo']}\n\n{text}", "context": issue_context(text, r["repo"])},
         "meta": {"raw_id": r["instance_id"], "repo": r["repo"], **(extra_meta or {})},
     }
 
@@ -197,7 +206,7 @@ def select_swe_rebench(n: int, rng: random.Random) -> list[dict]:
     """Gold-partition SWE-rebench instances; instances with published outcome data come first (anchors)."""
     import pyarrow.parquet as pq
 
-    cols = ["instance_id", "repo", "problem_statement", "patch", "license_name", "meta"]
+    cols = ["instance_id", "repo", "problem_statement", "license_name", "meta"]
     rows = []
     for p in sorted((RAW / "swe-rebench" / "data").glob("test-*.parquet")):
         rows += pq.read_table(p, columns=cols).to_pylist()
@@ -233,7 +242,7 @@ def select_swe_smith(n: int, rng: random.Random) -> list[dict]:
 
     rows = []
     for p in sorted((RAW / "swe-smith" / "data").glob("train-*.parquet")):
-        rows += pq.read_table(p, columns=["instance_id", "repo", "problem_statement", "patch"]).to_pylist()
+        rows += pq.read_table(p, columns=["instance_id", "repo", "problem_statement"]).to_pylist()
     rows = [r for r in rows if is_gold(r["instance_id"]) and 80 <= len(r["problem_statement"] or "") <= 20000]
     rng.shuffle(rows)
     picked, seen_repo, seen_text = [], {}, set()
@@ -430,6 +439,8 @@ async def raw_call(teacher: str, prompt: str) -> str:
         return await _run_cli(["kimi", "-p", prompt])
     if teacher == "grok":
         return await _run_cli(["grok", "-m", GROK_MODEL, "--disable-web-search", "-p", prompt])
+    if teacher == "deepseek":
+        return await _run_cli(["opencode", "run", "-m", DEEPSEEK_MODEL, prompt])
     if teacher == "ollama":
         return await asyncio.to_thread(_ollama_sync, prompt)
     raise ValueError(teacher)
@@ -563,6 +574,30 @@ def teacher_agreement_stats(per_task: dict[str, dict[str, dict]]) -> dict:
     return pairs
 
 
+def _norm_text(text: str) -> str:
+    return re.sub(r"\W+", " ", text.lower()).strip()
+
+
+def hygiene(rows: list[dict], data_dir: Path | None = None) -> tuple[list[dict], list[str]]:
+    """Drop gold rows whose normalised text duplicates a train/val/test row; flag SWE rows whose repo is in train."""
+    data_dir = data_dir or ROOT / "data"
+    seen, repos = set(), set()
+    for s in ("train", "val", "test"):
+        for r in read_jsonl(data_dir / f"{s}.jsonl"):
+            seen.add(_norm_text(r["task"]["text"]))
+            if r["source"].startswith("swe"):
+                repos.add((r.get("meta") or {}).get("repo"))
+    kept, dropped = [], []
+    for r in rows:
+        if _norm_text(r["task"]["text"]) in seen:
+            dropped.append(r["id"])
+            continue
+        if r["source"].startswith("swe"):
+            r["meta"]["repo_in_train"] = r["meta"].get("repo") in repos
+        kept.append(r)
+    return kept, dropped
+
+
 def merge_gold(min_teachers: int = 2, out: Path | None = None) -> dict:
     from ..datagen.merge import agreement, merge
 
@@ -582,10 +617,13 @@ def merge_gold(min_teachers: int = 2, out: Path | None = None) -> dict:
                 "teacher_answers": {t: got[t]["ans"] for t in names}, "split": "gold"}
         rows.append({"id": c["id"], "source": c["source"], "pair_of": None, "task": c["task"],
                      "labels": merge(answers), "meta": meta})
+    rows, dup_ids = hygiene(rows)
+    per_task = {k: v for k, v in per_task.items() if k not in set(dup_ids)}
     write_jsonl(out or GOLD_PATH, rows)
     top = Counter(max(r["labels"]["category"].items(), key=lambda kv: kv[1])[0] for r in rows)
     exp_d = [sum((i + 1) * p for i, p in enumerate(r["labels"]["difficulty"])) for r in rows]
-    return {"n": len(rows), "dropped_lt_min_teachers": dropped,
+    return {"n": len(rows), "dropped_lt_min_teachers": dropped, "dropped_duplicate_of_train": dup_ids,
+            "swe_repo_in_train": dict(Counter(bool(r["meta"]["repo_in_train"]) for r in rows if "repo_in_train" in r["meta"])),
             "by_source": dict(Counter(r["source"] for r in rows)),
             "teacher_sets": dict(Counter("+".join(r["meta"]["teachers"]) for r in rows)),
             "top_category": dict(top.most_common()),

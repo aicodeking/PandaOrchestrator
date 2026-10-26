@@ -12,43 +12,43 @@
   ],
   "skills": {
     "coding": {
-      "theta": 7.7,
-      "se": 0.9
+      "theta": 8.6,
+      "se": 0.54
     },
     "debugging": {
-      "theta": 7.5,
-      "se": 0.9
+      "theta": 8.4,
+      "se": 0.54
     },
     "reasoning": {
-      "theta": 7.8,
+      "theta": 8.7,
       "se": 0.9
     },
     "math": {
-      "theta": 7.9,
+      "theta": 8.8,
       "se": 0.9
     },
     "writing": {
-      "theta": 7.3,
+      "theta": 8.2,
       "se": 0.9
     },
     "research": {
-      "theta": 7.6,
+      "theta": 8.5,
       "se": 0.9
     },
     "review": {
-      "theta": 7.4,
+      "theta": 8.3,
       "se": 0.9
     },
     "planning": {
-      "theta": 7.4,
+      "theta": 8.3,
       "se": 0.9
     },
     "ui_frontend": {
-      "theta": 7.4,
+      "theta": 8.3,
       "se": 0.9
     },
     "data_analysis": {
-      "theta": 7.5,
+      "theta": 8.4,
       "se": 0.9
     }
   },
@@ -85,17 +85,18 @@
     "harness:grok",
     "tier:mid"
   ],
-  "card_version": "2026-10-25",
-  "provenance": "benchmark-informed",
+  "card_version": "2026-10-26",
+  "provenance": "verified",
   "field_provenance": {
     "cost": "verified",
     "limits": "verified",
-    "skills": "benchmark-informed",
+    "skills": "verified",
     "latency": "estimated"
   },
   "sources": [
     "https://docs.x.ai/developers/pricing",
-    "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)"
+    "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)",
+    "https://huggingface.co/datasets/ibragim-bad/swe_rebench_07_2026_trajectories (resolved flags only; IRT fit in data/outcomes)"
   ],
-  "notes": "Vision support assumed."
+  "notes": "Vision support assumed. Outcome calibration 2026-10-26: coding fitted 8.63 +/- 0.54 on the router scale from rebench07/grok-4.5 (exact model); all axes shifted by +0.9. See data/outcomes/REPORT.md."
 }

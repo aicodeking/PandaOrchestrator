@@ -1,0 +1,339 @@
+{
+ "scaffold_sd": 0.4069307674169111,
+ "without_rebench07": [
+  {
+   "card": "glm-4.7",
+   "current": 6.5,
+   "provenance": "estimated",
+   "kind": "lower_bound",
+   "fitted": 6.47,
+   "se": 1.14,
+   "systems": [
+    "verified/20250930_zai_glm4-6"
+   ],
+   "delta": 0.0,
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "ollama-devstral-small-2-24b",
+   "current": 6.0,
+   "provenance": "estimated",
+   "kind": "exact",
+   "fitted": 6.06,
+   "se": 1.14,
+   "delta": 0.1,
+   "component": "A",
+   "systems": [
+    "verified/20251209_mini-v1.17.2_devstral-small-2512"
+   ],
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "ollama-qwen3-coder-30b",
+   "current": 5.8,
+   "provenance": "estimated",
+   "kind": "exact",
+   "fitted": 5.74,
+   "se": 1.14,
+   "delta": -0.1,
+   "component": "A",
+   "systems": [
+    "verified/20250805_openhands-Qwen3-Coder-30B-A3B-Instruct"
+   ],
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "openrouter-gemini-3.8-flash",
+   "current": 8.0,
+   "provenance": "benchmark-informed",
+   "kind": "lower_bound",
+   "fitted": 7.23,
+   "se": 1.14,
+   "systems": [
+    "verified/20260901_mini-v2.4.2_gemini-3-5-flash"
+   ],
+   "delta": 0.0,
+   "apply": false,
+   "verify": false
+  }
+ ],
+ "with_rebench07": [
+  {
+   "card": "claude-fable-5.1",
+   "current": 9.0,
+   "provenance": "benchmark-informed",
+   "kind": "lower_bound",
+   "fitted": 8.92,
+   "se": 0.55,
+   "systems": [
+    "rebench07/fable-5"
+   ],
+   "delta": 0.0,
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "claude-opus-5.5",
+   "current": 9.3,
+   "provenance": "benchmark-informed",
+   "kind": "lower_bound",
+   "fitted": 8.82,
+   "se": 0.55,
+   "systems": [
+    "rebench07/opus-5"
+   ],
+   "delta": 0.0,
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "claude-sonnet-5.5",
+   "current": 8.6,
+   "provenance": "benchmark-informed",
+   "kind": "lower_bound",
+   "fitted": 8.07,
+   "se": 0.54,
+   "systems": [
+    "rebench07/sonnet-5"
+   ],
+   "delta": 0.0,
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "codex-gpt-5.6-luna",
+   "current": 7.4,
+   "provenance": "benchmark-informed",
+   "kind": "exact",
+   "fitted": 7.21,
+   "se": 0.54,
+   "delta": -0.2,
+   "component": "B",
+   "systems": [
+    "rebench07/gpt-5.6-luna"
+   ],
+   "apply": true,
+   "verify": true
+  },
+  {
+   "card": "codex-gpt-6-luna",
+   "current": 7.7,
+   "provenance": "benchmark-informed",
+   "kind": "lower_bound",
+   "fitted": 7.21,
+   "se": 0.54,
+   "systems": [
+    "rebench07/gpt-5.6-luna"
+   ],
+   "delta": 0.0,
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "glm-4.7",
+   "current": 6.5,
+   "provenance": "estimated",
+   "kind": "lower_bound",
+   "fitted": 6.47,
+   "se": 1.14,
+   "systems": [
+    "verified/20250930_zai_glm4-6"
+   ],
+   "delta": 0.0,
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "grok-4.5",
+   "current": 7.7,
+   "provenance": "benchmark-informed",
+   "kind": "exact",
+   "fitted": 8.63,
+   "se": 0.54,
+   "delta": 0.9,
+   "component": "B",
+   "systems": [
+    "rebench07/grok-4.5"
+   ],
+   "apply": true,
+   "verify": true
+  },
+  {
+   "card": "grok-4.6",
+   "current": 8.4,
+   "provenance": "benchmark-informed",
+   "kind": "lower_bound",
+   "fitted": 8.63,
+   "se": 0.54,
+   "systems": [
+    "rebench07/grok-4.5"
+   ],
+   "delta": 0.2,
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "ollama-devstral-small-2-24b",
+   "current": 6.0,
+   "provenance": "estimated",
+   "kind": "exact",
+   "fitted": 6.06,
+   "se": 1.14,
+   "delta": 0.1,
+   "component": "A",
+   "systems": [
+    "verified/20251209_mini-v1.17.2_devstral-small-2512"
+   ],
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "ollama-qwen3-coder-30b",
+   "current": 5.8,
+   "provenance": "estimated",
+   "kind": "exact",
+   "fitted": 5.74,
+   "se": 1.14,
+   "delta": -0.1,
+   "component": "A",
+   "systems": [
+    "verified/20250805_openhands-Qwen3-Coder-30B-A3B-Instruct"
+   ],
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "ollama-qwen3.6-27b",
+   "current": 6.4,
+   "provenance": "estimated",
+   "kind": "exact",
+   "fitted": 6.39,
+   "se": 0.54,
+   "delta": -0.0,
+   "component": "B",
+   "systems": [
+    "rebench07/qwen3.6-27b"
+   ],
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "ollama-qwen3.6-35b",
+   "current": 6.1,
+   "provenance": "estimated",
+   "kind": "exact",
+   "fitted": 5.73,
+   "se": 0.55,
+   "delta": -0.4,
+   "component": "B",
+   "systems": [
+    "rebench07/qwen3.6-35b-a3b"
+   ],
+   "apply": true,
+   "verify": false
+  },
+  {
+   "card": "ollama-qwen3.8-27b",
+   "current": 6.7,
+   "provenance": "benchmark-informed",
+   "kind": "lower_bound",
+   "fitted": 6.39,
+   "se": 0.54,
+   "systems": [
+    "rebench07/qwen3.6-27b"
+   ],
+   "delta": 0.0,
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "openrouter-deepseek-v4-pro",
+   "current": 6.9,
+   "provenance": "benchmark-informed",
+   "kind": "exact",
+   "fitted": 6.91,
+   "se": 0.54,
+   "delta": 0.0,
+   "component": "B",
+   "systems": [
+    "rebench07/deepseek-v4-pro"
+   ],
+   "apply": true,
+   "verify": true
+  },
+  {
+   "card": "openrouter-gemini-3.8-flash",
+   "current": 8.0,
+   "provenance": "benchmark-informed",
+   "kind": "lower_bound",
+   "fitted": 7.23,
+   "se": 1.14,
+   "systems": [
+    "verified/20260901_mini-v2.4.2_gemini-3-5-flash"
+   ],
+   "delta": 0.0,
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "openrouter-glm-5.3",
+   "current": 8.0,
+   "provenance": "benchmark-informed",
+   "kind": "lower_bound",
+   "fitted": 8.43,
+   "se": 0.54,
+   "systems": [
+    "rebench07/glm-5.2"
+   ],
+   "delta": 0.4,
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "openrouter-gpt-6-sol",
+   "current": 8.2,
+   "provenance": "benchmark-informed",
+   "kind": "lower_bound",
+   "fitted": 8.44,
+   "se": 0.54,
+   "systems": [
+    "rebench07/gpt-5.6-sol"
+   ],
+   "delta": 0.2,
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "openrouter-mimo-v2.6-pro",
+   "current": 8.1,
+   "provenance": "benchmark-informed",
+   "kind": "lower_bound",
+   "fitted": 7.34,
+   "se": 0.54,
+   "systems": [
+    "rebench07/mimo-v2.5-pro"
+   ],
+   "delta": 0.0,
+   "apply": false,
+   "verify": false
+  },
+  {
+   "card": "openrouter-minimax-m3",
+   "current": 6.7,
+   "provenance": "benchmark-informed",
+   "kind": "exact",
+   "fitted": 7.37,
+   "se": 0.54,
+   "delta": 0.7,
+   "component": "B",
+   "systems": [
+    "rebench07/minimax-m3"
+   ],
+   "apply": true,
+   "verify": true
+  }
+ ]
+}

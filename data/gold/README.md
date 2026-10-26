@@ -133,3 +133,9 @@ succeeds".
 .venv/bin/python scripts/eval/build_gold.py validate
 .venv/bin/python scripts/eval/fit_anchors.py               # anchors.jsonl + anchor_report.json
 ```
+
+## v2 changes (2026-10-26)
+
+- SWE `files_in_scope` / `estimated_input_tokens` now derive from the issue text only (no patch info). Spearman with `multi_file`: 0.87 -> 0.11.
+- `gold-wil-b090490cce` dropped (normalised text duplicated a train row); SWE rows carry `meta.repo_in_train`.
+- Grok (402 balance exhausted) and Kimi (5h limit) were unavailable; DeepSeek (opencode free) labelled 45 more rows before its limit, so gold has 329 rows and 45 rows use codex+deepseek. Ollama answers are kept as an extra.

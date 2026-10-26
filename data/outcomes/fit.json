@@ -1,0 +1,181 @@
+{
+ "components": {
+  "A": {
+   "n_systems": 284,
+   "n_items": 2594,
+   "n_cells": 171956,
+   "n_trials": 171956,
+   "model": "2PL",
+   "heldout": [
+    {
+     "model": "1PL",
+     "heldout_cells": 17287,
+     "heldout_trials": 17287,
+     "logloss": 0.2823892213157745,
+     "auc": 0.9491888508479249,
+     "base_rate_logloss": 0.6713649333160258
+    },
+    {
+     "model": "2PL",
+     "heldout_cells": 17287,
+     "heldout_trials": 17287,
+     "logloss": 0.2698839568711965,
+     "auc": 0.9535148364935725,
+     "base_rate_logloss": 0.6713649333160258
+    }
+   ],
+   "median_a": 1.2487906567755667,
+   "link": {
+    "alpha": 6.327615552650817,
+    "gamma": 1.0406588806463055,
+    "alpha_se": 1.0606601717798212,
+    "n_anchors": 2,
+    "anchor_resid_mad": 0.060183671285642504,
+    "anchors": [
+     {
+      "system": "verified/20250805_openhands-Qwen3-Coder-30B-A3B-Instruct",
+      "card": "ollama-qwen3-coder-30b",
+      "theta_irt": -0.565,
+      "card_theta": 5.8,
+      "card_se": 1.5
+     },
+     {
+      "system": "verified/20251209_mini-v1.17.2_devstral-small-2512",
+      "card": "ollama-devstral-small-2-24b",
+      "theta_irt": -0.257,
+      "card_theta": 6.0,
+      "card_se": 1.5
+     }
+    ]
+   }
+  },
+  "B": {
+   "n_systems": 17,
+   "n_items": 111,
+   "n_cells": 1887,
+   "n_trials": 9434,
+   "model": "2PL",
+   "heldout": [
+    {
+     "model": "1PL",
+     "heldout_cells": 196,
+     "heldout_trials": 980,
+     "logloss": 0.3836902028269719,
+     "auc": 0.9039809959998165,
+     "base_rate_logloss": 0.6923952219646698
+    },
+    {
+     "model": "2PL",
+     "heldout_cells": 196,
+     "heldout_trials": 980,
+     "logloss": 0.37040640667728214,
+     "auc": 0.911520445150768,
+     "base_rate_logloss": 0.6923952219646698
+    }
+   ],
+   "median_a": 1.256621651304912,
+   "link": {
+    "alpha": 7.746115990408393,
+    "gamma": 1.04718470942076,
+    "alpha_se": 0.34701104689428364,
+    "n_anchors": 6,
+    "anchor_resid_mad": 0.28006770381596846,
+    "theilsen_slope": 0.5770104033449446,
+    "theilsen_intercept": 7.177007179156644,
+    "theilsen_slope_ci": [
+     -0.4532408347505652,
+     1.271144557547671
+    ],
+    "anchors": [
+     {
+      "system": "rebench07/deepseek-v4-pro",
+      "card": "openrouter-deepseek-v4-pro",
+      "theta_irt": -0.798,
+      "card_theta": 6.9,
+      "card_se": 0.7
+     },
+     {
+      "system": "rebench07/gpt-5.6-luna",
+      "card": "codex-gpt-5.6-luna",
+      "theta_irt": -0.508,
+      "card_theta": 7.4,
+      "card_se": 0.8
+     },
+     {
+      "system": "rebench07/grok-4.5",
+      "card": "grok-4.5",
+      "theta_irt": 0.844,
+      "card_theta": 7.7,
+      "card_se": 0.9
+     },
+     {
+      "system": "rebench07/minimax-m3",
+      "card": "openrouter-minimax-m3",
+      "theta_irt": -0.357,
+      "card_theta": 6.7,
+      "card_se": 0.7
+     },
+     {
+      "system": "rebench07/qwen3.6-27b",
+      "card": "ollama-qwen3.6-27b",
+      "theta_irt": -1.295,
+      "card_theta": 6.4,
+      "card_se": 1.5
+     },
+     {
+      "system": "rebench07/qwen3.6-35b-a3b",
+      "card": "ollama-qwen3.6-35b",
+      "theta_irt": -1.929,
+      "card_theta": 6.1,
+      "card_se": 1.5
+     }
+    ]
+   }
+  }
+ },
+ "multilingual_linked_systems": {
+  "multilingual/20260213_mini-v2.0.0a0_claude-4-5-haiku": "verified/20260217_mini-v2.0.0_claude-4-5-haiku-high",
+  "multilingual/20260213_mini-v2.0.0a0_claude-4-5-opus": "verified/20260217_mini-v2.0.0_claude-4-5-opus-high",
+  "multilingual/20260213_mini-v2.0.0a0_claude-4-5-sonnet": "verified/20260217_mini-v2.0.0_claude-4-5-sonnet-high",
+  "multilingual/20260213_mini-v2.0.0a0_claude-4-6-opus": "verified/20260217_mini-v2.0.0_claude-4-6-opus",
+  "multilingual/20260213_mini-v2.0.0a0_deepseek-3-2": "verified/20260217_mini-v2.0.0_deepseek-3-2-high",
+  "multilingual/20260213_mini-v2.0.0a0_gemini-3-flash": "verified/20260217_mini-v2.0.0_gemini-3-flash-high",
+  "multilingual/20260213_mini-v2.0.0a0_gemini-3-pro": "verified/20260226_mini-v2.0.0_gemini-3-pro-high",
+  "multilingual/20260213_mini-v2.0.0a0_glm-5": "verified/20260217_mini-v2.0.0_glm-5-high",
+  "multilingual/20260213_mini-v2.0.0a0_gpt-5-2-high": "verified/20260217_mini-v2.0.0_gpt-5-2-high",
+  "multilingual/20260213_mini-v2.0.0a0_gpt-5-mini": "verified/20260217_mini-v2.0.0_gpt-5-mini",
+  "multilingual/20260213_mini-v2.0.0a0_kimi-k2-5": "verified/20260217_mini-v2.0.0_kimi-k2-5-high",
+  "multilingual/20260216_mini-v2.0.0a0_minimax-2-5": "verified/20260217_mini-v2.0.0_minimax-2-5-high",
+  "multilingual/20260902_mini-v2.4.6_gemini-3-5-flash": "verified/20260901_mini-v2.4.2_gemini-3-5-flash"
+ },
+ "gold_overlap": [],
+ "n_tasks_written": 2594,
+ "multimodal_excluded": {
+  "systems": 12,
+  "reason": "no shared system or task with the other splits (unlinked scale)"
+ },
+ "profiler_eval": {
+  "v1": {
+   "spearman": 0.04564672012663219,
+   "ci95": [
+    0.009011565891739619,
+    0.08046737772533857
+   ],
+   "mean_expected_difficulty": 4.832381162833912,
+   "spearman_verified": 0.11211721825649211,
+   "spearman_lite": 0.020798700099561047,
+   "spearman_multilingual": 0.04800999207284128
+  },
+  "heuristic": {
+   "spearman": 0.0063548460891477065,
+   "ci95": [
+    -0.030958511044005082,
+    0.04311721774113303
+   ],
+   "mean_expected_difficulty": 3.5685465501080222,
+   "spearman_verified": 0.07989116510200464,
+   "spearman_lite": -0.01707220735633126,
+   "spearman_multilingual": 0.04791939331038258
+  }
+ }
+}

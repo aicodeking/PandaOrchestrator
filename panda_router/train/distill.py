@@ -8,12 +8,13 @@ from ..model.net import load_checkpoint
 from .data import ProfileDataset
 
 
-def cache_teacher(teacher_dir, data_dir, out_path, split: str = "train", device=None, bf16: bool = True) -> Path:
+def cache_teacher(teacher_dir, data_dir, out_path, split: str = "train", device=None, bf16: bool = True,
+                  extra=None) -> Path:
     from .trainer import pick_device, predict
 
     dev = pick_device(device)
     model, tok, meta, _ = load_checkpoint(teacher_dir, dev)
-    ds = ProfileDataset.from_file(Path(data_dir) / f"{split}.jsonl", tok, meta.get("max_len", 512))
+    ds = ProfileDataset.from_file(Path(data_dir) / f"{split}.jsonl", tok, meta.get("max_len", 512), extra=extra)
     raw = predict(model, ds, dev, 64, bf16)
     out = Path(out_path)
     out.parent.mkdir(parents=True, exist_ok=True)

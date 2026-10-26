@@ -80,7 +80,7 @@ def exclusion_stages(model_path: Path, n_layers: int) -> list[list[str]]:
 
 
 def export_artifacts(ckpt_dir, out_dir, data_dir, max_drop: float = 1.0, opset: int = 17,
-                     limit_val: int | None = None) -> dict:
+                     limit_val: int | None = None, per_channel: bool = False) -> dict:
     torch._dynamo.config.disable = True
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -100,7 +100,7 @@ def export_artifacts(ckpt_dir, out_dir, data_dir, max_drop: float = 1.0, opset: 
     attempts = []
     n_layers = int(getattr(model.backbone.config, "num_hidden_layers", 0))
     for excluded in exclusion_stages(fp32_path, n_layers):
-        quantize_dynamic(str(fp32_path), str(int8_path), weight_type=QuantType.QInt8, per_channel=False,
+        quantize_dynamic(str(fp32_path), str(int8_path), weight_type=QuantType.QInt8, per_channel=per_channel,
                          nodes_to_exclude=excluded)
         m_int8 = compute_metrics(decode_probs(onnx_predict(_session(int8_path), val_ds), temps), y)
         drops = {k: p_fp32[k] - v for k, v in primary_metrics(m_int8).items()}
@@ -112,7 +112,7 @@ def export_artifacts(ckpt_dir, out_dir, data_dir, max_drop: float = 1.0, opset: 
             shutil.copy(Path(ckpt_dir) / f, out / f)
     ok = max(attempts[-1]["drops"].values()) <= max_drop
     write_heads_json(out, temps or {}, meta, {"source_checkpoint": str(ckpt_dir), "int8_excluded_nodes": excluded,
-                                              "opset": opset})
+                                              "int8_per_channel": per_channel, "opset": opset})
     metrics = {"val_examples": len(val_ds), "fp32": m_fp32, "int8": m_int8, "int8_drops_points": attempts[-1]["drops"],
                "int8_within_tolerance": ok, "quant_attempts": attempts, "torch_vs_onnx_max_abs": max_abs,
                "size_mb": {"fp32": fp32_path.stat().st_size / 2**20, "int8": int8_path.stat().st_size / 2**20}}

@@ -1,0 +1,105 @@
+{
+  "profiler": "heuristic",
+  "heldout_issue": {
+    "n": 980,
+    "spearman": -0.0046,
+    "ci95": [
+      -0.0634,
+      0.0629
+    ],
+    "mean_pred": 3.567,
+    "sd_pred": 0.919
+  },
+  "heldout_issue_within_repo": {
+    "n": 831,
+    "spearman": 0.0624,
+    "per_repo": {
+      "astropy/astropy": [
+        95,
+        -0.0747
+      ],
+      "psf/requests": [
+        44,
+        -0.1273
+      ],
+      "pytest-dev/pytest": [
+        119,
+        0.2139
+      ],
+      "sphinx-doc/sphinx": [
+        187,
+        0.1182
+      ],
+      "sympy/sympy": [
+        386,
+        0.044
+      ]
+    }
+  },
+  "heldout_issue_nsys100": {
+    "n": 258,
+    "spearman": 0.024,
+    "ci95": [
+      -0.0811,
+      0.1395
+    ],
+    "mean_pred": 3.397,
+    "sd_pred": 0.767
+  },
+  "heldout_report": {
+    "n": 980,
+    "spearman": 0.0019,
+    "ci95": [
+      -0.0534,
+      0.0698
+    ],
+    "mean_pred": 3.507,
+    "sd_pred": 0.864
+  },
+  "heldout_report_within_repo": {
+    "n": 831,
+    "spearman": 0.0598,
+    "per_repo": {
+      "astropy/astropy": [
+        95,
+        -0.0777
+      ],
+      "psf/requests": [
+        44,
+        -0.1725
+      ],
+      "pytest-dev/pytest": [
+        119,
+        0.2207
+      ],
+      "sphinx-doc/sphinx": [
+        187,
+        0.1353
+      ],
+      "sympy/sympy": [
+        386,
+        0.0339
+      ]
+    }
+  },
+  "heldout_report_nsys100": {
+    "n": 258,
+    "spearman": 0.0327,
+    "ci95": [
+      -0.0721,
+      0.1525
+    ],
+    "mean_pred": 3.349,
+    "sd_pred": 0.742
+  },
+  "all_report": {
+    "n": 2594,
+    "spearman": 0.0064,
+    "ci95": [
+      -0.031,
+      0.0431
+    ],
+    "mean_pred": 3.569,
+    "sd_pred": 0.938
+  }
+}

@@ -12,43 +12,43 @@
   ],
   "skills": {
     "coding": {
-      "theta": 7.4,
-      "se": 0.8
+      "theta": 7.2,
+      "se": 0.54
     },
     "debugging": {
-      "theta": 7.1,
-      "se": 0.8
+      "theta": 6.9,
+      "se": 0.54
     },
     "reasoning": {
-      "theta": 7.1,
-      "se": 0.8
-    },
-    "math": {
-      "theta": 7.2,
-      "se": 0.8
-    },
-    "writing": {
-      "theta": 6.8,
-      "se": 0.8
-    },
-    "research": {
-      "theta": 6.7,
-      "se": 0.8
-    },
-    "review": {
       "theta": 6.9,
       "se": 0.8
     },
+    "math": {
+      "theta": 7.0,
+      "se": 0.8
+    },
+    "writing": {
+      "theta": 6.6,
+      "se": 0.8
+    },
+    "research": {
+      "theta": 6.5,
+      "se": 0.8
+    },
+    "review": {
+      "theta": 6.7,
+      "se": 0.8
+    },
     "planning": {
-      "theta": 6.8,
+      "theta": 6.6,
       "se": 0.8
     },
     "ui_frontend": {
-      "theta": 6.8,
+      "theta": 6.6,
       "se": 0.8
     },
     "data_analysis": {
-      "theta": 7.0,
+      "theta": 6.8,
       "se": 0.8
     }
   },
@@ -85,17 +85,18 @@
     "harness:codex",
     "tier:mid"
   ],
-  "card_version": "2026-10-25",
-  "provenance": "benchmark-informed",
+  "card_version": "2026-10-26",
+  "provenance": "verified",
   "field_provenance": {
     "cost": "verified",
     "limits": "estimated",
-    "skills": "benchmark-informed",
+    "skills": "verified",
     "latency": "estimated"
   },
   "sources": [
     "https://developers.openai.com/api/docs/pricing",
-    "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)"
+    "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)",
+    "https://huggingface.co/datasets/ibragim-bad/swe_rebench_07_2026_trajectories (resolved flags only; IRT fit in data/outcomes)"
   ],
-  "notes": "Context window not verified; 400k assumed."
+  "notes": "Context window not verified; 400k assumed. Outcome calibration 2026-10-26: coding fitted 7.21 +/- 0.54 on the router scale from rebench07/gpt-5.6-luna (exact model); all axes shifted by -0.2. See data/outcomes/REPORT.md."
 }

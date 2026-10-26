@@ -117,3 +117,12 @@ model (`claude/sonnet-5-5`); then the closest spelling with the **same version d
 for the card it was scored as. Names that stay ambiguous (`qwen3.8-27b`: Ollama or OpenRouter?) or
 have no close match with the same digits (`claude/sonnet-4-5`) are returned in `filtered_out` as
 `unknown_model`.
+
+## Outcome calibration (2026-10-26)
+
+`data/outcomes/REPORT.md`: 2PL IRT on public per-instance results (swe-bench/experiments; SWE-rebench Jul-2026
+resolved flags), mapped onto this scale with slope median(a)/1.2 and location anchored on exact-model cards.
+Applied with `scripts/outcomes/cards.py --apply`: grok-4.5 +0.9, openrouter-minimax-m3 +0.7,
+codex-gpt-5.6-luna −0.2, openrouter-deepseek-v4-pro ±0 (these four → skills `verified`: only coding/debugging are
+fitted; other axes are shifted by the same delta), ollama-qwen3.6-35b −0.4 (Q4 local, provenance kept). Note
+grok-4.5 (8.6) now sits above its successor grok-4.6 (8.4); the lower-bound violation is within se, so grok-4.6 is unchanged.

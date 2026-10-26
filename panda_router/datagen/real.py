@@ -85,8 +85,33 @@ def _englishish(text: str) -> bool:
     return len(_NON_EN.findall(text)) / words < 0.04
 
 
-def _n_patch_files(patch: str) -> int:
-    return max(1, len(re.findall(r"^diff --git ", patch or "", re.M)))
+_URL = re.compile(r"https?://\S+")
+_PATH = re.compile(
+    r"(?<![\w./-])((?:[\w.-]+/)*[\w-]+\.(?:py|pyx|pyi|js|jsx|ts|tsx|c|h|cc|cpp|hpp|rs|go|rb|java|php|rst|md|txt|cfg|toml|ini|ya?ml|json|html|css|sh))\b")
+_FROM_IMPORT = re.compile(r"^\s*(?:from|import)\s+([A-Za-z_][\w]*(?:\.[A-Za-z_]\w*)+)", re.M)
+REPO_CONTEXT_TOKENS = 4000  # fixed allowance for the repo files an agent reads on top of the issue text
+
+
+def issue_files_in_scope(text: str, repo: str | None = None) -> int | None:
+    """Routing-time estimate of files in scope: distinct file paths / repo-internal modules named in the
+    issue text (never the patch). None when the text names no file at all."""
+    text = _URL.sub(" ", text or "")
+    found = {m.group(1).rsplit("/", 1)[-1] for m in _PATH.finditer(text)}
+    pkg = re.sub(r"[^a-z0-9]", "", (repo or "").rsplit("/", 1)[-1].lower())
+    for m in _FROM_IMPORT.finditer(text):
+        mod = m.group(1)
+        if pkg and re.sub(r"[^a-z0-9]", "", mod.split(".")[0].lower()) == pkg:
+            found.add(mod.rsplit(".", 1)[0] + ".py")
+    return len(found) or None
+
+
+def issue_context(text: str, repo: str | None = None) -> dict:
+    """task.context for a real SWE row, derived from the issue text only (no patch information)."""
+    ctx = {"repo_languages": ["python"], "estimated_input_tokens": int(len(text) / 4 + REPO_CONTEXT_TOKENS),
+           "has_images": _has_images(text), "requires_tools": True}
+    if (n := issue_files_in_scope(text, repo)) is not None:
+        ctx["files_in_scope"] = n
+    return ctx
 
 
 def _has_images(text: str) -> bool:
@@ -94,7 +119,7 @@ def _has_images(text: str) -> bool:
 
 
 def _swe_rows(source: str, limit: int, rng: random.Random) -> list[dict]:
-    cols = ["instance_id", "repo", "problem_statement", "patch"]
+    cols = ["instance_id", "repo", "problem_statement"]
     rows = []
     for p in _shard_paths(source):
         rows += pq.read_table(p, columns=cols).to_pylist()
@@ -109,13 +134,9 @@ def _swe_rows(source: str, limit: int, rng: random.Random) -> list[dict]:
     out = []
     for r in uniq[:limit]:
         text = _clip(scrub_pii(r["problem_statement"]))
-        nfiles = _n_patch_files(r["patch"])
         out.append({
             "id": f"{PREFIX[source]}-{short_hash(r['instance_id'])}", "source": source, "pair_of": None,
-            "task": {"text": f"Repository: {r['repo']}\n\n{text}", "context": {
-                "repo_languages": ["python"], "files_in_scope": nfiles,
-                "estimated_input_tokens": int(len(text) / 4 + 2500 * nfiles),
-                "has_images": _has_images(text), "requires_tools": True}},
+            "task": {"text": f"Repository: {r['repo']}\n\n{text}", "context": issue_context(text, r["repo"])},
             "meta": {"raw_id": r["instance_id"], "repo": r["repo"], "persona": None},
         })
     return out
@@ -173,3 +194,32 @@ def build(n_rebench: int, n_smith: int, n_wild: int, seed: int = 0) -> dict[str,
     allrows = reb + smi + wil
     write_jsonl(paths.POOL / "real.jsonl", allrows)
     return {"swe-rebench": len(reb), "swe-smith": len(smi), "wildchat": len(wil)}
+
+
+def issue_body(text: str) -> str:
+    return text.partition("\n\n")[2] or text if text.startswith("Repository: ") else text
+
+
+def refresh_contexts() -> dict[str, int]:
+    """Rewrite files_in_scope / estimated_input_tokens of SWE pool rows (and their minimal pairs) from the
+    issue text only. Idempotent; labels are keyed by id so existing teacher answers stay valid."""
+    from .jsonio import read_jsonl
+
+    reals = read_jsonl(paths.POOL / "real.jsonl")
+    repo_of = {r["id"]: r["meta"].get("repo") for r in reals if r["source"] != "wildchat"}
+    for r in reals:
+        if r["id"] in repo_of:
+            r["task"]["context"] = issue_context(issue_body(r["task"]["text"]), repo_of[r["id"]])
+    write_jsonl(paths.POOL / "real.jsonl", reals)
+    pairs = read_jsonl(paths.POOL / "minimal_pairs.jsonl")
+    npairs = 0
+    for r in pairs:
+        if r["pair_of"] in repo_of:
+            old = r["task"].get("context") or {}
+            new = issue_context(issue_body(r["task"]["text"]), repo_of[r["pair_of"]])
+            if (old.get("estimated_input_tokens") or 0) >= 80000:  # long_context edit sets the count on purpose
+                new["estimated_input_tokens"] = old["estimated_input_tokens"]
+            r["task"]["context"] = new
+            npairs += 1
+    write_jsonl(paths.POOL / "minimal_pairs.jsonl", pairs)
+    return {"originals": len(repo_of), "pairs": npairs}

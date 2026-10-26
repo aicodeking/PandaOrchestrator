@@ -32,6 +32,7 @@ def main() -> None:
     l.add_argument("--limit", type=int, default=None)
     m = sub.add_parser("merge")
     m.add_argument("--min-teachers", type=int, default=2)
+    sub.add_parser("fix-context")
     sub.add_parser("validate")
     a = ap.parse_args()
 
@@ -43,6 +44,8 @@ def main() -> None:
         stats = gold.merge_gold(a.min_teachers)
         (gold.GOLD / "agreement.json").write_text(json.dumps(stats, indent=2))
         print(json.dumps(stats, indent=2))
+    elif a.cmd == "fix-context":
+        print(gold.refresh_contexts(), "SWE candidates refreshed")
     else:
         errs = validate_file(gold.GOLD_PATH)
         print(f"{len(errs)} errors")

@@ -16,43 +16,43 @@
   ],
   "skills": {
     "coding": {
-      "theta": 6.1,
-      "se": 1.5
+      "theta": 5.7,
+      "se": 0.55
     },
     "debugging": {
-      "theta": 5.7,
-      "se": 1.5
+      "theta": 5.3,
+      "se": 0.55
     },
     "reasoning": {
-      "theta": 6.4,
+      "theta": 6.0,
       "se": 1.5
     },
     "math": {
-      "theta": 6.2,
+      "theta": 5.8,
       "se": 1.5
     },
     "writing": {
-      "theta": 6.5,
+      "theta": 6.1,
       "se": 1.5
     },
     "research": {
-      "theta": 5.5,
+      "theta": 5.1,
       "se": 1.5
     },
     "review": {
-      "theta": 5.9,
+      "theta": 5.5,
       "se": 1.5
     },
     "planning": {
-      "theta": 5.9,
+      "theta": 5.5,
       "se": 1.5
     },
     "ui_frontend": {
-      "theta": 5.9,
+      "theta": 5.5,
       "se": 1.5
     },
     "data_analysis": {
-      "theta": 5.9,
+      "theta": 5.5,
       "se": 1.5
     }
   },
@@ -94,7 +94,7 @@
     "vision",
     "thinking"
   ],
-  "card_version": "2026-10-25",
+  "card_version": "2026-10-26",
   "provenance": "estimated",
   "field_provenance": {
     "cost": "verified",
@@ -104,7 +104,8 @@
   },
   "sources": [
     "https://ollama.com/library/qwen3.6:35b",
-    "https://ollama.com/library/qwen3.6/tags"
+    "https://ollama.com/library/qwen3.6/tags",
+    "https://huggingface.co/datasets/ibragim-bad/swe_rebench_07_2026_trajectories (resolved flags only; IRT fit in data/outcomes)"
   ],
-  "notes": "NOT INSTALLED: pull with `ollama pull qwen3.6:35b`. Download 23-24GB (35.5B MoE (A3B, ~3B active), Q4_K_M default tag), needs ~28GB RAM plus KV cache; fits the 48GB M4 Max. Library context 256K; limit set to 131072 because Ollama sizes context from VRAM (assumes OLLAMA_CONTEXT_LENGTH raised). No independent benchmark found; MoE with ~3B active set 0.3 below qwen3.6-27b dense, above gemma4:26b (5.0). Q4 quantization already accounted for. Latency estimated for M4 Max 48GB by scaling measured gemma4:26b (78 tok/s, ~4B active) by active-weight bytes; not measured. Thinking is on by default: pass think=false for fast answers. Active-parameter count assumed from the A3B tag name. Page checked 2026-10-25."
+  "notes": "NOT INSTALLED: pull with `ollama pull qwen3.6:35b`. Download 23-24GB (35.5B MoE (A3B, ~3B active), Q4_K_M default tag), needs ~28GB RAM plus KV cache; fits the 48GB M4 Max. Library context 256K; limit set to 131072 because Ollama sizes context from VRAM (assumes OLLAMA_CONTEXT_LENGTH raised). No independent benchmark found; MoE with ~3B active set 0.3 below qwen3.6-27b dense, above gemma4:26b (5.0). Q4 quantization already accounted for. Latency estimated for M4 Max 48GB by scaling measured gemma4:26b (78 tok/s, ~4B active) by active-weight bytes; not measured. Thinking is on by default: pass think=false for fast answers. Active-parameter count assumed from the A3B tag name. Page checked 2026-10-25. Outcome calibration 2026-10-26: coding fitted 5.73 +/- 0.55 on the router scale from rebench07/qwen3.6-35b-a3b (exact model; Q4 local quant not measured, fitted on full-precision runs); all axes shifted by -0.4. See data/outcomes/REPORT.md."
 }

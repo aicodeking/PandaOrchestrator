@@ -19,8 +19,9 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--split", default="train")
     ap.add_argument("--device", default=None)
+    ap.add_argument("--extra", default=None, help="also cache these outcome-anchor rows (same file as --outcome-anchors)")
     a = ap.parse_args()
-    print(cache_teacher(a.teacher, a.data_dir, a.out, a.split, a.device))
+    print(cache_teacher(a.teacher, a.data_dir, a.out, a.split, a.device, extra=a.extra))
 
 
 if __name__ == "__main__":

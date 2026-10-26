@@ -168,3 +168,21 @@ def test_run_eval_with_stub_profiler(labels, tmp_path):
     assert rep["profiler_metrics"]["category"]["acc"] == 1.0
     assert rep["routing"]["metrics"]["predicted"]["all"]["utility_regret"] == pytest.approx(0.0, abs=1e-12)
     assert "Routing" in markdown_summary(rep)
+
+
+def test_gold_hygiene_drops_train_duplicates_and_flags_repo(tmp_path):
+    import json
+
+    from panda_router.eval.gold import hygiene
+
+    def row(i, text, source, repo=None):
+        return {"id": i, "source": source, "task": {"text": text}, "meta": {"repo": repo}}
+
+    (tmp_path / "train.jsonl").write_text(json.dumps(row("t1", "Fix   the BUG!", "wildchat")) + "\n"
+                                          + json.dumps(row("t2", "issue", "swe-rebench", "a/b")) + "\n")
+    for s in ("val", "test"):
+        (tmp_path / f"{s}.jsonl").write_text("")
+    kept, dropped = hygiene([row("g1", "fix the bug", "wildchat"), row("g2", "other", "swe-rebench", "a/b"),
+                             row("g3", "other2", "swe-smith", "c/d")], tmp_path)
+    assert dropped == ["g1"]
+    assert [r["meta"].get("repo_in_train") for r in kept] == [True, False]

@@ -40,11 +40,14 @@ class TrainConfig:
     regret_weight: float = 0.05
     regret_tau: float = 0.05
     regret_cards: int = 6
+    regret_mode: str = "max_utility"  # or "cheapest" (soft cheapest_above_threshold, the serving default)
     pair_weight: float = 0.5
     pair_margin: float = 0.5
     single_teacher_weight: float = 0.5
     anchors: str | None = None
     anchor_weight: float = 0.0
+    outcome_anchors: str | None = None  # jsonl of difficulty-only outcome rows (scripts/train/outcome_anchors.py)
+    outcome_val: str | None = None  # held-out outcome rows: Spearman logged per epoch (not used for selection)
     distill_from: str | None = None
     distill_T: float = 3.0
     distill_alpha: float = 0.5
@@ -97,6 +100,15 @@ def evaluate(model, ds, device, batch_size=64, bf16=True, temps=None) -> tuple[d
     return compute_metrics(decode_probs(raw, temps), stack_labels(ds.labels)), raw
 
 
+def outcome_spearman(model, ds: ProfileDataset, device, batch_size=64, bf16=True) -> float:
+    """Spearman of expected difficulty vs the outcome anchor on difficulty-only rows."""
+    from scipy.stats import spearmanr
+
+    raw = predict(model, ds, device, batch_size, bf16)
+    ed = (decode_probs(raw)["difficulty"] * np.arange(1, 11)).sum(-1)
+    return round(float(spearmanr(ed, stack_labels(ds.labels)["anchor"])[0]), 4)
+
+
 def _to(d: dict, device):
     return {k: v.to(device) for k, v in d.items()}
 
@@ -115,9 +127,12 @@ def train(cfg: TrainConfig) -> dict:
     teacher = load_teacher_cache(cfg.distill_from) if cfg.distill_from else None
     data = Path(cfg.data_dir)
     anchors = load_anchors(cfg.anchors) if cfg.anchors and cfg.anchor_weight > 0 else None
+    use_anchor = cfg.anchor_weight > 0 and bool(anchors or cfg.outcome_anchors)
     train_ds = ProfileDataset.from_file(data / "train.jsonl", tok, cfg.max_len, teacher, cfg.limit_train,
+                                        extra=cfg.outcome_anchors if cfg.anchor_weight > 0 else None,
                                         single_teacher_weight=cfg.single_teacher_weight, anchors=anchors)
     val_ds = ProfileDataset.from_file(data / "val.jsonl", tok, cfg.max_len, None, cfg.limit_val)
+    oval_ds = ProfileDataset.from_file(cfg.outcome_val, tok, cfg.max_len) if cfg.outcome_val else None
     torch.manual_seed(cfg.init_seed)  # same head init for every seed, so seed runs can be souped
     model = ProfilerModel.from_backbone(cfg.backbone, cfg.dropout).to(device)
     if cfg.seed != cfg.init_seed:
@@ -158,7 +173,7 @@ def train(cfg: TrainConfig) -> dict:
             parts = head_losses(o, y)
             loss = 0.0
             if "teacher" in b:
-                kd = distill_losses(o, _to(b["teacher"], device), cfg.distill_T)
+                kd = distill_losses(o, _to(b["teacher"], device), cfg.distill_T, y["w"])
                 for k in parts:
                     loss = loss + (1 - cfg.distill_alpha) * norm(k, parts[k]) + cfg.distill_alpha * norm("kd_" + k, kd[k])
                 parts.update({"kd_" + k: v for k, v in kd.items()})
@@ -170,15 +185,16 @@ def train(cfg: TrainConfig) -> dict:
                 if pl is not None:
                     parts["pair"] = pl
                     loss = loss + cfg.pair_weight * norm("pair", pl)
-            if anchors and (al := anchor_loss(o, y["anchor"])) is not None:
+            if use_anchor and (al := anchor_loss(o, y["anchor"], y["anchor_w"])) is not None:
                 parts["anchor"] = al
                 loss = loss + cfg.anchor_weight * norm("anchor", al)
-            if cfg.regret_weight > 0:
+            if cfg.regret_weight > 0 and bool((y["w"] > 0).any()):
                 pool = sample_pools(len(idx), cfg.regret_cards, gen, device)
                 pred = {"difficulty": corn_level_probs(o["difficulty"]), "skills": corn_level_probs(o["skills"]),
                         "out_p50": o["out_tokens"][:, 1]}
                 lab = {"difficulty": y["difficulty"], "skills": y["skills"], "out_p50": y["out_tokens"]}
-                rl = regret_loss(pred, lab, y["in_tokens"], pool, cfg.regret_tau)
+                rl = regret_loss(pred, lab, y["in_tokens"], pool, cfg.regret_tau, mode=cfg.regret_mode,
+                                 w=(y["w"] > 0).float())
                 parts["regret"] = rl
                 loss = loss + cfg.regret_weight * norm("regret", rl)
             opt.zero_grad(set_to_none=True)
@@ -204,9 +220,12 @@ def train(cfg: TrainConfig) -> dict:
             torch.mps.empty_cache()
         rec = {"epoch": epoch, "step": step, "train": train_losses, "val": metrics,
                "elapsed_s": time.time() - t_start}
+        if oval_ds is not None:
+            rec["outcome_val_spearman"] = outcome_spearman(model, oval_ds, device, cfg.eval_batch_size, cfg.bf16)
         history.append(rec)
         print(json.dumps({"epoch": epoch, "step": step, "loss": train_losses.get("total"),
-                          "val_score": round(metrics["val_score"], 3)}), flush=True)
+                          "val_score": round(metrics["val_score"], 3),
+                          "outcome_val_spearman": rec.get("outcome_val_spearman")}), flush=True)
         if metrics["val_score"] > best:
             best, bad = metrics["val_score"], 0
             save_checkpoint(model, tok, out / "best", {"backbone": cfg.backbone, "dropout": cfg.dropout,

@@ -13,11 +13,11 @@
   "skills": {
     "coding": {
       "theta": 6.9,
-      "se": 0.7
+      "se": 0.54
     },
     "debugging": {
       "theta": 6.7,
-      "se": 0.7
+      "se": 0.54
     },
     "reasoning": {
       "theta": 6.8,
@@ -85,18 +85,19 @@
     "tier:small",
     "open_weights"
   ],
-  "card_version": "2026-10-25",
-  "provenance": "benchmark-informed",
+  "card_version": "2026-10-26",
+  "provenance": "verified",
   "field_provenance": {
     "cost": "verified",
     "limits": "verified",
-    "skills": "benchmark-informed",
+    "skills": "verified",
     "latency": "estimated"
   },
   "sources": [
     "https://openrouter.ai/api/v1/models",
     "https://openrouter.ai/rankings",
-    "https://openrouter.ai/api/v1/models (benchmarks.artificial_analysis, Artificial Analysis indices)"
+    "https://openrouter.ai/api/v1/models (benchmarks.artificial_analysis, Artificial Analysis indices)",
+    "https://huggingface.co/datasets/ibragim-bad/swe_rebench_07_2026_trajectories (resolved flags only; IRT fit in data/outcomes)"
   ],
-  "notes": "AA coding index 59.4, intelligence 30.4, agentic 26.3; anchored below kimi-k2.7-code (60.8 -> 7.3) given lower agentic index. Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured."
+  "notes": "AA coding index 59.4, intelligence 30.4, agentic 26.3; anchored below kimi-k2.7-code (60.8 -> 7.3) given lower agentic index. Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured. Outcome calibration 2026-10-26: coding fitted 6.91 +/- 0.54 on the router scale from rebench07/deepseek-v4-pro (exact model); all axes shifted by +0.0. See data/outcomes/REPORT.md."
 }

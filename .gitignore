@@ -12,3 +12,4 @@ checkpoints/
 .DS_Store
 data/gold/raw/
 data/gold/cache/
+eval_reports/cache/

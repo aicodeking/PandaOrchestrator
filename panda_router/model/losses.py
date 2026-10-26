@@ -37,34 +37,39 @@ def head_losses(out: dict, y: dict) -> dict:
     }
 
 
-def anchor_loss(out: dict, anchor: torch.Tensor) -> torch.Tensor | None:
-    """Smooth-L1 between expected difficulty (1..10) and an outcome anchor (NaN = no anchor for that row)."""
+def anchor_loss(out: dict, anchor: torch.Tensor, weight: torch.Tensor | None = None) -> torch.Tensor | None:
+    """Weighted smooth-L1 between expected difficulty (1..10) and an outcome anchor (NaN = no anchor)."""
     m = torch.isfinite(anchor)
     if not bool(m.any()):
         return None
     ed = expected_level(corn_level_probs(out["difficulty"]), 1.0)
-    return F.smooth_l1_loss(ed[m], anchor[m])
+    per_row = F.smooth_l1_loss(ed[m], anchor[m], reduction="none")
+    return _wmean(per_row, None if weight is None else weight[m])
 
 
 def _kl_cat(p_t, p_s):
-    return (p_t * (p_t.clamp_min(1e-8).log() - p_s.clamp_min(1e-8).log())).sum(-1).mean()
+    return (p_t * (p_t.clamp_min(1e-8).log() - p_s.clamp_min(1e-8).log())).sum(-1)
 
 
 def _kl_bern(p_t, p_s):
     p_t, p_s = p_t.clamp(1e-6, 1 - 1e-6), p_s.clamp(1e-6, 1 - 1e-6)
-    return (p_t * (p_t / p_s).log() + (1 - p_t) * ((1 - p_t) / (1 - p_s)).log()).mean()
+    return (p_t * (p_t / p_s).log() + (1 - p_t) * ((1 - p_t) / (1 - p_s)).log()).mean(-1)
 
 
-def distill_losses(out: dict, teacher: dict, T: float = 3.0) -> dict:
-    """KL per head at temperature T (scaled by T^2); quantile head regresses teacher quantiles."""
+def distill_losses(out: dict, teacher: dict, T: float = 3.0, w: torch.Tensor | None = None) -> dict:
+    """KL per head at temperature T (scaled by T^2); quantile head regresses teacher quantiles.
+    Rows are weighted by `w` (0 masks a row, e.g. outcome-anchor rows)."""
     t2 = T * T
     return {
-        "category": t2 * _kl_cat(F.softmax(teacher["category"] / T, -1), F.softmax(out["category"] / T, -1)),
-        "difficulty": t2 * _kl_cat(corn_level_probs(teacher["difficulty"] / T), corn_level_probs(out["difficulty"] / T)),
-        "skills": t2 * _kl_cat(corn_level_probs(teacher["skills"] / T), corn_level_probs(out["skills"] / T)),
-        "flags": t2 * _kl_bern(torch.sigmoid(teacher["flags"] / T), torch.sigmoid(out["flags"] / T)),
-        "checklist": t2 * _kl_bern(torch.sigmoid(teacher["checklist"] / T), torch.sigmoid(out["checklist"] / T)),
-        "out_tokens": F.smooth_l1_loss(out["out_tokens"], teacher["out_tokens"]),
+        "category": t2 * _wmean(_kl_cat(F.softmax(teacher["category"] / T, -1), F.softmax(out["category"] / T, -1)), w),
+        "difficulty": t2 * _wmean(_kl_cat(corn_level_probs(teacher["difficulty"] / T),
+                                          corn_level_probs(out["difficulty"] / T)), w),
+        "skills": t2 * _wmean(_kl_cat(corn_level_probs(teacher["skills"] / T),
+                                      corn_level_probs(out["skills"] / T)).mean(-1), w),
+        "flags": t2 * _wmean(_kl_bern(torch.sigmoid(teacher["flags"] / T), torch.sigmoid(out["flags"] / T)), w),
+        "checklist": t2 * _wmean(_kl_bern(torch.sigmoid(teacher["checklist"] / T),
+                                          torch.sigmoid(out["checklist"] / T)), w),
+        "out_tokens": _wmean(F.smooth_l1_loss(out["out_tokens"], teacher["out_tokens"], reduction="none").mean(-1), w),
     }
 
 
@@ -123,18 +128,29 @@ def pair_loss(out: dict, pairs: list, margin_scale: float = 0.5) -> torch.Tensor
 
 
 class LossNormalizer:
-    """Divides each named loss by its first observed (non-zero) value."""
+    """Divides each named loss by its mean over the first `warmup` observed steps (floored).
 
-    def __init__(self):
-        self.init: dict[str, float] = {}
+    Sparse hinge losses (pair, anchor, regret) are often ~0 on any single batch, so a first-batch scale is
+    noisy; the running mean over the warm-up window is stable and the scale is frozen afterwards.
+    """
+
+    def __init__(self, warmup: int = 50, floor: float = 1e-3):
+        self.warmup, self.floor = warmup, floor
+        self.init: dict[str, float] = {}  # frozen scale (non-empty only once warm-up is done)
+        self._sum: dict[str, float] = {}
+        self._n: dict[str, int] = {}
+
+    def _scale(self, name: str) -> float:
+        n = self._n.get(name, 0)
+        return max(self._sum.get(name, 0.0) / n, self.floor) if n else 1.0
 
     def __call__(self, name: str, value: torch.Tensor) -> torch.Tensor:
         if name not in self.init:
-            v = float(value.detach())
-            if v <= 1e-8:
-                return value
-            self.init[name] = v
-        return value / self.init[name]
+            self._sum[name] = self._sum.get(name, 0.0) + float(value.detach())
+            self._n[name] = self._n.get(name, 0) + 1
+            if self._n[name] >= self.warmup:
+                self.init[name] = self._scale(name)
+        return value / self.init.get(name, self._scale(name))
 
     def state_dict(self):
-        return dict(self.init)
+        return {k: self.init.get(k, self._scale(k)) for k in self._n}
