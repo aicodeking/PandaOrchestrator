@@ -1,7 +1,7 @@
 {
   "profiler": "onnx:artifacts/s68m_soup",
   "split": "test",
-  "data": "/Users/king/PandaOrchestrator/data/test.jsonl",
+  "data": "data/test.jsonl",
   "n": 300,
   "sources": {
     "minimal-pair": 89,
@@ -424,7 +424,7 @@
     }
   },
   "routing": {
-    "card_source": "/Users/king/PandaOrchestrator/cards",
+    "card_source": "cards",
     "n_pools": 500,
     "pools_per_task": 50,
     "modes": [

@@ -1,7 +1,7 @@
 {
   "profiler": "torch:checkpoints/v2_32_a1r0/best",
   "split": "gold",
-  "data": "/Users/king/PandaOrchestrator/data/gold/gold.jsonl",
+  "data": "data/gold/gold.jsonl",
   "n": 329,
   "sources": {
     "swe-rebench": 109,
@@ -409,7 +409,7 @@
     }
   },
   "routing": {
-    "card_source": "/Users/king/PandaOrchestrator/cards",
+    "card_source": "cards",
     "n_pools": 500,
     "pools_per_task": 50,
     "modes": [

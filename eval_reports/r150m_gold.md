@@ -23,7 +23,7 @@ Latency (batch 1): p50 29.33 ms, p95 99.387 ms
 | swe-smith | 23 | 1.000 | 0.672 | 0.716 | 0.838 | 0.724 |
 | wildchat | 170 | 0.512 | 0.924 | 0.694 | 0.237 | 0.407 |
 
-## Routing (cards: /Users/king/PandaOrchestrator/cards, 500 pools, 50 pools/task)
+## Routing (cards: cards, 500 pools, 50 pools/task)
 
 | policy | mode | n | pick agree | utility regret | cost ratio | P(success) | P<0.75 | P·quality | oracle P·quality | infeasible |
 |---|---|---|---|---|---|---|---|---|---|---|

@@ -24,7 +24,7 @@ Latency (batch 1): p50 30.387 ms, p95 55.888 ms
 | synthetic | 68 | 0.338 | 0.736 | 0.584 | 0.637 | 0.617 |
 | wildchat | 83 | 0.361 | 1.514 | 0.303 | 0.304 | 0.306 |
 
-## Routing (cards: /Users/king/PandaOrchestrator/cards, 500 pools, 50 pools/task)
+## Routing (cards: cards, 500 pools, 50 pools/task)
 
 | policy | mode | n | pick agree | utility regret | cost ratio | P(success) | P<0.75 | P·quality | oracle P·quality | infeasible |
 |---|---|---|---|---|---|---|---|---|---|---|

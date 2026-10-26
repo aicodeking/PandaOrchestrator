@@ -1,7 +1,7 @@
 {
   "profiler": "onnx:artifacts/s32m_soup",
   "split": "gold",
-  "data": "/Users/king/PandaOrchestrator/data/gold/gold.jsonl",
+  "data": "data/gold/gold.jsonl",
   "n": 285,
   "sources": {
     "swe-rebench": 92,
@@ -409,7 +409,7 @@
     }
   },
   "routing": {
-    "card_source": "/Users/king/PandaOrchestrator/cards",
+    "card_source": "cards",
     "n_pools": 500,
     "pools_per_task": 50,
     "modes": [

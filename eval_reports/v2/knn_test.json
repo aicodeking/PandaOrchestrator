@@ -1,7 +1,7 @@
 {
   "profiler": "knn",
   "split": "test",
-  "data": "/Users/king/PandaOrchestrator/data/test.jsonl",
+  "data": "data/test.jsonl",
   "n": 364,
   "sources": {
     "minimal-pair": 78,
@@ -424,7 +424,7 @@
     }
   },
   "routing": {
-    "card_source": "/Users/king/PandaOrchestrator/cards",
+    "card_source": "cards",
     "n_pools": 500,
     "pools_per_task": 50,
     "modes": [

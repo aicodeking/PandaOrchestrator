@@ -3,13 +3,16 @@ name = "panda-router"
 version = "0.1.0"
 description = "Small local task profiler + card matcher for routing tasks to LLMs"
 requires-python = ">=3.12"
-dependencies = [
-  "torch", "transformers", "datasets", "onnx", "onnxruntime", "optimum[onnxruntime]",
-  "scikit-learn", "numpy", "scipy", "jsonschema",
-]
+dependencies = ["numpy", "scipy", "jsonschema", "onnxruntime", "transformers"]  # serving only (tokenizer; no torch)
 
 [project.optional-dependencies]
+train = ["torch", "transformers", "datasets", "onnx", "optimum[onnxruntime]", "scikit-learn"]
 dev = ["pytest"]
+
+[project.scripts]
+panda-router = "panda_router.serve.cli:main"
+panda-router-serve = "panda_router.serve.__main__:main"
+panda-router-mcp = "panda_router.mcp.server:main"
 
 [tool.setuptools.packages.find]
 include = ["panda_router*"]

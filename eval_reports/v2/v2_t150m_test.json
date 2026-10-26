@@ -1,7 +1,7 @@
 {
   "profiler": "onnx:artifacts/v2_t150m",
   "split": "test",
-  "data": "/Users/king/PandaOrchestrator/data/test.jsonl",
+  "data": "data/test.jsonl",
   "n": 364,
   "sources": {
     "minimal-pair": 78,

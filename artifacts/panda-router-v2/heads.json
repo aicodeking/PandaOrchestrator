@@ -1,0 +1,136 @@
+{
+  "taxonomy_version": "1.0.0",
+  "temperatures": {
+    "category": 1.1067183252969188,
+    "difficulty": 1.255628148361063,
+    "skills": [
+      1.096172422509523,
+      0.9914073624507538,
+      1.2776804208187762,
+      0.987330001020533,
+      1.0303564449162295,
+      1.211644013052648,
+      1.0574166539335024,
+      1.2037538495617257,
+      0.9378717586557537,
+      1.094024742439268
+    ],
+    "flags": 1.034658765255391,
+    "checklist": 1.0098071371098145,
+    "out_tokens_width": 1.3278094214234797
+  },
+  "label_order": {
+    "categories": [
+      "implementation",
+      "bugfix",
+      "refactor",
+      "test_writing",
+      "code_review",
+      "research",
+      "planning",
+      "docs_writing",
+      "ui_frontend",
+      "data_analysis",
+      "devops_infra",
+      "math_reasoning",
+      "chat_simple"
+    ],
+    "skill_axes": [
+      "coding",
+      "debugging",
+      "reasoning",
+      "math",
+      "writing",
+      "research",
+      "review",
+      "planning",
+      "ui_frontend",
+      "data_analysis"
+    ],
+    "flags": [
+      "needs_tools",
+      "needs_vision",
+      "long_context",
+      "needs_review",
+      "ambiguous_spec",
+      "multi_file",
+      "needs_web"
+    ],
+    "checklist": [
+      "edits_code",
+      "touches_gt3_files",
+      "new_feature",
+      "has_failing_behavior",
+      "needs_root_cause",
+      "needs_run_commands",
+      "needs_browser_or_web",
+      "has_images",
+      "input_gt_50k_tokens",
+      "concurrency_or_distributed",
+      "security_sensitive",
+      "formal_math_or_proof",
+      "domain_expertise",
+      "clear_acceptance_criteria",
+      "undefined_terms",
+      "design_decisions",
+      "visual_ui_work",
+      "writes_prose",
+      "data_processing",
+      "infra_config",
+      "multi_step_plan",
+      "reviews_existing_work",
+      "trivial_one_liner",
+      "high_stakes"
+    ],
+    "difficulty_levels": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "skill_levels": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "out_tokens_quantiles": [
+      "p10",
+      "p50",
+      "p90"
+    ],
+    "outputs": [
+      "category",
+      "difficulty",
+      "skills",
+      "flags",
+      "checklist",
+      "out_tokens"
+    ]
+  },
+  "backbone": "jhu-clsp/ettin-encoder-32m",
+  "max_len": 512,
+  "buckets": [
+    64,
+    128,
+    256,
+    512
+  ],
+  "source_checkpoint": "checkpoints/v2_s32m/best",
+  "int8_excluded_nodes": [],
+  "int8_per_channel": true,
+  "opset": 17
+}

@@ -411,7 +411,7 @@
     }
   },
   "routing": {
-    "card_source": "/Users/king/PandaOrchestrator/cards",
+    "card_source": "cards",
     "n_pools": 500,
     "pools_per_task": 50,
     "modes": [

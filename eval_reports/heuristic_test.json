@@ -1,7 +1,7 @@
 {
   "profiler": "heuristic",
   "split": "test",
-  "data": "/Users/king/PandaOrchestrator/data/test.jsonl",
+  "data": "data/test.jsonl",
   "n": 239,
   "sources": {
     "minimal-pair": 29,
@@ -420,7 +420,7 @@
     }
   },
   "routing": {
-    "card_source": "/Users/king/PandaOrchestrator/cards",
+    "card_source": "cards",
     "n_pools": 500,
     "pools_per_task": 50,
     "modes": [
