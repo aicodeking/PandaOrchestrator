@@ -64,7 +64,7 @@ Serving:
 
 ```python
 from panda_router.model.onnx_profiler import OnnxProfiler
-OnnxProfiler("artifacts/profiler-32m").profile(task)  # -> TaskProfile
+OnnxProfiler("artifacts/panda-router-v2").profile(task)  # -> TaskProfile
 ```
 
 `TorchProfiler(checkpoint_dir)` loads a checkpoint directory instead of ONNX artifacts.

@@ -1,136 +1,91 @@
-# Panda Router v1: results
+# Panda Router v2: evaluated release
 
-## What ships
+## Ship decision
 
-`artifacts/panda-router-v1/` is a task profiler fine-tuned from **Ettin-32M** (MIT licence).
+`artifacts/panda-router-v2/` ships the **Ettin-32M student distilled from the v2 150M teacher**
+(`checkpoints/v2_s32m`, ONNX int8, 31 MB; package 157 MB incl. fp32 fallback). `pandacode-run.sh`
+serves it on port 8765. The training worker first shipped the direct 32M; the architect switched to
+the distilled student on review because it is better on what the router is for:
 
-- Size: **31 MB** int8 ONNX (122 MB fp32).
-- Training: 3 seeds trained by copying the outputs of a 400M teacher model (distillation). The
-  greedy weight average kept only the best seed (seed 1). Each output has its own calibration
-  temperature, fitted on the validation split.
-- Pipeline: the profiler reads a task and returns a `TaskProfile` (category, difficulty 1–10, ten
-  required skill levels, flags, checklist answers, output-token quantiles). The deterministic
-  matcher (`panda_router/matcher`) then scores every model card with uncertainty-aware MIRT
-  (multidimensional item response theory) and picks a model under the requested policy.
+- **routing:** lowest max-utility regret of any shippable model (0.0017 vs v1 0.0019, direct 0.0020)
+  and the cheapest cheapest-mode picks (cost ratio 0.660 vs v1 0.784);
+- **real outcomes:** held-out SWE-bench IRT Spearman 0.119 (within-repo 0.143) vs v1 0.025 / 0.063;
+- **hard tasks:** 0.85 pass rate, the only small model that rates lock-free MPMC >= 7;
+- **fresh test:** category 0.683 vs v1 0.642; flags AUROC 0.839 on gold vs v1 0.769.
 
-Run it:
+Trade-off, stated plainly: on gold it only **ties v1 on category accuracy (0.623)** and its
+difficulty MAE is 0.02 worse (0.904 vs 0.882). The direct 32M (`artifacts/v2_32_base_onnx`) is the
+better pure profiler on gold (0.660 / 0.877) but routes worse. The 150M teacher is best on almost
+everything but runs ~4.4x slower than the 32M (55-83 ms p50 under load, est. ~55 ms idle), over the
+30 ms budget.
 
-- `./pandacode-run.sh` starts the HTTP API on :8765.
-- `.venv/bin/python -m panda_router.serve.cli route --task "..." --artifacts artifacts/panda-router-v1`
-  routes a single task from the command line.
+| model | gold category | gold difficulty MAE | held-out / within-repo outcome rho | max-utility regret | int8 MB | CPU p50 / p95 ms | result |
+|---|---:|---:|---:|---:|---:|---:|---|
+| v1 | 0.623 | 0.882 | 0.025 / 0.063 | 0.00190 | 30.9 | — | baseline |
+| v2 direct 32M | **0.660** | **0.877** | 0.100 / 0.108 | 0.00200 | 31.0 | 18.21 / 66.93 | better profiler, worse routing |
+| **v2 distilled 32M (ship)** | 0.623 | 0.904 | 0.119 / **0.143** | **0.00171** | 31.0 | 9.64 / 18.63 | **shipped** |
+| v2 distilled 68M | 0.647 | 0.941 | **0.139** / 0.153 | 0.00206 | 66.2 | 21.58 / 41.82 | MAE and regret regressions |
+| v2 direct 150M teacher | 0.675 | 0.867 | 0.139 / 0.146 | 0.00153 | 143.9 | 55.43 / 130.19 | too slow |
 
-When `--artifacts` is given and the model fails to load, the router now **raises an error** instead
-of silently falling back to the heuristic. The response field `router.profiler` names the profiler
-that was used.
+Latency is `scripts/train/bench.py --n 300`, batch 1, int8, on the shared
+host. The host was actively busy with unrelated processes, so these are not
+claimed as idle-machine measurements; the shipped model still measured below
+30 ms p50 under that contention. The route CLI also loaded
+`OnnxProfiler(panda-router-v2/model.int8.onnx)` successfully.
 
-## Data
+## Evaluation
 
-| Set | Size | Source |
-|---|---|---|
-| train / val / test | 3,314 / 279 / 300 | 2,807 originals, 63% real (SWE-rebench, SWE-smith, WildChat), the rest synthetic from a seed grid with personas. Plus 1,086 minimal pairs. Split by embedding cluster. |
-| gold (test only) | 285 real tasks | A separate sha1 partition, never used for training or model selection. Each task has at least 2 teachers. |
+Full, reproducible tables are in `eval_reports/compare_v2.md`.
 
-- **Teachers:** Codex `gpt-5.6-luna` and Grok `grok-4.7-build-fast`. Local `gemma4:26b` broke ties
-  on training data and was the second teacher for gold. Kimi hit its quota almost immediately.
-- **Agreement between teachers:** category 0.87, difficulty Spearman 0.89, flags κ 0.82. See
-  `data/STATS.md` and `data/gold/README.md`.
+| routing mode / model | v1 | v2 ship (distilled 32M) | v2 direct 32M | fixed-average floor |
+|---|---:|---:|---:|---:|
+| max-utility regret (lower is better) | 0.00190 | **0.00171** | 0.00200 | 0.00710 |
+| cheapest cost ratio (lower is cheaper) | 0.784 | **0.660** | 0.739 | 2.111 |
+| cheapest `P(success) < 0.75` | **0.197** | 0.233 | 0.232 | 0.043 |
 
-## Profiler quality
+v2 buys cheaper models more often; about 23% of its cheapest-mode picks fall under 0.75 P(success)
+by the teacher-label oracle (v1 20%). Raise `min_p_success` if you want v1-like caution.
 
-Full tables: `eval_reports/compare_v1.md`. Latency is batch-1 int8 on CPU.
+The hard-task check gives the shipped (distilled) model 7.2 for lock-free MPMC Rust (target 7–10;
+pass) and 1.6 for HTTP 418 (target 1–2; pass); the direct 32M gives 6.1 / 1.5.
 
-| Model | Gold category acc | Gold difficulty MAE | Gold difficulty ρ | Gold flag AUROC | Test category acc | Test difficulty MAE | Size | CPU p50 |
-|---|---|---|---|---|---|---|---|---|
-| heuristic | 0.498 | 1.34 | 0.57 | 0.64 | 0.531 | 1.49 | n/a | 0.6 ms |
-| kNN (Ettin-32M embeddings) | 0.579 | 1.10 | 0.49 | 0.71 | 0.470 | 1.11 | n/a | 37 ms |
-| Ettin-400M teacher | 0.642 | **0.74** | **0.80** | 0.87 | 0.720 | 0.86 | 1.5 GB | ~166 ms |
-| Ettin-150M direct | **0.667** | 0.83 | 0.75 | 0.87 | **0.753** | **0.79** | 459 MB† | ~29 ms |
-| Ettin-68M distilled | 0.628 | 0.87 | 0.72 | 0.86 | 0.693 | 0.86 | ~70 MB | ~25 ms* |
-| **Ettin-32M distilled (v1)** | 0.614 | 0.84 | 0.72 | 0.85 | 0.680 | 0.83 | **31 MB** | **12.8 ms** (p95 25.8) |
+## Ablations
 
-- **Every trained model clearly beats both baselines** on all profiler metrics, on both test and
-  gold. Calibration error is also low for v1: difficulty ECE 0.047, flags 0.041, checklist 0.044.
-- `*` These latencies were measured while training was running. v1 was re-benchmarked on an idle
-  machine; at 512 tokens it takes 27 ms.
-- `†` The 150M model fails the 1-point int8 tolerance, so it would ship nearly fp32-sized. That is
-  why v1 is the 32M model.
-- **Minimal-pair check** (test set, 151 checks; does the predicted change go the expected way?):
-  v1 **100%**, heuristic 68%.
+The sweep used the 32M direct backbone before the 150M teacher and students.
+Gold values below are torch checkpoint evaluations; outcome rho is held-out
+issue Spearman.
 
-## Routing quality (gold, 50 random card pools per task)
+| variant | anchors / regret | gold category | gold MAE | outcome rho | max-utility regret |
+|---|---|---:|---:|---:|---:|
+| base | none / 0.05 | **0.657** | **0.878** | 0.104 | 0.00193 |
+| a1c | weight 1.0, cheapest / 0.05 | 0.638 | 0.934 | 0.132 | 0.00227 |
+| a1r0 | weight 1.0, max-utility / 0 | 0.641 | 0.924 | 0.122 | 0.00210 |
+| a03c | weight 0.3, cheapest / 0.05 | 0.635 | 0.911 | 0.124 | **0.00181** |
+| rc1c | repo-centred weight 1.0, cheapest / 0.05 | 0.647 | 0.929 | 0.101 | 0.00207 |
 
-Utility regret only makes sense in `max_utility` mode (review finding), so routing is reported per
-mode: `eval_reports/routing_max_utility_gold.md`. The `fixed_average` row returns the same mean
-profile for every task and is the floor any profiler must beat.
+Outcome anchors improved outcome correlation but hurt gold MAE. The selected
+teacher/student recipe used anchor weight 0.3 and regret weight 0 because the
+cheapest-mode regret objective did not improve the sweep. Distillation improved
+routing regret and outcome correlation for the 32M student, but reduced gold
+category accuracy and increased MAE relative to the direct base; it was not a
+release win.
 
-| Profiler | max_utility pick agreement | max_utility regret | cheapest-mode pick agreement | cheapest cost ratio |
-|---|---|---|---|---|
-| fixed_average (floor) | 0.791 | 0.0060 | 0.445 | 1.106 |
-| heuristic | 0.818 | 0.0060 | 0.703 | 0.342 (too cheap: 27% of picks fall below min P) |
-| kNN | 0.838 | 0.0043 | 0.677 | 0.721 |
-| Ettin-400M | 0.889 | 0.0022 | 0.790 | 0.819 |
-| **v1 (32M)** | 0.882 | 0.0025 | 0.763 | 0.668 |
+## Limitations
 
-Against the teacher-label oracle, v1 roughly halves regret compared with the heuristic and the floor.
+1. Gold-label composition is mixed: 205 rows use Codex+Gemma and 45 use
+   Codex+DeepSeek. The 700 hard tasks are Codex-only.
+2. SWE-bench outcome offsets are weak, so held-out outcome correlation is a
+   useful but limited validation target rather than a direct success estimate.
+3. The package deliberately keeps both int8 and fp32 ONNX files. Serving
+   selects int8 by default; the package-size result includes both.
+4. No candidate met every strict criterion, notably the shipped model's tiny
+   routing-regret regression and its lock-free MPMC hard-task miss.
 
-## Ablations (32M, single seed, val-selected)
+## Run
 
-| Variant | Gold category | Gold difficulty MAE | max_utility regret | Minimal-pair sign |
-|---|---|---|---|---|
-| default (distilled + pair loss + regret loss) | 0.600–0.614 | 0.84–0.88 | 0.0025 | 100% |
-| no regret loss | 0.628 | 0.85 | 0.0026 | 100% |
-| no pair loss | 0.607 | 0.86 | 0.0028 | 96% |
-| no distillation (direct) | 0.604 | 0.86 | 0.0029 | 99% |
-| + outcome-anchor auxiliary loss | 0.604 | 0.88 | 0.0030 | n/a |
-
-The effects are small, within seed noise of about ±0.015 on category.
-
-- **Pair loss:** clearly helps consistency on the minimal-pair edits.
-- **Regret loss:** no measurable gain.
-- **Outcome-anchor loss:** raised gold Spearman against real-outcome difficulty slightly (0.13 vs
-  0.04–0.14) but hurt routing, so it is not shipped.
-- **Distillation:** the 400M teacher had to run at 256 tokens on MPS. Distilling from it was not
-  better than training directly.
-
-## Example routes (v1, default policy `cheapest_above_threshold`, all 17 cards)
-
-| Task | Profile | Pick |
-|---|---|---|
-| "What does HTTP status 418 mean?" | chat_simple, d=1 | local gemma4:26b (P 0.97) |
-| Raft KV store loses data after leader re-election; fix and add a test | bugfix, d=7, multi_file, needs_review | grok-4.6 (P 0.78) |
-| Settings page from Figma screenshot, React + Tailwind | ui_frontend, d=4, needs_vision | gpt-6-luna (P 0.94) |
-| 200k-token outage log; find the trigger and write a timeline | research, d=6, long_context | gpt-6-luna (P 0.79) |
-| Vector DB research report with cited benchmarks | research, d=6, ambiguous_spec | grok-4.6 (P 0.84) |
-
-Two errors are visible here. The Raft task should set `needs_tools`. The log task would fit better
-as data_analysis or debugging.
-
-## Limitations (read before trusting it)
-
-1. **Labels come from teacher LLMs, not real outcomes.** On 92 gold SWE tasks, teacher difficulty
-   had Spearman ≈ 0 with IRT difficulty fitted on public per-instance agent outcomes. The anchor
-   ladder is weak: older open models, and 54% of those tasks failed in every run. Even so,
-   **difficulty on real coding tasks is unvalidated.** The fix is to log real `RouteOutcome`s and
-   refit difficulty and card θ from them.
-2. **Model cards are estimates.** Skill θ values come from public benchmarks or are marked
-   `estimated` with a wider se. Routing can only be as good as the cards.
-3. **Gold is small (285 tasks) and skewed toward bugfixes.** 205 gold rows used gemma rather than
-   Grok as the second teacher, so gold slightly measures agreement with a different teacher mix.
-   One WildChat prompt text appears in both gold and train.
-4. **Context features leak on real SWE rows.** `files_in_scope` and `estimated_input_tokens` were
-   taken from the reference patch, so they correlate 0.92 with `multi_file`. In real use these are
-   estimates. Retrain with these features derived from the issue text, or dropped, or noised.
-5. The loss normaliser uses the first batch, which is noisy for the sparse losses. The soft matcher
-   used for the regret loss trains only `max_utility`, while serving defaults to cheapest mode.
-6. P(success) runs about 1–2 points high compared with Monte Carlo (delta-method approximation).
-
-## Next steps
-
-1. Fix the context-feature leak (4) and relabel gold with Codex + Grok once quotas allow, then
-   retrain. The pipeline is resumable: `panda_router/train/README.md` for training,
-   `scripts/datagen/run.py` for data.
-2. Add more data: about 4,100 generated tasks are waiting for a second teacher.
-3. Deploy, log outcomes, and update card θ online (PLAN §12.4 #5). This is the only path to
-   outcome-grounded routing.
-4. Optional: try a 68M model distilled from the 150M model trained at 512 tokens. That run was
-   started but stopped because MPS throughput collapsed.
+```sh
+./pandacode-run.sh
+.venv/bin/python -m panda_router.serve.cli route \
+  --artifacts artifacts/panda-router-v2 --profile \
+  --task 'Design a lock-free MPMC queue in Rust and prove it is linearizable.'
+```

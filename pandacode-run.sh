@@ -1,5 +1,5 @@
 #!/bin/sh
-# Panda Router v1: local routing API (POST /route, /escalate, /outcome; GET /health) on port 8765.
+# Panda Router v2: local routing API (POST /route, /escalate, /outcome; GET /health) on port 8765.
 set -eu
 cd "$(dirname "$0")"
-exec .venv/bin/python -m panda_router.serve --port 8765 --artifacts artifacts/panda-router-v1
+exec .venv/bin/python -m panda_router.serve --port 8765 --artifacts artifacts/panda-router-v2

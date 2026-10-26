@@ -1,0 +1,927 @@
+{
+  "onnx:artifacts/panda-router-v1": {
+    "pass_rate": 0.8,
+    "rows": [
+      {
+        "band": "easy",
+        "text": "What does HTTP 418 mean?",
+        "expected_difficulty": 1.46,
+        "lo": 1.0,
+        "hi": 2.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Convert 72 degrees Fahrenheit to Celsius.",
+        "expected_difficulty": 1.84,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Fix the typo 'recieve' -> 'receive' in README.md.",
+        "expected_difficulty": 2.2,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "easy",
+        "text": "What is the capital of Australia?",
+        "expected_difficulty": 1.76,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Write a one-line Python expression that reverses a string s.",
+        "expected_difficulty": 2.11,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "easy",
+        "text": "Rename the variable `tmp` to `buffer` in utils/io.py.",
+        "expected_difficulty": 2.77,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "easy",
+        "text": "Give me a synonym for 'happy'.",
+        "expected_difficulty": 1.72,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "medium",
+        "text": "Add pagination (limit/offset query params) to the GET /users endpoint of our FastAPI app and update the tests.",
+        "expected_difficulty": 3.75,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "medium",
+        "text": "Write a bash script that rotates the logs in /var/log/myapp daily and keeps 7 compressed copies.",
+        "expected_difficulty": 4.44,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "medium",
+        "text": "Our React form re-renders on every keystroke and feels slow; find why and fix it.",
+        "expected_difficulty": 4.83,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "medium",
+        "text": "Write a SQL query that returns the top 3 customers by revenue per month from orders(customer_id, amount, created_at).",
+        "expected_difficulty": 3.01,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "data_analysis"
+      },
+      {
+        "band": "medium",
+        "text": "Refactor the payment module to use dependency injection for the gateway client; keep behaviour unchanged.",
+        "expected_difficulty": 4.97,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "medium",
+        "text": "Explain the difference between optimistic and pessimistic locking with examples.",
+        "expected_difficulty": 2.05,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": false,
+        "category": "chat_simple"
+      },
+      {
+        "band": "hard",
+        "text": "Design a lock-free MPMC queue in Rust and prove it is linearizable",
+        "expected_difficulty": 5.19,
+        "lo": 7.0,
+        "hi": 10.0,
+        "pass": false,
+        "category": "implementation"
+      },
+      {
+        "band": "hard",
+        "text": "Our Raft-based KV store loses acknowledged writes after a leader re-election under network partitions. Find the bug in the log replication code and add a Jepsen-style test.",
+        "expected_difficulty": 5.75,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": false,
+        "category": "bugfix"
+      },
+      {
+        "band": "hard",
+        "text": "Implement a garbage collector (concurrent mark-sweep with write barriers) for our toy JVM in C++.",
+        "expected_difficulty": 6.34,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "hard",
+        "text": "Prove that every planar graph is 5-colorable, then give a linear-time 5-coloring algorithm.",
+        "expected_difficulty": 4.02,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": false,
+        "category": "chat_simple"
+      },
+      {
+        "band": "hard",
+        "text": "Port our CUDA attention kernel to Metal while keeping numerical parity within 1e-3 and beating the PyTorch MPS baseline.",
+        "expected_difficulty": 6.11,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "hard",
+        "text": "Find and fix the data race that corrupts the B-tree under concurrent splits in our storage engine; it only reproduces under heavy load.",
+        "expected_difficulty": 6.88,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "hard",
+        "text": "Design a multi-region active-active payment ledger with exactly-once semantics and write the consistency argument.",
+        "expected_difficulty": 6.0,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "implementation"
+      }
+    ]
+  },
+  "onnx:artifacts/v2_t150m": {
+    "pass_rate": 0.6,
+    "rows": [
+      {
+        "band": "easy",
+        "text": "What does HTTP 418 mean?",
+        "expected_difficulty": 1.74,
+        "lo": 1.0,
+        "hi": 2.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Convert 72 degrees Fahrenheit to Celsius.",
+        "expected_difficulty": 2.11,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Fix the typo 'recieve' -> 'receive' in README.md.",
+        "expected_difficulty": 2.96,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "easy",
+        "text": "What is the capital of Australia?",
+        "expected_difficulty": 2.32,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Write a one-line Python expression that reverses a string s.",
+        "expected_difficulty": 1.81,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "easy",
+        "text": "Rename the variable `tmp` to `buffer` in utils/io.py.",
+        "expected_difficulty": 2.28,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "easy",
+        "text": "Give me a synonym for 'happy'.",
+        "expected_difficulty": 1.83,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "medium",
+        "text": "Add pagination (limit/offset query params) to the GET /users endpoint of our FastAPI app and update the tests.",
+        "expected_difficulty": 4.26,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "medium",
+        "text": "Write a bash script that rotates the logs in /var/log/myapp daily and keeps 7 compressed copies.",
+        "expected_difficulty": 2.7,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": false,
+        "category": "implementation"
+      },
+      {
+        "band": "medium",
+        "text": "Our React form re-renders on every keystroke and feels slow; find why and fix it.",
+        "expected_difficulty": 4.35,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "medium",
+        "text": "Write a SQL query that returns the top 3 customers by revenue per month from orders(customer_id, amount, created_at).",
+        "expected_difficulty": 2.95,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": false,
+        "category": "data_analysis"
+      },
+      {
+        "band": "medium",
+        "text": "Refactor the payment module to use dependency injection for the gateway client; keep behaviour unchanged.",
+        "expected_difficulty": 2.94,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": false,
+        "category": "refactor"
+      },
+      {
+        "band": "medium",
+        "text": "Explain the difference between optimistic and pessimistic locking with examples.",
+        "expected_difficulty": 2.55,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": false,
+        "category": "chat_simple"
+      },
+      {
+        "band": "hard",
+        "text": "Design a lock-free MPMC queue in Rust and prove it is linearizable",
+        "expected_difficulty": 5.78,
+        "lo": 7.0,
+        "hi": 10.0,
+        "pass": false,
+        "category": "math_reasoning"
+      },
+      {
+        "band": "hard",
+        "text": "Our Raft-based KV store loses acknowledged writes after a leader re-election under network partitions. Find the bug in the log replication code and add a Jepsen-style test.",
+        "expected_difficulty": 7.13,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "hard",
+        "text": "Implement a garbage collector (concurrent mark-sweep with write barriers) for our toy JVM in C++.",
+        "expected_difficulty": 6.23,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "hard",
+        "text": "Prove that every planar graph is 5-colorable, then give a linear-time 5-coloring algorithm.",
+        "expected_difficulty": 5.26,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": false,
+        "category": "math_reasoning"
+      },
+      {
+        "band": "hard",
+        "text": "Port our CUDA attention kernel to Metal while keeping numerical parity within 1e-3 and beating the PyTorch MPS baseline.",
+        "expected_difficulty": 5.64,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": false,
+        "category": "implementation"
+      },
+      {
+        "band": "hard",
+        "text": "Find and fix the data race that corrupts the B-tree under concurrent splits in our storage engine; it only reproduces under heavy load.",
+        "expected_difficulty": 7.45,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "hard",
+        "text": "Design a multi-region active-active payment ledger with exactly-once semantics and write the consistency argument.",
+        "expected_difficulty": 5.51,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": false,
+        "category": "implementation"
+      }
+    ]
+  },
+  "onnx:artifacts/v2_s68m": {
+    "pass_rate": 0.8,
+    "rows": [
+      {
+        "band": "easy",
+        "text": "What does HTTP 418 mean?",
+        "expected_difficulty": 2.24,
+        "lo": 1.0,
+        "hi": 2.0,
+        "pass": false,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Convert 72 degrees Fahrenheit to Celsius.",
+        "expected_difficulty": 2.29,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Fix the typo 'recieve' -> 'receive' in README.md.",
+        "expected_difficulty": 2.93,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "easy",
+        "text": "What is the capital of Australia?",
+        "expected_difficulty": 2.68,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Write a one-line Python expression that reverses a string s.",
+        "expected_difficulty": 2.3,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "easy",
+        "text": "Rename the variable `tmp` to `buffer` in utils/io.py.",
+        "expected_difficulty": 2.55,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "easy",
+        "text": "Give me a synonym for 'happy'.",
+        "expected_difficulty": 2.41,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "medium",
+        "text": "Add pagination (limit/offset query params) to the GET /users endpoint of our FastAPI app and update the tests.",
+        "expected_difficulty": 3.92,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "medium",
+        "text": "Write a bash script that rotates the logs in /var/log/myapp daily and keeps 7 compressed copies.",
+        "expected_difficulty": 4.75,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "medium",
+        "text": "Our React form re-renders on every keystroke and feels slow; find why and fix it.",
+        "expected_difficulty": 4.94,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "medium",
+        "text": "Write a SQL query that returns the top 3 customers by revenue per month from orders(customer_id, amount, created_at).",
+        "expected_difficulty": 4.07,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "data_analysis"
+      },
+      {
+        "band": "medium",
+        "text": "Refactor the payment module to use dependency injection for the gateway client; keep behaviour unchanged.",
+        "expected_difficulty": 4.45,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "refactor"
+      },
+      {
+        "band": "medium",
+        "text": "Explain the difference between optimistic and pessimistic locking with examples.",
+        "expected_difficulty": 2.73,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": false,
+        "category": "chat_simple"
+      },
+      {
+        "band": "hard",
+        "text": "Design a lock-free MPMC queue in Rust and prove it is linearizable",
+        "expected_difficulty": 7.06,
+        "lo": 7.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "math_reasoning"
+      },
+      {
+        "band": "hard",
+        "text": "Our Raft-based KV store loses acknowledged writes after a leader re-election under network partitions. Find the bug in the log replication code and add a Jepsen-style test.",
+        "expected_difficulty": 7.31,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "hard",
+        "text": "Implement a garbage collector (concurrent mark-sweep with write barriers) for our toy JVM in C++.",
+        "expected_difficulty": 6.78,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "hard",
+        "text": "Prove that every planar graph is 5-colorable, then give a linear-time 5-coloring algorithm.",
+        "expected_difficulty": 5.43,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": false,
+        "category": "math_reasoning"
+      },
+      {
+        "band": "hard",
+        "text": "Port our CUDA attention kernel to Metal while keeping numerical parity within 1e-3 and beating the PyTorch MPS baseline.",
+        "expected_difficulty": 5.85,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": false,
+        "category": "implementation"
+      },
+      {
+        "band": "hard",
+        "text": "Find and fix the data race that corrupts the B-tree under concurrent splits in our storage engine; it only reproduces under heavy load.",
+        "expected_difficulty": 7.96,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "hard",
+        "text": "Design a multi-region active-active payment ledger with exactly-once semantics and write the consistency argument.",
+        "expected_difficulty": 6.36,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "implementation"
+      }
+    ]
+  },
+  "onnx:artifacts/v2_s32m": {
+    "pass_rate": 0.85,
+    "rows": [
+      {
+        "band": "easy",
+        "text": "What does HTTP 418 mean?",
+        "expected_difficulty": 1.61,
+        "lo": 1.0,
+        "hi": 2.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Convert 72 degrees Fahrenheit to Celsius.",
+        "expected_difficulty": 1.96,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Fix the typo 'recieve' -> 'receive' in README.md.",
+        "expected_difficulty": 2.58,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "easy",
+        "text": "What is the capital of Australia?",
+        "expected_difficulty": 1.85,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Write a one-line Python expression that reverses a string s.",
+        "expected_difficulty": 1.97,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "easy",
+        "text": "Rename the variable `tmp` to `buffer` in utils/io.py.",
+        "expected_difficulty": 2.66,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "easy",
+        "text": "Give me a synonym for 'happy'.",
+        "expected_difficulty": 1.81,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "medium",
+        "text": "Add pagination (limit/offset query params) to the GET /users endpoint of our FastAPI app and update the tests.",
+        "expected_difficulty": 3.25,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "medium",
+        "text": "Write a bash script that rotates the logs in /var/log/myapp daily and keeps 7 compressed copies.",
+        "expected_difficulty": 3.86,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "medium",
+        "text": "Our React form re-renders on every keystroke and feels slow; find why and fix it.",
+        "expected_difficulty": 4.43,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "medium",
+        "text": "Write a SQL query that returns the top 3 customers by revenue per month from orders(customer_id, amount, created_at).",
+        "expected_difficulty": 2.84,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": false,
+        "category": "data_analysis"
+      },
+      {
+        "band": "medium",
+        "text": "Refactor the payment module to use dependency injection for the gateway client; keep behaviour unchanged.",
+        "expected_difficulty": 4.56,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "medium",
+        "text": "Explain the difference between optimistic and pessimistic locking with examples.",
+        "expected_difficulty": 2.2,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": false,
+        "category": "chat_simple"
+      },
+      {
+        "band": "hard",
+        "text": "Design a lock-free MPMC queue in Rust and prove it is linearizable",
+        "expected_difficulty": 7.16,
+        "lo": 7.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "hard",
+        "text": "Our Raft-based KV store loses acknowledged writes after a leader re-election under network partitions. Find the bug in the log replication code and add a Jepsen-style test.",
+        "expected_difficulty": 6.54,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "hard",
+        "text": "Implement a garbage collector (concurrent mark-sweep with write barriers) for our toy JVM in C++.",
+        "expected_difficulty": 6.92,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "hard",
+        "text": "Prove that every planar graph is 5-colorable, then give a linear-time 5-coloring algorithm.",
+        "expected_difficulty": 5.58,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": false,
+        "category": "math_reasoning"
+      },
+      {
+        "band": "hard",
+        "text": "Port our CUDA attention kernel to Metal while keeping numerical parity within 1e-3 and beating the PyTorch MPS baseline.",
+        "expected_difficulty": 6.27,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "hard",
+        "text": "Find and fix the data race that corrupts the B-tree under concurrent splits in our storage engine; it only reproduces under heavy load.",
+        "expected_difficulty": 6.71,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "hard",
+        "text": "Design a multi-region active-active payment ledger with exactly-once semantics and write the consistency argument.",
+        "expected_difficulty": 7.35,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "implementation"
+      }
+    ]
+  },
+  "onnx:artifacts/v2_32_base_onnx": {
+    "pass_rate": 0.8,
+    "rows": [
+      {
+        "band": "easy",
+        "text": "What does HTTP 418 mean?",
+        "expected_difficulty": 1.51,
+        "lo": 1.0,
+        "hi": 2.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Convert 72 degrees Fahrenheit to Celsius.",
+        "expected_difficulty": 1.89,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Fix the typo 'recieve' -> 'receive' in README.md.",
+        "expected_difficulty": 2.27,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "easy",
+        "text": "What is the capital of Australia?",
+        "expected_difficulty": 1.78,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "easy",
+        "text": "Write a one-line Python expression that reverses a string s.",
+        "expected_difficulty": 1.62,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "easy",
+        "text": "Rename the variable `tmp` to `buffer` in utils/io.py.",
+        "expected_difficulty": 2.43,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "easy",
+        "text": "Give me a synonym for 'happy'.",
+        "expected_difficulty": 1.54,
+        "lo": 1.0,
+        "hi": 3.0,
+        "pass": true,
+        "category": "chat_simple"
+      },
+      {
+        "band": "medium",
+        "text": "Add pagination (limit/offset query params) to the GET /users endpoint of our FastAPI app and update the tests.",
+        "expected_difficulty": 3.18,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "medium",
+        "text": "Write a bash script that rotates the logs in /var/log/myapp daily and keeps 7 compressed copies.",
+        "expected_difficulty": 3.65,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "medium",
+        "text": "Our React form re-renders on every keystroke and feels slow; find why and fix it.",
+        "expected_difficulty": 4.41,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "medium",
+        "text": "Write a SQL query that returns the top 3 customers by revenue per month from orders(customer_id, amount, created_at).",
+        "expected_difficulty": 2.62,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": false,
+        "category": "data_analysis"
+      },
+      {
+        "band": "medium",
+        "text": "Refactor the payment module to use dependency injection for the gateway client; keep behaviour unchanged.",
+        "expected_difficulty": 4.35,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "medium",
+        "text": "Explain the difference between optimistic and pessimistic locking with examples.",
+        "expected_difficulty": 2.27,
+        "lo": 3.0,
+        "hi": 7.0,
+        "pass": false,
+        "category": "chat_simple"
+      },
+      {
+        "band": "hard",
+        "text": "Design a lock-free MPMC queue in Rust and prove it is linearizable",
+        "expected_difficulty": 6.12,
+        "lo": 7.0,
+        "hi": 10.0,
+        "pass": false,
+        "category": "implementation"
+      },
+      {
+        "band": "hard",
+        "text": "Our Raft-based KV store loses acknowledged writes after a leader re-election under network partitions. Find the bug in the log replication code and add a Jepsen-style test.",
+        "expected_difficulty": 6.28,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "hard",
+        "text": "Implement a garbage collector (concurrent mark-sweep with write barriers) for our toy JVM in C++.",
+        "expected_difficulty": 6.14,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "hard",
+        "text": "Prove that every planar graph is 5-colorable, then give a linear-time 5-coloring algorithm.",
+        "expected_difficulty": 5.55,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": false,
+        "category": "math_reasoning"
+      },
+      {
+        "band": "hard",
+        "text": "Port our CUDA attention kernel to Metal while keeping numerical parity within 1e-3 and beating the PyTorch MPS baseline.",
+        "expected_difficulty": 6.17,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "implementation"
+      },
+      {
+        "band": "hard",
+        "text": "Find and fix the data race that corrupts the B-tree under concurrent splits in our storage engine; it only reproduces under heavy load.",
+        "expected_difficulty": 7.04,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "bugfix"
+      },
+      {
+        "band": "hard",
+        "text": "Design a multi-region active-active payment ledger with exactly-once semantics and write the consistency argument.",
+        "expected_difficulty": 7.53,
+        "lo": 6.0,
+        "hi": 10.0,
+        "pass": true,
+        "category": "implementation"
+      }
+    ]
+  }
+}

@@ -1,0 +1,574 @@
+{
+  "profiler": "onnx:artifacts/v2_s68m",
+  "split": "gold",
+  "data": "/Users/king/PandaOrchestrator/data/gold/gold.jsonl",
+  "n": 329,
+  "sources": {
+    "swe-rebench": 109,
+    "swe-smith": 24,
+    "wildchat": 196
+  },
+  "latency": {
+    "n": 329,
+    "p50_ms": 180.211,
+    "p95_ms": 937.164,
+    "mean_ms": 297.329
+  },
+  "profiler_metrics": {
+    "n": 329,
+    "category": {
+      "acc": 0.6474,
+      "top2": 0.8389,
+      "soft_ce": 1.066,
+      "ece": 0.108,
+      "per_category": {
+        "implementation": {
+          "n": 44,
+          "recall": 0.6364
+        },
+        "bugfix": {
+          "n": 116,
+          "recall": 0.9569
+        },
+        "refactor": {
+          "n": 10,
+          "recall": 0.1
+        },
+        "test_writing": {
+          "n": 6,
+          "recall": 0.0
+        },
+        "code_review": {
+          "n": 10,
+          "recall": 0.1
+        },
+        "research": {
+          "n": 11,
+          "recall": 0.1818
+        },
+        "planning": {
+          "n": 19,
+          "recall": 0.2105
+        },
+        "docs_writing": {
+          "n": 14,
+          "recall": 0.3571
+        },
+        "ui_frontend": {
+          "n": 7,
+          "recall": 0.2857
+        },
+        "data_analysis": {
+          "n": 12,
+          "recall": 0.25
+        },
+        "devops_infra": {
+          "n": 6,
+          "recall": 0.0
+        },
+        "math_reasoning": {
+          "n": 19,
+          "recall": 0.4211
+        },
+        "chat_simple": {
+          "n": 55,
+          "recall": 0.8727
+        }
+      }
+    },
+    "difficulty": {
+      "mae": 0.9405,
+      "spearman": 0.6787,
+      "qwk": 0.6144,
+      "label_mean": 4.198,
+      "pred_mean": 4.028,
+      "ece": 0.025,
+      "anchor_n": 92,
+      "spearman_pred_vs_anchor": 0.102,
+      "spearman_label_vs_anchor": 0.0037
+    },
+    "skills": {
+      "mae_mean": 0.7437,
+      "spearman_mean": 0.6021,
+      "ece_mean": 0.1502,
+      "per_axis": {
+        "coding": {
+          "mae": 0.8826,
+          "spearman": 0.8331
+        },
+        "debugging": {
+          "mae": 0.7415,
+          "spearman": 0.8854
+        },
+        "reasoning": {
+          "mae": 1.0904,
+          "spearman": 0.6425
+        },
+        "math": {
+          "mae": 0.5111,
+          "spearman": 0.5174
+        },
+        "writing": {
+          "mae": 0.9939,
+          "spearman": 0.6593
+        },
+        "research": {
+          "mae": 0.7683,
+          "spearman": 0.4359
+        },
+        "review": {
+          "mae": 0.7374,
+          "spearman": 0.5271
+        },
+        "planning": {
+          "mae": 0.8945,
+          "spearman": 0.5989
+        },
+        "ui_frontend": {
+          "mae": 0.3291,
+          "spearman": 0.4341
+        },
+        "data_analysis": {
+          "mae": 0.4882,
+          "spearman": 0.4877
+        }
+      }
+    },
+    "flags": {
+      "f1_macro": 0.5103,
+      "f1_micro": 0.6973,
+      "auroc_macro": 0.8573,
+      "ece_macro": 0.0445,
+      "brier_macro": 0.0549,
+      "per_id": {
+        "needs_tools": {
+          "pos_rate": 0.4225,
+          "f1": 0.9779,
+          "auroc": 0.9854,
+          "ece": 0.0277,
+          "brier": 0.018
+        },
+        "needs_vision": {
+          "pos_rate": 0.0243,
+          "f1": 0.7143,
+          "auroc": 0.9178,
+          "ece": 0.0117,
+          "brier": 0.0036
+        },
+        "long_context": {
+          "pos_rate": 0.003,
+          "f1": 0.0,
+          "auroc": 0.7927,
+          "ece": 0.0057,
+          "brier": 0.001
+        },
+        "needs_review": {
+          "pos_rate": 0.3191,
+          "f1": 0.3916,
+          "auroc": 0.7486,
+          "ece": 0.0869,
+          "brier": 0.1096
+        },
+        "ambiguous_spec": {
+          "pos_rate": 0.5471,
+          "f1": 0.7179,
+          "auroc": 0.8043,
+          "ece": 0.1197,
+          "brier": 0.1269
+        },
+        "multi_file": {
+          "pos_rate": 0.2796,
+          "f1": 0.5278,
+          "auroc": 0.8769,
+          "ece": 0.0459,
+          "brier": 0.0884
+        },
+        "needs_web": {
+          "pos_rate": 0.0881,
+          "f1": 0.2424,
+          "auroc": 0.8753,
+          "ece": 0.0137,
+          "brier": 0.0367
+        }
+      }
+    },
+    "checklist": {
+      "f1_macro": 0.4494,
+      "f1_micro": 0.717,
+      "auroc_macro": 0.8557,
+      "ece_macro": 0.0408,
+      "brier_macro": 0.0535,
+      "per_id": {
+        "edits_code": {
+          "pos_rate": 0.5745,
+          "f1": 0.9091,
+          "auroc": 0.972,
+          "ece": 0.0404,
+          "brier": 0.0644
+        },
+        "touches_gt3_files": {
+          "pos_rate": 0.0669,
+          "f1": 0.0,
+          "auroc": 0.8411,
+          "ece": 0.0218,
+          "brier": 0.0342
+        },
+        "new_feature": {
+          "pos_rate": 0.1793,
+          "f1": 0.5895,
+          "auroc": 0.9333,
+          "ece": 0.0452,
+          "brier": 0.0508
+        },
+        "has_failing_behavior": {
+          "pos_rate": 0.4073,
+          "f1": 0.9058,
+          "auroc": 0.9794,
+          "ece": 0.0632,
+          "brier": 0.0481
+        },
+        "needs_root_cause": {
+          "pos_rate": 0.3283,
+          "f1": 0.7805,
+          "auroc": 0.9526,
+          "ece": 0.0415,
+          "brier": 0.0706
+        },
+        "needs_run_commands": {
+          "pos_rate": 0.4164,
+          "f1": 0.9852,
+          "auroc": 0.9938,
+          "ece": 0.0339,
+          "brier": 0.0193
+        },
+        "needs_browser_or_web": {
+          "pos_rate": 0.0912,
+          "f1": 0.125,
+          "auroc": 0.8192,
+          "ece": 0.0137,
+          "brier": 0.0392
+        },
+        "has_images": {
+          "pos_rate": 0.0274,
+          "f1": 0.3636,
+          "auroc": 0.9767,
+          "ece": 0.0241,
+          "brier": 0.006
+        },
+        "input_gt_50k_tokens": {
+          "pos_rate": 0.003,
+          "f1": 0.0,
+          "auroc": 0.7287,
+          "ece": 0.0136,
+          "brier": 0.0013
+        },
+        "concurrency_or_distributed": {
+          "pos_rate": 0.0334,
+          "f1": 0.0,
+          "auroc": 0.7833,
+          "ece": 0.012,
+          "brier": 0.0143
+        },
+        "security_sensitive": {
+          "pos_rate": 0.0456,
+          "f1": 0.125,
+          "auroc": 0.687,
+          "ece": 0.0316,
+          "brier": 0.0206
+        },
+        "formal_math_or_proof": {
+          "pos_rate": 0.0395,
+          "f1": 0.375,
+          "auroc": 0.9632,
+          "ece": 0.0261,
+          "brier": 0.0144
+        },
+        "domain_expertise": {
+          "pos_rate": 0.5653,
+          "f1": 0.6781,
+          "auroc": 0.7315,
+          "ece": 0.1081,
+          "brier": 0.1465
+        },
+        "clear_acceptance_criteria": {
+          "pos_rate": 0.6869,
+          "f1": 0.8065,
+          "auroc": 0.8101,
+          "ece": 0.0608,
+          "brier": 0.129
+        },
+        "undefined_terms": {
+          "pos_rate": 0.4225,
+          "f1": 0.6506,
+          "auroc": 0.7899,
+          "ece": 0.0699,
+          "brier": 0.1042
+        },
+        "design_decisions": {
+          "pos_rate": 0.4164,
+          "f1": 0.5973,
+          "auroc": 0.814,
+          "ece": 0.043,
+          "brier": 0.1014
+        },
+        "visual_ui_work": {
+          "pos_rate": 0.0608,
+          "f1": 0.5714,
+          "auroc": 0.9463,
+          "ece": 0.0177,
+          "brier": 0.0224
+        },
+        "writes_prose": {
+          "pos_rate": 0.4286,
+          "f1": 0.8451,
+          "auroc": 0.9457,
+          "ece": 0.0639,
+          "brier": 0.082
+        },
+        "data_processing": {
+          "pos_rate": 0.155,
+          "f1": 0.2667,
+          "auroc": 0.8935,
+          "ece": 0.0364,
+          "brier": 0.0443
+        },
+        "infra_config": {
+          "pos_rate": 0.0486,
+          "f1": 0.1176,
+          "auroc": 0.9393,
+          "ece": 0.0159,
+          "brier": 0.0274
+        },
+        "multi_step_plan": {
+          "pos_rate": 0.3617,
+          "f1": 0.3529,
+          "auroc": 0.7885,
+          "ece": 0.0978,
+          "brier": 0.1036
+        },
+        "reviews_existing_work": {
+          "pos_rate": 0.0547,
+          "f1": 0.0,
+          "auroc": 0.7008,
+          "ece": 0.0126,
+          "brier": 0.0303
+        },
+        "trivial_one_liner": {
+          "pos_rate": 0.2614,
+          "f1": 0.5526,
+          "auroc": 0.8151,
+          "ece": 0.0712,
+          "brier": 0.084
+        },
+        "high_stakes": {
+          "pos_rate": 0.0851,
+          "f1": 0.1875,
+          "auroc": 0.7329,
+          "ece": 0.0153,
+          "brier": 0.0257
+        }
+      }
+    },
+    "out_tokens": {
+      "mae_log10": 0.2438,
+      "spearman": 0.6639,
+      "coverage_p10_p90": 0.7143
+    },
+    "ece": {
+      "category": 0.108,
+      "difficulty": 0.025,
+      "skills_mean": 0.1502,
+      "flags_macro": 0.0445,
+      "checklist_macro": 0.0408
+    }
+  },
+  "by_source": {
+    "swe-rebench": {
+      "n": 109,
+      "category_acc": 0.8624,
+      "difficulty_mae": 0.8994,
+      "difficulty_spearman": 0.3597,
+      "flags_f1": 0.5259,
+      "checklist_f1": 0.347
+    },
+    "swe-smith": {
+      "n": 24,
+      "category_acc": 1.0,
+      "difficulty_mae": 0.6052,
+      "difficulty_spearman": 0.5734,
+      "flags_f1": 0.6364,
+      "checklist_f1": 0.5786
+    },
+    "wildchat": {
+      "n": 196,
+      "category_acc": 0.4847,
+      "difficulty_mae": 1.0045,
+      "difficulty_spearman": 0.6066,
+      "flags_f1": 0.2396,
+      "checklist_f1": 0.355
+    }
+  },
+  "routing": {
+    "card_source": "/Users/king/PandaOrchestrator/cards",
+    "n_pools": 500,
+    "pools_per_task": 50,
+    "modes": [
+      "cheapest_above_threshold",
+      "max_utility",
+      "max_quality"
+    ],
+    "metrics": {
+      "predicted": {
+        "cheapest_above_threshold": {
+          "n": 16446,
+          "pick_agreement": 0.63426,
+          "utility_regret": 0.02429,
+          "cost_ratio": 0.7287,
+          "p_success": 0.8357,
+          "p_success_oracle": 0.87737,
+          "pq_quality": 0.54499,
+          "pq_quality_oracle": 0.5749,
+          "infeasible_rate": 0.0,
+          "below_min_p_rate": 0.23033
+        },
+        "max_utility": {
+          "n": 16446,
+          "pick_agreement": 0.90095,
+          "utility_regret": 0.00206,
+          "cost_ratio": 0.9061,
+          "p_success": 0.92508,
+          "p_success_oracle": 0.9325,
+          "pq_quality": 0.71437,
+          "pq_quality_oracle": 0.7202,
+          "infeasible_rate": 0.0,
+          "below_min_p_rate": 0.0726
+        },
+        "max_quality": {
+          "n": 16446,
+          "pick_agreement": 0.98906,
+          "utility_regret": 0.00054,
+          "cost_ratio": 1.0012,
+          "p_success": 0.95484,
+          "p_success_oracle": 0.95486,
+          "pq_quality": 0.79887,
+          "pq_quality_oracle": 0.79889,
+          "infeasible_rate": 0.0,
+          "below_min_p_rate": 0.03484
+        },
+        "all": {
+          "n": 49338,
+          "pick_agreement": 0.84142,
+          "utility_regret": 0.00896,
+          "cost_ratio": 0.9466,
+          "p_success": 0.90521,
+          "p_success_oracle": 0.92158,
+          "pq_quality": 0.68608,
+          "pq_quality_oracle": 0.698,
+          "infeasible_rate": 0.0,
+          "below_min_p_rate": 0.11259
+        }
+      },
+      "always_strongest": {
+        "cheapest_above_threshold": {
+          "n": 16446,
+          "pick_agreement": 0.15487,
+          "utility_regret": -0.00188,
+          "cost_ratio": 5.1858,
+          "p_success": 0.94903,
+          "p_success_oracle": 0.87737,
+          "pq_quality": 0.79426,
+          "pq_quality_oracle": 0.5749,
+          "infeasible_rate": 0.00705,
+          "below_min_p_rate": 0.04031
+        },
+        "max_utility": {
+          "n": 16446,
+          "pick_agreement": 0.24742,
+          "utility_regret": 0.11407,
+          "cost_ratio": 3.2195,
+          "p_success": 0.94903,
+          "p_success_oracle": 0.9325,
+          "pq_quality": 0.79426,
+          "pq_quality_oracle": 0.7202,
+          "infeasible_rate": 0.00705,
+          "below_min_p_rate": 0.04031
+        },
+        "max_quality": {
+          "n": 16446,
+          "pick_agreement": 0.96613,
+          "utility_regret": 0.009,
+          "cost_ratio": 0.9994,
+          "p_success": 0.94903,
+          "p_success_oracle": 0.95486,
+          "pq_quality": 0.79426,
+          "pq_quality_oracle": 0.79889,
+          "infeasible_rate": 0.00705,
+          "below_min_p_rate": 0.04031
+        },
+        "all": {
+          "n": 49338,
+          "pick_agreement": 0.45614,
+          "utility_regret": 0.0404,
+          "cost_ratio": 1.9944,
+          "p_success": 0.94903,
+          "p_success_oracle": 0.92158,
+          "pq_quality": 0.79426,
+          "pq_quality_oracle": 0.698,
+          "infeasible_rate": 0.00705,
+          "below_min_p_rate": 0.04031
+        }
+      },
+      "always_cheapest": {
+        "cheapest_above_threshold": {
+          "n": 16446,
+          "pick_agreement": 0.27849,
+          "utility_regret": 0.23768,
+          "cost_ratio": 0.042,
+          "p_success": 0.60563,
+          "p_success_oracle": 0.87737,
+          "pq_quality": 0.32537,
+          "pq_quality_oracle": 0.5749,
+          "infeasible_rate": 0.01623,
+          "below_min_p_rate": 0.56877
+        },
+        "max_utility": {
+          "n": 16446,
+          "pick_agreement": 0.07698,
+          "utility_regret": 0.35363,
+          "cost_ratio": 0.0261,
+          "p_success": 0.60563,
+          "p_success_oracle": 0.9325,
+          "pq_quality": 0.32537,
+          "pq_quality_oracle": 0.7202,
+          "infeasible_rate": 0.01623,
+          "below_min_p_rate": 0.56877
+        },
+        "max_quality": {
+          "n": 16446,
+          "pick_agreement": 0.01167,
+          "utility_regret": 0.24856,
+          "cost_ratio": 0.0081,
+          "p_success": 0.60563,
+          "p_success_oracle": 0.95486,
+          "pq_quality": 0.32537,
+          "pq_quality_oracle": 0.79889,
+          "infeasible_rate": 0.01623,
+          "below_min_p_rate": 0.56877
+        },
+        "all": {
+          "n": 49338,
+          "pick_agreement": 0.12238,
+          "utility_regret": 0.27996,
+          "cost_ratio": 0.0161,
+          "p_success": 0.60563,
+          "p_success_oracle": 0.92158,
+          "pq_quality": 0.32537,
+          "pq_quality_oracle": 0.698,
+          "infeasible_rate": 0.01623,
+          "below_min_p_rate": 0.56877
+        }
+      }
+    },
+    "wall_s": 83.5
+  }
+}
