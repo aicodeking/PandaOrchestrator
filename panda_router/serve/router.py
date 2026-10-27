@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import sys
 import time
 from collections import OrderedDict
@@ -11,6 +12,16 @@ from ..heuristic import HeuristicProfiler
 from ..matcher import Matcher, new_trace_id, schema_errors
 from ..profile import Profiler, TaskProfile
 from .store import Store
+
+
+ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_ARTIFACTS = ROOT / "artifacts" / "panda-router-v4"
+ARTIFACTS_ENV = "PANDA_ROUTER_ARTIFACTS"
+
+
+def default_artifacts() -> str | None:
+    """$PANDA_ROUTER_ARTIFACTS, else the shipped v4 profiler if present (else None -> heuristic)."""
+    return os.environ.get(ARTIFACTS_ENV) or (str(DEFAULT_ARTIFACTS) if DEFAULT_ARTIFACTS.exists() else None)
 
 
 class RequestError(ValueError):
@@ -98,4 +109,5 @@ class Router:
     def health(self) -> dict:
         cards = self.matcher.cards
         return {"ok": True, "version": self.matcher.version, "profiler": profiler_name(self.profiler),
-                "cards": len(cards), "db": str(self.store.path)}
+                "cards": len(cards), "db": str(self.store.path), "policy": self.matcher.policy,
+                "success_head": self.matcher.success_head.name if self.matcher.success_head else None}

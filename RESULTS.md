@@ -1,4 +1,32 @@
-# Panda Router v3
+# Panda Router v4
+
+**Shipped:** `artifacts/panda-router-v4` = 32M profiler (distilled from a 150M teacher trained on Modal, asymmetric
+"over-estimate" difficulty loss, fine-tuned on 1,474 vague-request examples) + a learned per-model success head
+(`success_head.json`) + a safer policy. Modal spend: $1.67 of the $30 budget.
+
+| on 150 held-out real attempt tasks, 9-model pool | success / 100 | $ / 100 |
+|---|---:|---:|
+| v4 single pick | 76.7 [69.3, 82.7] | 0.91 |
+| v4 ladder, <= 2 attempts | 88.7 [83.3, 93.3] | 0.88 |
+| v4 ladder, <= 3 attempts | 92.0 | 1.23 |
+| v3 single pick (max_utility) | 66.7 | 0.23 |
+| always gpt-6.1-sol | 79.3 | 1.11 |
+| oracle | 94.0 | 0.56 |
+
+- 85 is reached with one retry along `escalation_ladder` (needs a failure signal), not single-shot.
+- $0 picks in cheapest mode, full pool: 88% -> 0%. Under-estimation (picked model failed, a stronger affordable one
+  passed): 26.7% (v3) -> 14.0%; over-spend 58% -> 69%, the trade the user asked for.
+- `p_success` is calibrated per model (train/val ECE 0.015; gold ECE 0.375 -> 0.127); decisions use
+  `p_success_lower`. Trivial-task P is understated (~0.5) for lack of trivial outcome data.
+- Outcome data: 9 attempters (5 OpenRouter until credits ran out; Claude Haiku/Sonnet/Opus and GPT-6-Luna via
+  subscription CLIs), judges ds-think > dsh > codex-terra (parity kappa 0.68-0.85). The DeepSeek (dsh) balance also
+  ran out mid-grading. Claude CLI thinking could not be capped, which favours the Claude models.
+- Details: `eval_reports/v4/REPORT.md`, `eval_reports/v4_profiler/REPORT.md`, `data/outcomes/REPORT_v4_attempts.md`,
+  `data/vague_v4/STATS.md`.
+
+---
+
+# Panda Router v3 (superseded by v4)
 
 ## What changed
 

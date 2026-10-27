@@ -15,7 +15,7 @@ from pathlib import Path
 from ..serve.router import RequestError, Router, load_profiler, profiler_name
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_ARTIFACTS = ROOT / "artifacts" / "panda-router-v3"
+DEFAULT_ARTIFACTS = ROOT / "artifacts" / "panda-router-v4"
 PROTOCOL = "2025-06-18"
 
 _STR_LIST = {"type": "array", "items": {"type": "string"}}

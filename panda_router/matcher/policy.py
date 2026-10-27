@@ -5,6 +5,7 @@ from __future__ import annotations
 import difflib
 import hashlib
 import json
+import os
 import random
 import re
 import time
@@ -19,6 +20,8 @@ from .calibration import load_calibration, tier_shifts, transform
 from .cards import PoolCache, load_cards, validate_card
 from .core import (ability_moments, axis_weights, difficulty_posterior_after_failure, expected_skills,
                    p_by_level)
+from ..router_v4 import policy as v4
+from ..router_v4.success import SuccessHead, quantile_level
 
 MODES = ("cheapest_above_threshold", "max_utility", "max_quality")
 DEFAULTS = {
@@ -29,6 +32,14 @@ DEFAULTS = {
     "explore_epsilon": 0.0,
     "explore_temperature": 0.1,
 }
+# v4 policy defaults (tuned on train/val out-of-fold head predictions: eval_reports/v4/tune.json "selection").
+V4_DEFAULTS = {"min_p_success": 0.6, "failure_penalty_usd": 0.1, "equal_p_margin": 0.05, "ladder_lambda": 3.0,
+               "weights": {"quality": 1.0, "cost": 1.0, "latency": 0.0}}
+P_SUCCESS_NOTE = ("p_success: estimated pass rate under strict grading (success head calibrated on train/val outcomes; "
+                  "card prior for cards it was not trained on); decisions use p_success_lower")
+POLICIES = ("v4", "v3")
+DEFAULT_HEAD = Path(__file__).resolve().parents[2] / "artifacts/panda-router-v4/success_head.json"
+HEAD_ENV = "PANDA_ROUTER_SUCCESS_HEAD"  # path to a success_head.json, or "off"
 DEFAULT_MODEL = "claude-opus-5.5"
 CONTEXT_MARGIN = 1.2
 DEFAULT_TOP_K = 3
@@ -104,6 +115,23 @@ def resolve_alias(name: str, cards: dict[str, dict], index: dict[str, str | None
     return best
 
 
+def load_success_head(spec="auto") -> SuccessHead | None:
+    """"auto": $PANDA_ROUTER_SUCCESS_HEAD (path or "off") else the shipped v4 head if present; None/False: off;
+    a path or SuccessHead: that head."""
+    if spec is None or spec is False:
+        return None
+    if isinstance(spec, SuccessHead):
+        return spec
+    if spec == "auto":
+        env = os.environ.get(HEAD_ENV, "").strip()
+        if env.lower() in ("off", "0", "false", "none"):
+            return None
+        spec = env or DEFAULT_HEAD
+        if not Path(spec).exists():
+            return None
+    return SuccessHead.load(spec)
+
+
 def _norm(x: np.ndarray) -> np.ndarray:
     m = float(x.max()) if x.size else 0.0
     return x / m if m > 0 else np.zeros_like(x)
@@ -112,9 +140,15 @@ def _norm(x: np.ndarray) -> np.ndarray:
 class Matcher:
     def __init__(self, cards_dir: str | Path | None = None, default_model: str = DEFAULT_MODEL,
                  floor: float = DEFAULTS["floor"], version: str | None = None,
-                 calibration: bool | str | Path | dict | None = None):
+                 calibration: bool | str | Path | dict | None = None, success_head="auto", policy: str = "v4"):
         """calibration: None = off unless PANDA_ROUTER_CALIBRATION=on, True = shipped calibration.json, False = raw P,
-        a path or params dict = that calibration."""
+        a path or params dict = that calibration.
+        success_head: "auto" = shipped v4 head (artifacts/panda-router-v4/success_head.json, or $PANDA_ROUTER_SUCCESS_HEAD),
+        None/False = card P only, a path or SuccessHead. policy: "v4" (failure-aware, conservative) or "v3" (legacy)."""
+        if policy not in POLICIES:
+            raise ValueError(f"unknown policy {policy!r}")
+        self.policy = policy
+        self.success_head = load_success_head(success_head)
         self.cards_dir = cards_dir
         self.calibration = load_calibration(calibration)
         self.default_model = default_model
@@ -186,17 +220,72 @@ class Matcher:
                       "prior_difficulty": [round(float(p), 6) for p in prior],
                       "posterior_difficulty": [round(float(p), 6) for p in post]}
         return self._route(request, profile, difficulty=post, failed=failed, escalation=escalation,
-                           trace_id=trace_id, profiler_name=profiler_name)
+                           trace_id=trace_id, profiler_name=profiler_name,
+                           ladder=[r["model_id"] for r in response.get("escalation_ladder") or []])
+
+    def _v4_p(self, pool, profile: TaskProfile, text: str, diff: np.ndarray, p_levels: np.ndarray, cost: np.ndarray,
+              card_ids: list[str], failed) -> tuple[np.ndarray, np.ndarray, np.ndarray, dict]:
+        """v4 P per card: calibrated success-head P and its lower bound for cards the head was trained on;
+        otherwise the card's P at the upper difficulty quantile, anchored per task to the covered cards' scale and
+        minus a provenance/free prior penalty. Returns (P, P lower, decision difficulty, info)."""
+        head = self.success_head
+        if head is not None:
+            dec, vague = head.decision_difficulty(profile, text, diff)
+            q, cal = head.q, head.params.get("card_calibration") or {}
+        else:
+            dec, vague, q, cal = diff, 0.0, 0.75, {}
+        level = quantile_level(dec, q)
+        penalty = np.array([v4.card_prior_penalty(c, cost[i] <= 0) for i, c in enumerate(pool.cards)])
+        card_q = v4.p_at_level(p_levels, level)
+        p = v4.conservative_card_p(card_q, cal.get("alpha", 0.0), cal.get("beta", 1.0), penalty)
+        p_lo = p.copy()
+        source = ["card_prior"] * len(p)
+        prior = None
+        covered = [i for i, c in enumerate(card_ids) if head is not None and c in head.index]
+        failed_cards = [card_ids[pool.index(m)] for m in failed if m in pool.ids]
+        if failed_cards and head is not None:  # uncovered cards also lose the mean correlated-failure shift
+            unc = [i for i in range(len(p)) if i not in covered]
+            shift = head.failure_offset(failed_cards, [card_ids[i] for i in unc])
+            p[unc] = v4.sigmoid(v4.logit(p[unc]) + shift)
+            p_lo[unc] = v4.sigmoid(v4.logit(p_lo[unc]) + shift)
+        if covered:
+            ids = [card_ids[i] for i in covered]
+            off = head.failure_offset(failed_cards, ids)
+            pc, lo = head.predict(head.features(profile, text, diff), ids, off)
+            if len(covered) >= 2:  # anchor uncovered cards to this task's evidence-backed P scale
+                p = v4.anchored_card_p(card_q, card_q[covered], pc, penalty)
+                p_lo = v4.anchored_card_p(card_q, card_q[covered], lo, penalty)
+            p[covered], p_lo[covered] = pc, lo
+            base = head.params.get("base_rate") or {}
+            prior = np.full(len(p), -np.inf)
+            prior[covered] = [base.get(c, -np.inf) for c in ids]
+            for i in covered:
+                source[i] = "success_head"
+        info = {"source": source, "raw_expected": round(float(diff @ np.arange(1, 11)), 3), "prior": prior,
+                "vagueness": round(float(vague), 4), "decision_level": round(float(level), 3)}
+        return np.clip(p, 0.0, 1.0), np.clip(np.minimum(p_lo, p), 0.0, 1.0), dec, info
+
+    def _ladder(self, pool, cand: list[int], p_lo, cost, strength, card_ids, lam: float) -> list[int]:
+        head = self.success_head
+        ids = [card_ids[i] for i in cand]
+        off = (np.array([head.failure_offset([a], ids) for a in ids]) if head is not None
+               else np.zeros((len(ids), len(ids))))
+        np.fill_diagonal(off, 0.0)
+        idx = np.array(cand)
+        lad = v4.ladder(p_lo[idx], cost[idx], strength[idx], off, lam, allowed=v4.free_guard(p_lo[idx], cost[idx]))
+        return [cand[k] for k in lad]
 
     def _route(self, request: dict, profile: TaskProfile, difficulty=None, failed=(), escalation=None,
-               trace_id: str | None = None, profiler_name: str | None = None) -> dict:
+               trace_id: str | None = None, profiler_name: str | None = None, ladder=()) -> dict:
         t0 = time.perf_counter()
         trace_id = trace_id or new_trace_id()
         task = request.get("task") or {}
         ctx = task.get("context") or {}
         cons = request.get("constraints") or {}
-        prefs = {**DEFAULTS, "floor": self.floor, **(request.get("preferences") or {})}
-        weights = {**DEFAULTS["weights"], **(prefs.get("weights") or {})}
+        is_v4 = self.policy == "v4"
+        base = {**DEFAULTS, **V4_DEFAULTS} if is_v4 else DEFAULTS
+        prefs = {**base, "floor": self.floor, **(request.get("preferences") or {})}
+        weights = {**base["weights"], **(prefs.get("weights") or {})}
         mode = prefs["mode"]
         if mode not in MODES:
             raise ValueError(f"unknown mode {mode!r}")
@@ -212,14 +301,20 @@ class Matcher:
         exp = expected_skills(profile.skills)
         w = axis_weights(exp)
         mu, sd = ability_moments(w, exp, pool.theta, pool.se)
-        p = np.clip(self._p_by_level(pool, mu, sd) @ diff, 0.0, 1.0)
+        p_levels = self._p_by_level(pool, mu, sd)
+        p = np.clip(p_levels @ diff, 0.0, 1.0)
         quality = np.clip(mu / 10.0, 0.0, 1.0)
+        card_ids = [c.get("card_id", c["id"]) for c in pool.cards]
 
         # --- cost / latency.
         in_tok = estimate_input_tokens(task)
         out_tok = 10.0 ** float(profile.out_tokens_log10.get("p50", 3.0))
         cost = (in_tok * pool.cost_in + out_tok * pool.cost_out) / 1e6
         latency = pool.ttft_ms + out_tok / pool.tps * 1000.0
+        v4_info, p_lo = None, p
+        if is_v4:
+            p, p_lo, diff, v4_info = self._v4_p(pool, profile, task.get("text") or "", diff, p_levels, cost, card_ids,
+                                          failed)
 
         # --- hard filters.
         flags = profile.flags
@@ -258,7 +353,6 @@ class Matcher:
         # --- newer version wins: drop a candidate when a card that `supersedes` it is also a candidate
         # and costs no more for this task. A pricier successor competes normally (the older one is
         # picked only if it is cheaper and still clears the policy threshold).
-        card_ids = [c.get("card_id", c["id"]) for c in pool.cards]
         newer = {old: i for i in cand for old in pool.cards[i].get("supersedes", ())}
         superseded = {i: newer[card_ids[i]] for i in cand
                       if card_ids[i] in newer and cost[newer[card_ids[i]]] <= cost[i] + 1e-12}
@@ -274,6 +368,7 @@ class Matcher:
                               - weights["cost"] * _norm(cost[cand_idx])
                               - weights["latency"] * _norm(latency[cand_idx]))
         cts = cost / np.maximum(p, 1e-6)
+        exp_cost = np.full(n, np.nan)
 
         # --- mode, floor, fallback.
         fb = {"triggered": False, "floor": floor, "default_model": default_model if default_model in pool.ids else None}
@@ -281,6 +376,23 @@ class Matcher:
         if not cand:
             decided_by = "none:all_filtered"
             fb.update(triggered=True, reason="all_candidates_filtered")
+        elif is_v4:
+            # v4: decide on the lower bound; anchor (best-evidence card) unless a cheaper card is clearly safe or
+            # no worse; no floor fallback. After a failure, follow the previous response's escalation ladder.
+            strength = pool.theta.mean(axis=1)
+            prior = v4_info["prior"]
+            k, decided_by, u, e = v4.choose(mode, p_lo[cand_idx], cost[cand_idx], latency[cand_idx], strength[cand_idx],
+                                            min_p, float(prefs["failure_penalty_usd"]), w_cost=weights["cost"],
+                                            w_lat=weights["latency"], w_quality=weights["quality"],
+                                            prior=None if prior is None else prior[cand_idx],
+                                            eq_margin=float(prefs["equal_p_margin"]), p_mean=p[cand_idx])
+            greedy, eligible = cand[k], list(cand)
+            util[cand_idx], exp_cost[cand_idx] = u, e
+            nxt = [pool.index(m) for m in ladder if m in pool.ids and pool.index(m) in cand]
+            if nxt:
+                greedy, decided_by = nxt[0], "escalation_ladder"
+            v4_info["ladder"] = self._ladder(pool, cand, p_lo, cost, strength, card_ids, float(prefs["ladder_lambda"]))
+            fb["low_confidence"] = bool(p[greedy] < floor)
         else:
             eligible = [i for i in cand if p[i] >= floor]
             if not eligible:
@@ -338,14 +450,18 @@ class Matcher:
                     "p_success": round(float(p[i]), 4),
                     "quality": round(float(quality[i]), 4), "utility": round(float(util[i]), 4),
                     "est_cost_usd": round(float(cost[i]), 6), "est_cost_to_success_usd": round(float(cts[i]), 6),
-                    "est_latency_ms": round(float(latency[i]), 1)}
+                    "est_latency_ms": round(float(latency[i]), 1),
+                    **({"p_success_lower": round(float(p_lo[i]), 4), "p_source": v4_info["source"][i],
+                        "expected_cost_usd": round(float(exp_cost[i]), 6) if np.isfinite(exp_cost[i]) else None}
+                       if v4_info else {})}
 
         level = int(np.argmax(diff)) + 1
         cat_label, cat_p = profile.top_category()
         resp = {
             "choice": {"model_id": pool.ids[chosen] if chosen is not None else None,
                        "confidence": round(float(p[chosen]), 4) if chosen is not None else 0.0,
-                       "decided_by": decided_by, "propensity": round(float(propensity), 6), "explored": explored},
+                       "decided_by": decided_by, "propensity": round(float(propensity), 6), "explored": explored,
+                       **({"confidence_lower": round(float(p_lo[chosen]), 4)} if v4_info and chosen is not None else {})},
             "ranking": [row(i) for i in order[:top_k]],
             "filtered_out": filtered_out,
             "difficulty": {"level": level, "expected": round(float(diff @ np.arange(1, 11)), 3),
@@ -354,9 +470,22 @@ class Matcher:
             "flags": {k: round(float(v), 4) for k, v in flags.items()},
             "fallback": fb,
             "router": {"version": self.version, "profiler": profiler_name or "external",
-                       "latency_ms": 0.0, "pool_hash": pool.hash},
+                       "latency_ms": 0.0, "pool_hash": pool.hash, "policy": self.policy,
+                       "success_head": self.success_head.name if self.success_head else None,
+                       **({"p_success_note": P_SUCCESS_NOTE} if is_v4 else {})},
             "trace_id": trace_id,
         }
+        if v4_info:
+            resp["difficulty"].update(raw_expected=v4_info["raw_expected"], vagueness=v4_info["vagueness"],
+                                      decision_level=v4_info["decision_level"])
+        if v4_info and v4_info.get("ladder"):
+            lad = v4_info["ladder"]
+            p_two = p_lo[lad[0]] + (1 - p_lo[lad[0]]) * (p_lo[lad[1]] if len(lad) > 1 else 0.0)
+            resp["escalation_ladder"] = [{"model_id": pool.ids[i], "p_success": round(float(p[i]), 4),
+                                          "p_success_lower": round(float(p_lo[i]), 4),
+                                          "est_cost_usd": round(float(cost[i]), 6)} for i in lad]
+            resp["escalation_ladder_note"] = (f"try in order, escalate on failure; independent-failure estimate of "
+                                              f"success within 2 attempts >= {p_two:.2f}")
         if escalation is not None:
             resp["escalation"] = escalation
         if "profile" in (request.get("questions") or []):

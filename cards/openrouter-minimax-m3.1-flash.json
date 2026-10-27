@@ -30,12 +30,12 @@
       "se": 0.62
     },
     "writing": {
-      "theta": 7.5,
-      "se": 0.9
+      "theta": 6.8,
+      "se": 0.34
     },
     "research": {
-      "theta": 7.4,
-      "se": 0.9
+      "theta": 6.47,
+      "se": 0.49
     },
     "review": {
       "theta": 7.6,
@@ -46,12 +46,12 @@
       "se": 0.9
     },
     "ui_frontend": {
-      "theta": 7.6,
-      "se": 0.9
+      "theta": 6.6,
+      "se": 0.44
     },
     "data_analysis": {
-      "theta": 7.5,
-      "se": 0.9
+      "theta": 6.76,
+      "se": 0.41
     }
   },
   "discrimination": 1.2,
@@ -88,7 +88,7 @@
     "harness:openrouter",
     "tier:mid"
   ],
-  "card_version": "2026-10-26",
+  "card_version": "2026-10-27",
   "provenance": "benchmark-informed",
   "field_provenance": {
     "cost": "verified",
@@ -100,7 +100,8 @@
     "https://openrouter.ai/api/v1/models",
     "https://openrouter.ai/rankings",
     "https://openrouter.ai/api/v1/models (benchmarks.artificial_analysis, Artificial Analysis indices)",
-    "data/outcomes/REPORT_attempts.md (attempt-and-grade IRT; judge deepseek-v4.1-flash validated vs kimi-k3.1-pro)"
+    "data/outcomes/REPORT_attempts.md (attempt-and-grade IRT; judge deepseek-v4.1-flash validated vs kimi-k3.1-pro)",
+    "data/outcomes/REPORT_v4_attempts.md (attempt-and-grade IRT v4, 9 attempters; judges deepseek-v4.1-flash ds-think / dsh)"
   ],
-  "notes": "AA intelligence 42.7 (no coding index); vendor claims gains in agentic coding. Very high usage (~13.7T tokens/7d). Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured. verified (attempt-grade 2026-10): axes coding 7.8->7.04, debugging 7.6->6.89, math 7.6->6.42, reasoning 7.7->6.81 fitted (1PL IRT, router scale) from single-turn, no-tool attempts on non-SWE tasks, graded by deepseek-v4.1-flash (kappa 0.85 vs kimi-k3.1-pro); applied only where the direction also holds under gpt-6.1-sol grading. Location anchored on the 5 attempters' own card means (deltas are relative to their consensus). Other axes and supersedes unchanged. See data/outcomes/REPORT_attempts.md."
+  "notes": "AA intelligence 42.7 (no coding index); vendor claims gains in agentic coding. Very high usage (~13.7T tokens/7d). Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured. verified (attempt-grade 2026-10): axes coding 7.8->7.04, debugging 7.6->6.89, math 7.6->6.42, reasoning 7.7->6.81 fitted (1PL IRT, router scale) from single-turn, no-tool attempts on non-SWE tasks, graded by deepseek-v4.1-flash (kappa 0.85 vs kimi-k3.1-pro); applied only where the direction also holds under gpt-6.1-sol grading. Location anchored on the 5 attempters' own card means (deltas are relative to their consensus). Other axes and supersedes unchanged. See data/outcomes/REPORT_attempts.md. verified (attempt-grade v4): axes data_analysis 7.5->6.76, research 7.4->6.47, ui_frontend 7.6->6.6, writing 7.5->6.8 fitted (1PL IRT, router scale) from single-turn, no-tool attempts on non-SWE tasks, graded by deepseek-v4.1-flash (ds-think, kappa 0.85 vs kimi-k3.1-pro; dsh harness for the rest, kappa 0.75 vs ds-think); for the 5 OpenRouter models applied only where the direction also holds under gpt-6.1-sol grading. Location anchored on the 9 attempters' own card means (deltas are relative to their consensus). Other axes and supersedes unchanged. See data/outcomes/REPORT_v4_attempts.md."
 }

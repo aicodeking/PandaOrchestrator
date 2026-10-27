@@ -25,6 +25,7 @@ GROK_MODEL = os.environ.get("PANDA_GROK_MODEL", "grok-4.7-build-fast")
 DEEPSEEK_MODEL = os.environ.get("PANDA_DEEPSEEK_MODEL", "deepseek/deepseek-v4.1-flash")  # OpenRouter slug, direct API
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_AUTH = os.path.expanduser("~/.local/share/opencode/auth.json")
+DEEPSEEK_BACKEND = os.environ.get("PANDA_DEEPSEEK_BACKEND", "dsh")  # dsh (subscription harness) | openrouter (paid API)
 DEEPSEEK_REASONING = os.environ.get("PANDA_DEEPSEEK_REASONING", "off")  # off | low | default
 USAGE_LOG = paths.CACHE / "deepseek_usage.jsonl"
 # $/Mtok, used only when the API response carries no usage.cost
@@ -45,6 +46,10 @@ class TeacherError(RuntimeError):
     pass
 
 
+class QuotaError(TeacherError):
+    """Backend balance/quota exhausted: retrying cannot help, so call() fails fast (or fails over)."""
+
+
 def _sem(teacher: str) -> asyncio.Semaphore:
     if teacher not in _sems:
         _sems[teacher] = asyncio.Semaphore(CONCURRENCY[teacher])
@@ -52,7 +57,7 @@ def _sem(teacher: str) -> asyncio.Semaphore:
 
 
 def _key(teacher: str, prompt: str) -> str:
-    model = {"codex": CODEX_MODEL, "ollama": OLLAMA_MODEL, "grok": GROK_MODEL, "deepseek": DEEPSEEK_MODEL}.get(teacher, "")
+    model = {"codex": CODEX_MODEL, "ollama": OLLAMA_MODEL, "grok": GROK_MODEL, "deepseek": f"{DEEPSEEK_BACKEND}:{DEEPSEEK_MODEL}"}.get(teacher, "")
     return hashlib.sha1(f"{teacher}|{model}|{prompt}".encode()).hexdigest()
 
 
@@ -149,6 +154,13 @@ async def _raw_call(teacher: str, prompt: str) -> str:
         code, out, err = await _run_cli(["kimi", "-p", prompt])
     elif teacher == "grok":
         code, out, err = await _run_cli(["grok", "-m", GROK_MODEL, "--disable-web-search", "-p", prompt])
+    elif teacher == "deepseek" and DEEPSEEK_BACKEND == "dsh":
+        # same prompt/JSON contract as the OpenRouter path; the final answer is on stdout, reasoning on stderr
+        code, out, err = await _run_cli(["dsh", "--profile", "headless", prompt])
+        if "QUOTA" in err or "Insufficient Balance" in err:
+            if os.environ.get("PANDA_DEEPSEEK_FALLBACK") == "openrouter":  # opt-in: paid API as the backup
+                return await asyncio.to_thread(openrouter_chat, prompt)
+            raise QuotaError("quota:dsh: " + err.strip()[-200:])
     elif teacher == "deepseek":
         return await asyncio.to_thread(openrouter_chat, prompt)
     elif teacher == "ollama":
@@ -200,6 +212,8 @@ async def call(teacher: str, prompt: str, parse: Callable[[Any], Any], purpose: 
             }])
         if ok:
             return result
+        if isinstance(last, QuotaError):
+            raise last
         wait = (60 if "ratelimit" in str(last) else 5) * (2 ** attempt) + random.random() * 5
         await asyncio.sleep(wait)
     raise TeacherError(f"{teacher} failed after {retries} attempts: {last}")

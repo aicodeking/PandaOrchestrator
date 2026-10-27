@@ -6,7 +6,7 @@ import argparse
 import json
 import sys
 
-from .router import RequestError, Router, load_profiler
+from .router import RequestError, Router, default_artifacts, load_profiler
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -23,7 +23,8 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--local-only", action="store_true")
     r.add_argument("--top-k", type=int, default=3)
     r.add_argument("--profile", action="store_true", help="include the TaskProfile in the output")
-    r.add_argument("--artifacts", default=None, help="ONNX profiler artifacts dir (default: heuristic)")
+    r.add_argument("--artifacts", default=default_artifacts(),
+                   help="ONNX profiler artifacts dir (default: $PANDA_ROUTER_ARTIFACTS or artifacts/panda-router-v4)")
     r.add_argument("--cards", default=None)
     r.add_argument("--db", default=None)
     r.add_argument("--no-log", action="store_true", help="do not write the route to SQLite")

@@ -1,0 +1,31 @@
+/Users/king/PandaOrchestrator/.venv/lib/python3.12/site-packages/transformers/modeling_attn_mask_utils.py:196: TracerWarning: torch.tensor results are registered as constants in the trace. You can safely ignore this warning if you use this function to create tensors out of constant variables that would be the same every time you call this function. In any other case, this might cause the trace to be incorrect.
+  inverted_mask = torch.tensor(1.0, dtype=dtype) - expanded_mask
+WARNING:root:Please consider to run pre-processing before quantization. Refer to example: https://github.com/microsoft/onnxruntime-inference-examples/blob/main/quantization/image_classification/cpu/ReadMe.md 
+WARNING:root:Inference failed or unsupported type to quantize for tensor '/model/backbone/Unsqueeze_6_output_0', type is tensor_type {
+  elem_type: 7
+  shape {
+    dim {
+      dim_value: 1
+    }
+    dim {
+      dim_param: "unk__6"
+    }
+  }
+}
+.
+{
+  "int8_drops_points": {
+    "category": -0.31796502384737835,
+    "difficulty": -0.02213941215198645,
+    "skills": -0.00021459977199356217,
+    "flags": 0.06667750853797827,
+    "checklist": 0.23516937442485641,
+    "out_tokens": -0.011149588942714672
+  },
+  "int8_within_tolerance": true,
+  "torch_vs_onnx_max_abs": 8.58306884765625e-06,
+  "size_mb": {
+    "fp32": 260.73283767700195,
+    "int8": 66.24650192260742
+  }
+}

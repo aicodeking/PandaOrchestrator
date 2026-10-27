@@ -100,4 +100,5 @@ def test_cli_route(tmp_path):
     assert out.returncode == 0, out.stderr
     resp = json.loads(out.stdout)
     assert schema_errors(resp, "route_response") == []
-    assert resp["router"]["profiler"] == "heuristic"
+    assert resp["router"]["profiler"].startswith("OnnxProfiler(panda-router-v4")  # v4 is the default
+    assert resp["router"]["policy"] == "v4" and resp["router"]["success_head"]

@@ -1,0 +1,209 @@
+{
+  "val_examples": 629,
+  "fp32": {
+    "category_acc": 0.7742448330683624,
+    "category_top2": 0.918918918918919,
+    "category_ece": 0.041819665117729436,
+    "difficulty_mae": 0.7970001178242674,
+    "difficulty_spearman": 0.8230615437459069,
+    "difficulty_qwk": 0.7734305142109169,
+    "difficulty_ece": 0.08261682732282345,
+    "skill_mae": 0.7070535895433153,
+    "skill_ece": 0.09974235892076096,
+    "flags_f1": 0.8236115962277332,
+    "flags_macro_f1": 0.794068718851962,
+    "flags_ece": 0.03490025918436664,
+    "checklist_f1": 0.8118640398354622,
+    "checklist_macro_f1": 0.7413983887443267,
+    "checklist_ece": 0.029626333667481488,
+    "flags_auroc": 0.9250364723863649,
+    "out_tokens_mae": 0.15488619853658026,
+    "out_tokens_coverage80": 0.7933227344992051,
+    "primary_category": 77.42448330683625,
+    "primary_difficulty": 91.14444313528591,
+    "primary_skills": 92.92946410456685,
+    "primary_flags": 82.36115962277331,
+    "primary_checklist": 81.18640398354621,
+    "primary_out_tokens": 96.12784503658548,
+    "val_score": 86.86229986493235
+  },
+  "int8": {
+    "category_acc": 0.7790143084260731,
+    "category_top2": 0.9157392686804452,
+    "category_ece": 0.040334423214151656,
+    "difficulty_mae": 0.7982096839056806,
+    "difficulty_spearman": 0.8204147505431257,
+    "difficulty_qwk": 0.7686630132892249,
+    "difficulty_ece": 0.08263281880341253,
+    "skill_mae": 0.7085847376111025,
+    "skill_ece": 0.09947108093819367,
+    "flags_f1": 0.826417704011065,
+    "flags_macro_f1": 0.7945727928197976,
+    "flags_ece": 0.03031406356717665,
+    "checklist_f1": 0.8122514777001612,
+    "checklist_macro_f1": 0.7424606702520563,
+    "checklist_ece": 0.026277642280831456,
+    "flags_auroc": 0.9250857883564001,
+    "out_tokens_mae": 0.15555898752803832,
+    "out_tokens_coverage80": 0.7901430842607313,
+    "primary_category": 77.90143084260731,
+    "primary_difficulty": 91.1310035121591,
+    "primary_skills": 92.91415262388898,
+    "primary_flags": 82.6417704011065,
+    "primary_checklist": 81.22514777001612,
+    "primary_out_tokens": 96.11102531179905,
+    "val_score": 86.98742174359619
+  },
+  "int8_drops_points": {
+    "category": -0.4769475357710604,
+    "difficulty": 0.013439623126814126,
+    "skills": 0.01531148067786603,
+    "flags": -0.28061077833318393,
+    "checklist": -0.03874378646990806,
+    "out_tokens": 0.0168197247864299
+  },
+  "int8_within_tolerance": true,
+  "quant_attempts": [
+    {
+      "n_excluded": 0,
+      "drops": {
+        "category": -0.4769475357710604,
+        "difficulty": 0.013439623126814126,
+        "skills": 0.01531148067786603,
+        "flags": -0.28061077833318393,
+        "checklist": -0.03874378646990806,
+        "out_tokens": 0.0168197247864299
+      }
+    }
+  ],
+  "torch_vs_onnx_max_abs": 1.239776611328125e-05,
+  "size_mb": {
+    "fp32": 122.1031379699707,
+    "int8": 31.034499168395996
+  },
+  "v4_router": {
+    "profiler": {
+      "base": "artifacts/v4_candidates/t150m_s32m_soup",
+      "finetune": "Modal L40S run v4r_vague_ft_t150m_s32m_soup_e3_s0 (data/train + data/vague_v4/train, 3 ep, lr 3e-5, anchors 0.3, under-w 2.5)",
+      "weights": "WiSE interpolation 0.7*finetuned + 0.3*base",
+      "probes": {
+        "a model trainer": 4.09,
+        "train a model": 4.36,
+        "What does HTTP 418 mean?": 1.97
+      }
+    },
+    "success_head": "success_head.json (unweighted, per-card Platt on OOF, bootstrap lower bound; train/val only)",
+    "policy_defaults": {
+      "failure_penalty_usd": 0.1,
+      "equal_p_margin": 0.05,
+      "min_p_success": 0.6,
+      "w_cost": 1.0,
+      "ladder_lambda": 3.0,
+      "best_single_usd_cap": 1.5183
+    },
+    "gold_9_model": {
+      "v4 max_utility single-shot": {
+        "success_per_100": 76.7,
+        "success_ci95": [
+          69.3333,
+          82.6667
+        ],
+        "usd_per_100": 0.9091,
+        "under_est_rate": 0.14,
+        "over_spend_rate": 0.687
+      },
+      "v4 escalation_ladder within 1": {
+        "success_per_100": 76.0,
+        "success_ci95": [
+          68.6667,
+          82.6667
+        ],
+        "usd_per_100": 0.5641,
+        "under_est_rate": 0.167,
+        "over_spend_rate": 0.66
+      },
+      "v4 escalation_ladder within 2": {
+        "success_per_100": 88.7,
+        "success_ci95": [
+          83.3333,
+          93.3333
+        ],
+        "usd_per_100": 0.884,
+        "under_est_rate": 0.167,
+        "over_spend_rate": 0.66
+      },
+      "v4 escalation_ladder within 3": {
+        "success_per_100": 92.0,
+        "success_ci95": [
+          87.3333,
+          96.0
+        ],
+        "usd_per_100": 1.2342,
+        "under_est_rate": 0.167,
+        "over_spend_rate": 0.66
+      },
+      "always openrouter-gpt-6.1-sol": {
+        "success_per_100": 79.3,
+        "success_ci95": [
+          72.6667,
+          85.3333
+        ],
+        "usd_per_100": 1.1143,
+        "under_est_rate": 0.107,
+        "over_spend_rate": 0.747
+      },
+      "always-strongest (card skills)": {
+        "success_per_100": 76.7,
+        "success_ci95": [
+          70.0,
+          83.3333
+        ],
+        "usd_per_100": 4.0299,
+        "under_est_rate": 0.0,
+        "over_spend_rate": 0.76
+      },
+      "oracle (cheapest passing)": {
+        "success_per_100": 94.0,
+        "success_ci95": [
+          90.0,
+          97.3333
+        ],
+        "usd_per_100": 0.5597,
+        "under_est_rate": 0.0,
+        "over_spend_rate": 0.0
+      }
+    },
+    "report": "eval_reports/v4/REPORT.md",
+    "version": "v4.1",
+    "calibration_train_val_nested_cv": {
+      "ece": 0.0147,
+      "logloss": 0.5603,
+      "auc": 0.7446,
+      "mean_p": 0.3522,
+      "mean_margin": 0.0391
+    },
+    "calibration_gold": {
+      "v4.1 p_success (calibrated)": {
+        "n_cells": 1350,
+        "ece": 0.1266,
+        "mean_p": 0.4971,
+        "pass_rate": 0.6237,
+        "auc": 0.6504
+      },
+      "v4.1 p_success_lower": {
+        "n_cells": 1350,
+        "ece": 0.1842,
+        "mean_p": 0.4395,
+        "pass_rate": 0.6237,
+        "auc": 0.65
+      },
+      "v4.0 p_success (fail-weight 2.5 + LCB)": {
+        "n_cells": 1350,
+        "ece": 0.3751,
+        "mean_p": 0.2486,
+        "pass_rate": 0.6237,
+        "auc": 0.6166
+      }
+    }
+  }
+}

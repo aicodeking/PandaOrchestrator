@@ -11,7 +11,7 @@ Tool and endpoint details are in [API.md](API.md).
 
 | what | how it was checked |
 |---|---|
-| Panda Router MCP, HTTP, CLI, Python and shell snippets | **Run** against `artifacts/panda-router-v3` (Python 3.12, fresh venv) |
+| Panda Router MCP, HTTP, CLI, Python and shell snippets | **Run** against `artifacts/panda-router-v4` (Python 3.12, fresh venv) |
 | Claude Code 2.1.310: `claude mcp add --scope project ...` | **Run**; it wrote the `.mcp.json` shown below. Project-scope servers then show "Pending approval" until you approve them in a session, so tool calls from a live Claude session were **not** run |
 | Codex CLI 0.162.1: `codex mcp add` | **Run** with a temporary `CODEX_HOME`; it wrote the TOML shown. `codex mcp list` lists the server. A live Codex session calling the tools was not run |
 | OpenCode 1.19.0: `opencode.json` `mcp` entry | **Run**; `opencode mcp list` reported the server `connected`. A model calling the tools was not run |
@@ -32,7 +32,7 @@ which panda-router-mcp   # use this absolute path in the configs below
 ```
 
 In the configs below, replace `/ABS/PATH/PandaOrchestrator` with your checkout. Use absolute paths: MCP clients
-start the server from their own working directory. The profiler directory (`artifacts/panda-router-v3`) must exist
+start the server from their own working directory. The profiler directory (`artifacts/panda-router-v4`) must exist
 (see the README); without `--artifacts` and outside a checkout that has it, you get the weaker heuristic profiler.
 
 ## Mapping a pick to a harness
@@ -61,7 +61,7 @@ Register the MCP server (user scope so it applies in every project; `--` separat
 
 ```sh
 claude mcp add --scope user panda-router -- /ABS/PATH/PandaOrchestrator/.venv/bin/panda-router-mcp \
-  --artifacts /ABS/PATH/PandaOrchestrator/artifacts/panda-router-v3
+  --artifacts /ABS/PATH/PandaOrchestrator/artifacts/panda-router-v4
 claude mcp list
 ```
 
@@ -74,7 +74,7 @@ each user to approve it on first use:
     "panda-router": {
       "type": "stdio",
       "command": "/ABS/PATH/PandaOrchestrator/.venv/bin/panda-router-mcp",
-      "args": ["--artifacts", "/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v3"],
+      "args": ["--artifacts", "/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v4"],
       "env": {}
     }
   }
@@ -110,7 +110,7 @@ and model override behaviour were **not re-verified** for this version; check `/
 Either run `codex mcp add` or edit `~/.codex/config.toml`. This is what `codex mcp add` (0.162.1) wrote:
 
 ```sh
-codex mcp add panda-router --env PANDA_ROUTER_ARTIFACTS=/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v3 \
+codex mcp add panda-router --env PANDA_ROUTER_ARTIFACTS=/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v4 \
   -- /ABS/PATH/PandaOrchestrator/.venv/bin/panda-router-mcp
 ```
 ```toml
@@ -118,7 +118,7 @@ codex mcp add panda-router --env PANDA_ROUTER_ARTIFACTS=/ABS/PATH/PandaOrchestra
 command = "/ABS/PATH/PandaOrchestrator/.venv/bin/panda-router-mcp"
 
 [mcp_servers.panda-router.env]
-PANDA_ROUTER_ARTIFACTS = "/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v3"
+PANDA_ROUTER_ARTIFACTS = "/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v4"
 ```
 
 Put the same routing instructions as the CLAUDE.md snippet in `AGENTS.md`, with `pool` limited to `codex-*` cards
@@ -135,7 +135,7 @@ Put the same routing instructions as the CLAUDE.md snippet in `AGENTS.md`, with 
     "panda-router": {
       "type": "stdio",
       "command": "/ABS/PATH/PandaOrchestrator/.venv/bin/panda-router-mcp",
-      "args": ["--artifacts", "/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v3"]
+      "args": ["--artifacts", "/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v4"]
     }
   }
 }
@@ -156,7 +156,7 @@ as `connected` on OpenCode 1.19.0:
     "panda-router": {
       "type": "local",
       "command": ["/ABS/PATH/PandaOrchestrator/.venv/bin/panda-router-mcp",
-                  "--artifacts", "/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v3"],
+                  "--artifacts", "/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v4"],
       "enabled": true
     }
   }
@@ -177,7 +177,7 @@ from claude_agent_sdk import ClaudeAgentOptions, query
 options = ClaudeAgentOptions(
     mcp_servers={"panda-router": {
         "command": "/ABS/PATH/PandaOrchestrator/.venv/bin/panda-router-mcp",
-        "args": ["--artifacts", "/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v3"],
+        "args": ["--artifacts", "/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v4"],
     }},
     allowed_tools=["mcp__panda-router__*"],   # connecting a server does not grant permission to use its tools
 )
@@ -192,7 +192,7 @@ from SDK docs and was not run):
 from claude_agent_sdk import ClaudeAgentOptions, query
 from panda_router.serve.router import Router, load_profiler
 
-router = Router(profiler=load_profiler("artifacts/panda-router-v3"))
+router = Router(profiler=load_profiler("artifacts/panda-router-v4"))
 CLAUDE_POOL = ["claude-opus-5.5", "claude-sonnet-5.5", "claude-haiku-5.5"]
 
 async def run_subtask(text: str):
@@ -213,7 +213,7 @@ from agents.mcp import MCPServerStdio
 
 async with MCPServerStdio(params={
     "command": "/ABS/PATH/PandaOrchestrator/.venv/bin/panda-router-mcp",
-    "args": ["--artifacts", "/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v3"],
+    "args": ["--artifacts", "/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v4"],
 }) as router_mcp:
     agent = Agent(name="Dispatcher", instructions="Call route_task before delegating; call record_outcome after.",
                   mcp_servers=[router_mcp])
@@ -242,7 +242,7 @@ Use a router node that picks the chat model, then a worker node that invokes it.
 from langchain.chat_models import init_chat_model
 from panda_router.serve.router import Router, load_profiler
 
-router = Router(profiler=load_profiler("artifacts/panda-router-v3"))
+router = Router(profiler=load_profiler("artifacts/panda-router-v4"))
 
 def card_id(resp):  # the ranking entry of the chosen model (ranking[0] is not always the pick)
     return next(x["card_id"] for x in resp["ranking"] if x["model_id"] == resp["choice"]["model_id"])
@@ -265,7 +265,7 @@ To expose the MCP tools to a LangChain agent instead, use `langchain-mcp-adapter
 
 ## Any orchestrator over HTTP
 
-Start `panda-router-serve --port 8765 --artifacts artifacts/panda-router-v3`, then loop:
+Start `panda-router-serve --port 8765 --artifacts artifacts/panda-router-v4`, then loop:
 
 ```python
 import requests
@@ -296,7 +296,7 @@ with curl in [API.md](API.md#http).
 
 ```sh
 TASK='Add retry with backoff to the S3 uploader'
-OUT=$(panda-router route --artifacts artifacts/panda-router-v3 --db /tmp/router.sqlite --task "$TASK" \
+OUT=$(panda-router route --artifacts artifacts/panda-router-v4 --db /tmp/router.sqlite --task "$TASK" \
         --pool claude-sonnet-5.5,claude-haiku-5.5 2>/dev/null)
 echo "$OUT" | jq -r '[.choice.model_id, .trace_id, .difficulty.level] | @tsv'
 # claude-haiku-5.5	r_175ec83aaf7841beaeb9a986	2

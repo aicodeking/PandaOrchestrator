@@ -81,3 +81,11 @@ def test_strict_verdict_and_kappa():
     assert strict_verdict({"criteria": [{"id": 2, "evidence": "q", "met": True}], "material_errors": []}, cr) is False
     assert strict_verdict({}, cr) is None
     assert cohen_kappa([True, False] * 5, [True, False] * 5) == 1.0
+
+
+def test_cli_chat_quota_detection_and_dsh_default():
+    from panda_router.datagen import teachers
+    from panda_router.outcomes.cli_chat import _fail
+
+    assert _fail("HTTP 429 Too Many Requests")["quota"] and not _fail("exit 1: boom")["quota"]
+    assert teachers.DEEPSEEK_BACKEND in ("dsh", "openrouter")

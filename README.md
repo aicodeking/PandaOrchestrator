@@ -46,16 +46,16 @@ pip install -e .            # core: serving only (onnxruntime, transformers toke
 pip install -e ".[train]"   # optional: torch and friends, only needed to retrain or export (see docs below)
 ```
 
-The trained profiler ships in the repo at `artifacts/panda-router-v3/` (31 MB int8 ONNX `model.int8.onnx`,
+The trained profiler ships in the repo at `artifacts/panda-router-v4/` (31 MB int8 ONNX `model.int8.onnx`,
 `heads.json`, tokenizer files). The 128 MB fp32 export is not committed; the router only needs the int8 model.
 Without `--artifacts` the CLI falls back to a keyword heuristic profiler, which works but is clearly weaker
-(see [Results](#results)); the HTTP and MCP servers default to `artifacts/panda-router-v3` in a source
+(see [Results](#results)); the HTTP and MCP servers default to `artifacts/panda-router-v4` in a source
 checkout. An explicitly given `--artifacts` directory that fails to load is an error, not a silent fallback.
 
 **Route one task (CLI)**
 
 ```sh
-panda-router route --artifacts artifacts/panda-router-v3 --no-log \
+panda-router route --artifacts artifacts/panda-router-v4 --no-log \
   --task 'Rename a variable in utils.py' \
   --pool claude/sonnet-5-5,claude-haiku-5.5,gpt-oss:20b --mode max_utility --top-k 3
 ```
@@ -67,21 +67,21 @@ panda-router route --artifacts artifacts/panda-router-v3 --no-log \
 **Start the HTTP server**
 
 ```sh
-panda-router-serve --port 8765 --artifacts artifacts/panda-router-v3
-# [panda-router] listening on http://127.0.0.1:8765 (profiler=OnnxProfiler(panda-router-v3/model.int8.onnx), ...)
+panda-router-serve --port 8765 --artifacts artifacts/panda-router-v4
+# [panda-router] listening on http://127.0.0.1:8765 (profiler=OnnxProfiler(panda-router-v4/model.int8.onnx), ...)
 curl -s localhost:8765/health
 ```
 
 **Start the MCP server (stdio)**
 
 ```sh
-panda-router-mcp --artifacts artifacts/panda-router-v3
+panda-router-mcp --artifacts artifacts/panda-router-v4
 ```
 
 It speaks newline-delimited JSON-RPC on stdin/stdout and exposes `route_task`, `escalate_task`,
 `record_outcome` and `list_models`. Clients normally launch it for you; see
 [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md). In a source checkout, `--artifacts` defaults to
-`artifacts/panda-router-v3` when that directory exists.
+`artifacts/panda-router-v4` when that directory exists.
 
 ## Example
 
@@ -113,7 +113,7 @@ Real output (the `difficulty.distribution` array is shortened to two entries):
   "flags": {"needs_tools": 0.1835, "needs_vision": 0.0057, "long_context": 0.0082, "needs_review": 0.8608,
             "ambiguous_spec": 0.9294, "multi_file": 0.9169, "needs_web": 0.0538},
   "fallback": {"triggered": false, "floor": 0.55, "default_model": "claude-opus-5.5"},
-  "router": {"version": "panda-router-0.1.0", "profiler": "OnnxProfiler(panda-router-v3/model.int8.onnx)",
+  "router": {"version": "panda-router-0.1.0", "profiler": "OnnxProfiler(panda-router-v4/model.int8.onnx)",
              "latency_ms": 22.67, "pool_hash": "..."},
   "trace_id": "r_8f10ab11a5394f35a79c2032"
 }
@@ -125,26 +125,35 @@ task is harder. Report the final result with `/outcome`. Details: [docs/API.md](
 
 ## Results
 
-### Real routed success (v3)
+### Real routed success (v4)
 
-140 held-out real tasks (non-coding and small coding, single-turn), each actually attempted by five OpenRouter
-models (qwen3.8-flash, deepseek-v4.1-flash, minimax-m3.1-flash, gemini-3.8-flash, gpt-6.1-sol) and graded
-pass/fail by DeepSeek V4.1 Flash (kappa 0.85 against a Kimi K3.1 Pro reference). The router picks from those
-five; we count how often its pick actually passed. Report: [data/outcomes/REPORT_attempts.md](data/outcomes/REPORT_attempts.md).
+150 held-out real tasks, each actually attempted by nine models (claude-haiku/sonnet/opus-5.5, codex-gpt-6-luna,
+gpt-6.1-sol, gemini-3.8-flash, deepseek-v4.1-flash, minimax-m3.1-flash, qwen3.8-flash) and graded pass/fail by an
+LLM judge (DeepSeek, then GPT-5.6-Terra; agreement with a Kimi K3.1 Pro reference kappa 0.70-0.85). Nothing was
+tuned on these tasks. Reports: [eval_reports/v4/REPORT.md](eval_reports/v4/REPORT.md),
+[data/outcomes/REPORT_v4_attempts.md](data/outcomes/REPORT_v4_attempts.md).
 
-| policy | success / 100 | $ / 100 tasks |
+| strategy | success / 100 [95% CI] | $ / 100 tasks |
 |---|---:|---:|
-| always cheapest (qwen3.8-flash) | 47.1 | 0.064 |
-| v2, old default (`cheapest_above_threshold`) | 50.0 | 0.095 |
-| v3, `cheapest_above_threshold` | 51.4 | 0.142 |
-| **v3, `max_utility` (new default)** | **67.9** | **0.156** |
-| always strongest (gpt-6.1-sol) | 78.6 | 1.061 |
-| oracle (cheapest model that passed) | 90.0 | 0.192 |
+| v4, single pick (default) | 76.7 [69.3, 82.7] | 0.91 |
+| **v4, follow `escalation_ladder`, up to 2 attempts** | **88.7 [83.3, 93.3]** | **0.88** |
+| v4, up to 3 attempts | 92.0 | 1.23 |
+| always best single model (gpt-6.1-sol) | 79.3 [72.7, 85.3] | 1.11 |
+| always strongest-priced (claude-opus-5.5) | 76.7 | 4.03 |
+| oracle (cheapest model that passed) | 94.0 | 0.56 |
 
-The default mode is now `max_utility`: it gets 86% of always-strongest's successes at 15% of its cost. The gap to
-the oracle is still large; better model cards are the main lever (see Limitations).
+- **85+ needs one retry.** No single pick beats always-gpt-6.1-sol by more than noise; per-task differences between
+  strong models are small. Following the response's `escalation_ladder` (cheap-but-safe first, stronger next)
+  when your orchestrator can tell a failure (tests, review, a verifier) gets 88.7/100 for less than always-sol.
+- **$0 models no longer win by default.** Expected cost now includes the cost of failing and retrying; free and
+  weak-evidence cards get a conservative prior. $0 picks on the full pool in cheapest mode: 88% (v3) -> 0%.
+- **Errs on the safe side.** Decisions use `p_success_lower` (a lower confidence bound); the profiler is trained
+  to over- rather than under-estimate difficulty. Under-powered picks fell from 27% (v3) to 14%.
+- **`p_success` is an honest, strict-grading pass rate** (calibrated per model on train/val, ECE 0.015). It looks
+  low for trivial questions (~0.5) because the outcome data has few trivial, well-specified tasks; see Limitations.
+- **Vague requests** ("a model trainer") are rated ~5 instead of 1.5 and go to a paid model.
 
-### Profiler quality
+### Profiler quality (v3 baseline; v4 = v3 data + Modal-trained 150M teacher, distilled 32M, vague-task fine-tune)
 
 Evaluated on 359 real tasks (the gold set) that were never trained on, labelled by Codex + DeepSeek V4.1 Flash.
 Full tables: [eval_reports/compare_v3.md](eval_reports/compare_v3.md); release notes: [RESULTS.md](RESULTS.md).

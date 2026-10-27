@@ -53,7 +53,7 @@ def req(pool=POOL, **kw):
 
 @pytest.fixture(scope="module")
 def m():
-    return Matcher(calibration=False)
+    return Matcher(calibration=False, policy="v3", success_head=None)  # v3 card policy; v4: tests/test_router_v4.py
 
 
 # ----------------------------------------------------------------------------- cards / schemas

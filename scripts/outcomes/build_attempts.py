@@ -26,6 +26,7 @@ sys.path.insert(0, str(ROOT / "scripts" / "outcomes"))
 
 from attempts import ATTEMPTERS, RAW, ok_answer, read_jsonl, tasks  # noqa: E402
 
+from panda_router.outcomes.cli_chat import CLAUDE_MODELS, CODEX_MODELS  # noqa: E402
 from panda_router.outcomes.grade import cohen_kappa  # noqa: E402
 from panda_router.outcomes.irt import fit_b_given_theta, fit_irt, fit_theta_given_b, heldout_metrics  # noqa: E402
 from panda_router.outcomes.scale import fit_link, link_slope, to_1_10, to_router  # noqa: E402
@@ -33,15 +34,17 @@ from panda_router.outcomes.scale import fit_link, link_slope, to_1_10, to_router
 OUT = ROOT / "data" / "outcomes"
 CARDS = ROOT / "cards"
 LABEL_JUDGE = "ds-think"
-JUDGE_SLUGS = {"ds-think": "deepseek/deepseek-v4.1-flash (reasoning effort low)",
+JUDGE_SLUGS = {"dsh": "deepseek via dsh harness (thinking on)", "codex-terra": "gpt-5.6-terra via codex exec (batched)", "ds-think": "deepseek/deepseek-v4.1-flash (reasoning effort low)",
                "strong": "openai/gpt-6.1-sol (reasoning effort low)"}
 AXES = ("coding", "debugging", "reasoning", "math", "writing", "research", "review", "planning", "ui_frontend",
         "data_analysis")
 # card update rules (per axis): enough items whose dominant axis is k, and the fitted value differs from the card
 # by more than the combined uncertainty
 MIN_AXIS_ITEMS, AXIS_PRIOR_SD = 25, 1.0
-PROVENANCE_NOTE = "verified (attempt-grade 2026-10)"
-MODELS = list(ATTEMPTERS)
+PROVENANCE_NOTE = "verified (attempt-grade v4)"
+OLD_MODELS = list(ATTEMPTERS)  # the five OpenRouter attempters (also graded by gpt-6.1-sol / kimi for the sensitivity checks)
+MODELS = OLD_MODELS + [*CLAUDE_MODELS, *CODEX_MODELS]
+LABEL_JUDGES = ("ds-think", "dsh", "codex-terra")  # label = first available (judge mix + kappa in REPORT_v4_attempts.md)
 
 
 def card(cid: str) -> dict:
@@ -64,7 +67,9 @@ def teacher_axes() -> dict:
     return out
 
 
-def load_cells(label_judge: str = LABEL_JUDGE) -> pd.DataFrame:
+def load_cells(label_judge: str | None = None) -> pd.DataFrame:
+    """label_judge None = LABEL_JUDGES in order (ds-think, else dsh); 'dsh'/'strong'/... = that judge only."""
+    order = (label_judge,) if label_judge else LABEL_JUDGES
     tmap = {t["id"]: t for t in tasks()}
     ans = {(r["task_id"], r["model"]): r for r in read_jsonl(RAW / "answers.jsonl") if ok_answer(r)}
     grades = defaultdict(dict)
@@ -74,15 +79,16 @@ def load_cells(label_judge: str = LABEL_JUDGE) -> pd.DataFrame:
     rows = []
     for key, a in ans.items():
         g = grades.get(key, {})
-        if key[0] not in tmap or label_judge not in g:
+        lj = next((j for j in order if j in g), None)
+        if key[0] not in tmap or lj is None:
             continue
         t = tmap[key[0]]
         rows.append({"task_id": key[0], "split": t["split"], "category": t["category"], "model": key[1],
-                     "pass": bool(g[label_judge]["pass"]), "judge": JUDGE_SLUGS[label_judge],
+                     "pass": bool(g[lj]["pass"]), "judge": JUDGE_SLUGS[lj], "label": lj,
                      "pass_ds": g["ds"]["pass"] if "ds" in g else None,
-                     "finish": a["finish"], "verify_ran": (g[label_judge].get("verify") or {}).get("ran"),
-                     "cost_attempt": round(a["cost"], 6), "cost_judge": round(g[label_judge].get("cost", 0.0), 6),
-                     "out_tokens": a["usage"]["completion"]})
+                     "finish": a["finish"], "verify_ran": (g[lj].get("verify") or {}).get("ran"),
+                     "cost_attempt": round(a["cost"], 6), "cost_judge": round(g[lj].get("cost", 0.0), 6),
+                     "out_tokens": a["usage"]["completion"], "in_tokens": a["usage"]["prompt"]})
     return pd.DataFrame(rows)
 
 
@@ -134,16 +140,17 @@ def sensitivity(cells: pd.DataFrame, link: dict) -> dict:
     key = ["task_id", "model"]
     both = cells[cells.split != "gold"].merge(strong[strong.split != "gold"][key + ["pass"]], on=key,
                                               suffixes=("", "_strong"))
+    both = both[both.model.isin(OLD_MODELS)]
     items = sorted(both.task_id.unique())
-    ii, mi = {x: j for j, x in enumerate(items)}, {m: j for j, m in enumerate(MODELS)}
+    ii, mi = {x: j for j, x in enumerate(items)}, {m: j for j, m in enumerate(OLD_MODELS)}
     s, i = both.model.map(mi).to_numpy(), both.task_id.map(ii).to_numpy()
     out = {"n_cells": len(both), "n_items": len(items),
            "pass_rate": {"ds-think": both.groupby("model")["pass"].mean().round(3).to_dict(),
                          "strong": both.groupby("model")["pass_strong"].mean().round(3).to_dict()}}
     for name, col in (("ds-think", "pass"), ("strong", "pass_strong")):
-        f = fit_irt(s, i, both[col].astype(int).to_numpy(), np.ones(len(both)), len(MODELS), len(items), two_pl=False)
+        f = fit_irt(s, i, both[col].astype(int).to_numpy(), np.ones(len(both)), len(OLD_MODELS), len(items), two_pl=False)
         out[f"theta_router_{name}"] = {m: round(float(to_router(t, link["alpha"], link["gamma"])), 2)
-                                       for m, t in zip(MODELS, f.theta)}
+                                       for m, t in zip(OLD_MODELS, f.theta)}
     return out
 
 
@@ -183,7 +190,7 @@ def card_proposals(res: dict, ax: pd.DataFrame, sens: dict) -> list[dict]:
     """Apply an axis delta only if (1) >= MIN_AXIS_ITEMS items, (2) |delta| > hypot(fit se, card se / 2) and (3) the
     gpt-6.1-sol sensitivity fit puts the model on the same side of its card mean (direction robust to the judge)."""
     f, link = res["fit"], res["link"]
-    strong_th = sens["theta_router_strong"]
+    strong_th = sens["theta_router_strong"]  # old 5 only; the 4 subscription models have no second judge
     out = []
     for j, m in enumerate(MODELS):
         c = card(m)
@@ -191,12 +198,12 @@ def card_proposals(res: dict, ax: pd.DataFrame, sens: dict) -> list[dict]:
         gse = float(np.hypot(link["gamma"] * f.se_theta[j], link["alpha_se"]))
         mean, _ = card_mean(c)
         row = {"card": m, "card_mean": round(mean, 2), "fitted_mean": round(glob, 2), "se": round(gse, 2),
-               "delta_mean": round(glob - mean, 2), "strong_judge_mean": strong_th[m], "axes": {}}
+               "delta_mean": round(glob - mean, 2), "strong_judge_mean": strong_th.get(m), "axes": {}}
         for r in ax[ax.model == m].itertuples():
             cur = c["skills"][r.axis]
             d = r.theta_router - cur["theta"]
             strong = r.n_items >= MIN_AXIS_ITEMS and abs(d) > np.hypot(r.se_router, 0.5 * cur["se"])
-            robust = np.sign(d) == np.sign(strong_th[m] - mean)
+            robust = m not in strong_th or np.sign(d) == np.sign(strong_th[m] - mean)
             row["axes"][r.axis] = {"n_items": r.n_items, "pass_rate": r.pass_rate, "current": cur["theta"],
                                    "current_se": cur["se"], "fitted": round(r.theta_router, 2),
                                    "se": round(r.se_router, 2), "delta": round(d, 2), "strong_evidence": bool(strong),
@@ -217,21 +224,21 @@ def apply_cards(props: list[dict]):
         for a, v in upd.items():
             skills[a] = {"theta": round(float(np.clip(v["fitted"], 0, 10)), 2),
                          "se": round(float(min(skills[a]["se"], max(v["se"], 0.3))), 2)}
-        src = "data/outcomes/REPORT_attempts.md (attempt-and-grade IRT; judge deepseek-v4.1-flash validated vs kimi-k3.1-pro)"
+        src = "data/outcomes/REPORT_v4_attempts.md (attempt-and-grade IRT v4, 9 attempters; judges deepseek-v4.1-flash ds-think / dsh)"
         note = (f" {PROVENANCE_NOTE}: axes " + ", ".join(f"{a} {c['skills'][a]['theta']}->{skills[a]['theta']}"
                                                        for a in upd)
                 + " fitted (1PL IRT, router scale) from single-turn, no-tool attempts on non-SWE tasks, graded by "
-                  "deepseek-v4.1-flash (kappa 0.85 vs kimi-k3.1-pro); applied only where the direction also holds "
-                  "under gpt-6.1-sol grading. Location anchored on the 5 attempters' own card means (deltas are "
-                  "relative to their consensus). Other axes and supersedes unchanged. See "
-                  "data/outcomes/REPORT_attempts.md.")
+                  "deepseek-v4.1-flash (ds-think, kappa 0.85 vs kimi-k3.1-pro; dsh harness for the rest, kappa 0.75 vs ds-think); "
+                  "for the 5 OpenRouter models applied only where the direction also holds under gpt-6.1-sol grading. "
+                  "Location anchored on the 9 attempters' own card means (deltas are relative to their consensus). "
+                  "Other axes and supersedes unchanged. See data/outcomes/REPORT_v4_attempts.md.")
         fp = dict(c["field_provenance"])
         if len(upd) >= len(skills) / 2:
             fp["skills"] = "verified"
         new = {**c, "skills": skills, "field_provenance": fp,
                "provenance": "verified" if fp.get("skills") == "verified" else c["provenance"],
                "sources": [*c.get("sources", []), *([src] if src not in c.get("sources", []) else [])],
-               "notes": (c.get("notes") or "").rstrip() + note, "card_version": "2026-10-26"}
+               "notes": (c.get("notes") or "").rstrip() + note, "card_version": "2026-10-27"}
         path.write_text(json.dumps(new, indent=2, ensure_ascii=False) + "\n")
         print("updated", p["card"], {a: v["delta"] for a, v in upd.items()})
 
@@ -308,7 +315,12 @@ def main():
     print("diag", res["diag"], "link", {k: v for k, v in link.items() if k != "anchors"})
 
     # --- outputs
-    cells.drop(columns=["pass_ds"]).assign(cost=lambda d: (d.cost_attempt + d.cost_judge).round(6)).to_json(
+    ok = cells.assign(text=cells.task_id.map(lambda x: tmeta[x]["text"]), card_id=cells.model,
+                      judge=cells.label,
+                      **{"pass": cells["pass"].astype(int)})
+    ok[["task_id", "split", "text", "card_id", "pass", "judge"]].to_json(OUT / "success_cells.jsonl", orient="records",
+                                                                         lines=True, force_ascii=False)  # gold = eval only
+    cells.drop(columns=["pass_ds", "label"]).assign(cost=lambda d: (d.cost_attempt + d.cost_judge).round(6)).to_json(
         OUT / "attempts.jsonl", orient="records", lines=True)
     npass = cells.groupby("task_id")["pass"].sum()
     nmod = cells.groupby("task_id")["pass"].size()
@@ -355,8 +367,7 @@ def main():
     sp = {s: spearman_table(allt[m], ["v2", "teacher"], "irt_b") for s, m in sets.items()}
     sp_fail = {s: spearman_table(allt[m], ["v2", "teacher"], "models_failed") for s, m in sets.items()}
 
-    routing = {"cards_before": route_eval(gi, cells, profiles, CARDS),
-               "cards_after": route_eval(gi, cells, profiles, updated_cards_dir(props))}
+    routing = {}  # v4: routed success / oracle live in REPORT_v4_attempts.md (scripts/outcomes/report_v4.py)
 
     summary = {
         "label_judge": "openai/gpt-6.1-sol (reasoning effort low)", "judge_validation": judge_validation(),

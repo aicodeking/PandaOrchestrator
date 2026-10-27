@@ -6,7 +6,7 @@ requires-python = ">=3.12"
 dependencies = ["numpy", "scipy", "jsonschema", "onnxruntime", "transformers"]  # serving only (tokenizer; no torch)
 
 [project.optional-dependencies]
-train = ["torch", "transformers", "datasets", "onnx", "optimum[onnxruntime]", "scikit-learn"]
+train = ["torch", "transformers", "datasets", "onnx", "optimum[onnxruntime]", "scikit-learn", "modal"]
 dev = ["pytest"]
 
 [project.scripts]

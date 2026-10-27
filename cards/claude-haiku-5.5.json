@@ -15,36 +15,36 @@
   ],
   "skills": {
     "coding": {
-      "theta": 7.0,
-      "se": 0.8
+      "theta": 8.35,
+      "se": 0.38
     },
     "debugging": {
-      "theta": 6.8,
-      "se": 0.8
+      "theta": 8.71,
+      "se": 0.38
     },
     "reasoning": {
-      "theta": 6.7,
-      "se": 0.8
+      "theta": 8.16,
+      "se": 0.38
     },
     "math": {
       "theta": 6.3,
       "se": 0.8
     },
     "writing": {
-      "theta": 7.2,
-      "se": 0.8
+      "theta": 7.77,
+      "se": 0.38
     },
     "research": {
       "theta": 6.5,
       "se": 0.8
     },
     "review": {
-      "theta": 6.8,
-      "se": 0.8
+      "theta": 8.29,
+      "se": 0.47
     },
     "planning": {
-      "theta": 6.5,
-      "se": 0.8
+      "theta": 7.9,
+      "se": 0.41
     },
     "ui_frontend": {
       "theta": 6.8,
@@ -88,18 +88,19 @@
     "harness:claude-code",
     "tier:small"
   ],
-  "card_version": "2026-10-25",
-  "provenance": "benchmark-informed",
+  "card_version": "2026-10-27",
+  "provenance": "verified",
   "field_provenance": {
     "cost": "verified",
     "limits": "verified",
-    "skills": "benchmark-informed",
+    "skills": "verified",
     "latency": "estimated"
   },
   "sources": [
     "https://platform.claude.com/docs/en/about-claude/pricing",
     "https://platform.claude.com/docs/en/models/overview",
-    "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)"
+    "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)",
+    "data/outcomes/REPORT_v4_attempts.md (attempt-and-grade IRT v4, 9 attempters; judges deepseek-v4.1-flash ds-think / dsh)"
   ],
-  "notes": "Price is the <=100k-token prompt tier; prompts over 100k cost $0.50/$2.50 per MTok."
+  "notes": "Price is the <=100k-token prompt tier; prompts over 100k cost $0.50/$2.50 per MTok. verified (attempt-grade v4): axes coding 7.0->8.35, debugging 6.8->8.71, planning 6.5->7.9, reasoning 6.7->8.16, review 6.8->8.29, writing 7.2->7.77 fitted (1PL IRT, router scale) from single-turn, no-tool attempts on non-SWE tasks, graded by deepseek-v4.1-flash (ds-think, kappa 0.85 vs kimi-k3.1-pro; dsh harness for the rest, kappa 0.75 vs ds-think); for the 5 OpenRouter models applied only where the direction also holds under gpt-6.1-sol grading. Location anchored on the 9 attempters' own card means (deltas are relative to their consensus). Other axes and supersedes unchanged. See data/outcomes/REPORT_v4_attempts.md."
 }

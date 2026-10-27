@@ -7,8 +7,8 @@
     "agreement": 0.76,
     "kappa": 0.459,
     "kappa_ci95": [
-     0.282,
-     0.63
+     0.287,
+     0.629
     ],
     "pass_rate": 0.78,
     "ref_pass_rate": 0.6
@@ -18,8 +18,8 @@
     "agreement": 0.59,
     "kappa": 0.24,
     "kappa_ci95": [
-     0.111,
-     0.386
+     0.094,
+     0.38
     ],
     "pass_rate": 0.78,
     "ref_pass_rate": 0.43
@@ -29,8 +29,8 @@
     "agreement": 0.929,
     "kappa": 0.851,
     "kappa_ci95": [
-     0.738,
-     0.938
+     0.735,
+     0.955
     ],
     "pass_rate": 0.616,
     "ref_pass_rate": 0.606
@@ -40,8 +40,8 @@
     "agreement": 0.758,
     "kappa": 0.53,
     "kappa_ci95": [
-     0.373,
-     0.685
+     0.374,
+     0.668
     ],
     "pass_rate": 0.616,
     "ref_pass_rate": 0.434
@@ -51,8 +51,8 @@
     "agreement": 0.667,
     "kappa": 0.385,
     "kappa_ci95": [
-     0.247,
-     0.521
+     0.25,
+     0.525
     ],
     "pass_rate": 0.283,
     "ref_pass_rate": 0.596
@@ -62,8 +62,8 @@
     "agreement": 0.687,
     "kappa": 0.336,
     "kappa_ci95": [
-     0.156,
-     0.512
+     0.164,
+     0.517
     ],
     "pass_rate": 0.283,
     "ref_pass_rate": 0.434
@@ -73,8 +73,8 @@
     "agreement": 0.81,
     "kappa": 0.63,
     "kappa_ci95": [
-     0.491,
-     0.78
+     0.487,
+     0.764
     ],
     "pass_rate": 0.43,
     "ref_pass_rate": 0.6
@@ -84,8 +84,8 @@
     "agreement": 0.81,
     "kappa": 0.63,
     "kappa_ci95": [
-     0.489,
-     0.763
+     0.487,
+     0.766
     ],
     "pass_rate": 0.6,
     "ref_pass_rate": 0.43
@@ -131,181 +131,313 @@
     "strong": 23,
     "kimi": 25,
     "n": 29
+   },
+   "claude-haiku-5.5": {
+    "ds": 0,
+    "ds-think": 0,
+    "ds-strict": 0,
+    "strong": 0,
+    "kimi": 0,
+    "n": 0
+   },
+   "claude-sonnet-5.5": {
+    "ds": 0,
+    "ds-think": 0,
+    "ds-strict": 0,
+    "strong": 0,
+    "kimi": 0,
+    "n": 0
+   },
+   "claude-opus-5.5": {
+    "ds": 0,
+    "ds-think": 0,
+    "ds-strict": 0,
+    "strong": 0,
+    "kimi": 0,
+    "n": 0
+   },
+   "codex-gpt-6-luna": {
+    "ds": 0,
+    "ds-think": 0,
+    "ds-strict": 0,
+    "strong": 0,
+    "kimi": 0,
+    "n": 0
    }
   }
  },
- "n_cells": 2938,
- "n_trainval_items": 511,
+ "n_cells": 7059,
+ "n_trainval_items": 879,
  "n_gold_items": 150,
  "pass_rate_by_model": {
   "train/val": {
-   "openrouter-deepseek-v4.1-flash": 0.332,
-   "openrouter-gemini-3.8-flash": 0.322,
-   "openrouter-gpt-6.1-sol": 0.549,
-   "openrouter-minimax-m3.1-flash": 0.241,
-   "openrouter-qwen3.8-flash": 0.209
+   "claude-haiku-5.5": 0.44,
+   "claude-opus-5.5": 0.48,
+   "claude-sonnet-5.5": 0.528,
+   "codex-gpt-6-luna": 0.29,
+   "openrouter-deepseek-v4.1-flash": 0.351,
+   "openrouter-gemini-3.8-flash": 0.303,
+   "openrouter-gpt-6.1-sol": 0.576,
+   "openrouter-minimax-m3.1-flash": 0.229,
+   "openrouter-qwen3.8-flash": 0.188
   },
   "gold": {
-   "openrouter-deepseek-v4.1-flash": 0.66,
-   "openrouter-gemini-3.8-flash": 0.612,
-   "openrouter-gpt-6.1-sol": 0.788,
-   "openrouter-minimax-m3.1-flash": 0.446,
-   "openrouter-qwen3.8-flash": 0.459
+   "claude-haiku-5.5": 0.64,
+   "claude-opus-5.5": 0.767,
+   "claude-sonnet-5.5": 0.733,
+   "codex-gpt-6-luna": 0.513,
+   "openrouter-deepseek-v4.1-flash": 0.653,
+   "openrouter-gemini-3.8-flash": 0.607,
+   "openrouter-gpt-6.1-sol": 0.793,
+   "openrouter-minimax-m3.1-flash": 0.453,
+   "openrouter-qwen3.8-flash": 0.453
   }
  },
  "pass_rate_by_category": {
+  "claude-haiku-5.5": {
+   "bugfix": 0.54,
+   "chat_simple": 0.43,
+   "code_review": 0.25,
+   "data_analysis": 0.46,
+   "devops_infra": 0.43,
+   "docs_writing": 0.48,
+   "implementation": 0.51,
+   "math_reasoning": 0.52,
+   "planning": 0.47,
+   "refactor": 0.29,
+   "research": 0.31,
+   "test_writing": 0.33,
+   "ui_frontend": 0.41
+  },
+  "claude-opus-5.5": {
+   "bugfix": 0.56,
+   "chat_simple": 0.5,
+   "code_review": 0.33,
+   "data_analysis": 0.22,
+   "devops_infra": 0.27,
+   "docs_writing": 0.56,
+   "implementation": 0.54,
+   "math_reasoning": 0.78,
+   "planning": 0.39,
+   "refactor": 0.5,
+   "research": 0.44,
+   "test_writing": 0.5,
+   "ui_frontend": 0.67
+  },
+  "claude-sonnet-5.5": {
+   "bugfix": 0.65,
+   "chat_simple": 0.67,
+   "code_review": 0.34,
+   "data_analysis": 0.54,
+   "devops_infra": 0.52,
+   "docs_writing": 0.39,
+   "implementation": 0.63,
+   "math_reasoning": 0.72,
+   "planning": 0.5,
+   "refactor": 0.29,
+   "research": 0.38,
+   "test_writing": 0.44,
+   "ui_frontend": 0.47
+  },
+  "codex-gpt-6-luna": {
+   "bugfix": 0.28,
+   "chat_simple": 0.4,
+   "code_review": 0.16,
+   "data_analysis": 0.23,
+   "devops_infra": 0.26,
+   "docs_writing": 0.42,
+   "implementation": 0.31,
+   "math_reasoning": 0.32,
+   "planning": 0.5,
+   "refactor": 0.12,
+   "research": 0.17,
+   "test_writing": 0.17,
+   "ui_frontend": 0.24
+  },
   "openrouter-deepseek-v4.1-flash": {
-   "bugfix": 0.3,
-   "chat_simple": 0.75,
-   "code_review": 0.21,
-   "data_analysis": 0.39,
+   "bugfix": 0.32,
+   "chat_simple": 0.76,
+   "code_review": 0.25,
+   "data_analysis": 0.34,
    "devops_infra": 0.28,
-   "docs_writing": 0.55,
-   "implementation": 0.27,
-   "math_reasoning": 0.24,
-   "planning": 0.42,
+   "docs_writing": 0.44,
+   "implementation": 0.26,
+   "math_reasoning": 0.29,
+   "planning": 0.49,
    "refactor": 0.21,
-   "research": 0.26,
-   "test_writing": 0.16,
-   "ui_frontend": 0.15
+   "research": 0.35,
+   "test_writing": 0.26,
+   "ui_frontend": 0.3
   },
   "openrouter-gemini-3.8-flash": {
    "bugfix": 0.32,
-   "chat_simple": 0.61,
-   "code_review": 0.09,
-   "data_analysis": 0.25,
-   "devops_infra": 0.19,
-   "docs_writing": 0.41,
+   "chat_simple": 0.57,
+   "code_review": 0.16,
+   "data_analysis": 0.27,
+   "devops_infra": 0.23,
+   "docs_writing": 0.31,
    "implementation": 0.42,
-   "math_reasoning": 0.44,
-   "planning": 0.26,
-   "refactor": 0.05,
-   "research": 0.31,
-   "test_writing": 0.17,
-   "ui_frontend": 0.39
+   "math_reasoning": 0.35,
+   "planning": 0.22,
+   "refactor": 0.13,
+   "research": 0.3,
+   "test_writing": 0.12,
+   "ui_frontend": 0.35
   },
   "openrouter-gpt-6.1-sol": {
-   "bugfix": 0.54,
-   "chat_simple": 0.62,
-   "code_review": 0.28,
-   "data_analysis": 0.63,
-   "devops_infra": 0.61,
-   "docs_writing": 0.48,
-   "implementation": 0.59,
-   "math_reasoning": 0.76,
-   "planning": 0.77,
-   "refactor": 0.4,
-   "research": 0.48,
-   "test_writing": 0.47,
-   "ui_frontend": 0.41
+   "bugfix": 0.57,
+   "chat_simple": 0.7,
+   "code_review": 0.4,
+   "data_analysis": 0.59,
+   "devops_infra": 0.53,
+   "docs_writing": 0.54,
+   "implementation": 0.67,
+   "math_reasoning": 0.62,
+   "planning": 0.72,
+   "refactor": 0.46,
+   "research": 0.47,
+   "test_writing": 0.53,
+   "ui_frontend": 0.54
   },
   "openrouter-minimax-m3.1-flash": {
    "bugfix": 0.19,
-   "chat_simple": 0.39,
-   "code_review": 0.18,
-   "data_analysis": 0.19,
-   "devops_infra": 0.3,
-   "docs_writing": 0.29,
-   "implementation": 0.3,
-   "math_reasoning": 0.19,
-   "planning": 0.43,
-   "refactor": 0.05,
-   "research": 0.16,
-   "test_writing": 0.21,
+   "chat_simple": 0.4,
+   "code_review": 0.16,
+   "data_analysis": 0.18,
+   "devops_infra": 0.2,
+   "docs_writing": 0.25,
+   "implementation": 0.27,
+   "math_reasoning": 0.13,
+   "planning": 0.42,
+   "refactor": 0.15,
+   "research": 0.15,
+   "test_writing": 0.19,
    "ui_frontend": 0.22
   },
   "openrouter-qwen3.8-flash": {
-   "bugfix": 0.22,
-   "chat_simple": 0.44,
-   "code_review": 0.09,
-   "data_analysis": 0.31,
-   "devops_infra": 0.09,
-   "docs_writing": 0.19,
-   "implementation": 0.22,
-   "math_reasoning": 0.21,
-   "planning": 0.14,
-   "refactor": 0.1,
+   "bugfix": 0.18,
+   "chat_simple": 0.5,
+   "code_review": 0.07,
+   "data_analysis": 0.21,
+   "devops_infra": 0.12,
+   "docs_writing": 0.18,
+   "implementation": 0.2,
+   "math_reasoning": 0.17,
+   "planning": 0.11,
+   "refactor": 0.11,
    "research": 0.14,
-   "test_writing": 0.18,
-   "ui_frontend": 0.32
+   "test_writing": 0.16,
+   "ui_frontend": 0.28
   }
  },
  "diag": [
   {
    "model": "1PL",
-   "heldout_cells": 347,
-   "heldout_trials": 347,
-   "logloss": 0.406254503629314,
-   "auc": 0.8773032148639273,
-   "base_rate_logloss": 0.6223583837025144
+   "heldout_cells": 892,
+   "heldout_trials": 892,
+   "logloss": 0.4790033049987088,
+   "auc": 0.8285101550949738,
+   "base_rate_logloss": 0.6393254868665389
   },
   {
    "model": "2PL",
-   "heldout_cells": 347,
-   "heldout_trials": 347,
-   "logloss": 0.410136927942679,
-   "auc": 0.8724654999614525,
-   "base_rate_logloss": 0.6223583837025144
+   "heldout_cells": 892,
+   "heldout_trials": 892,
+   "logloss": 0.48198648619885087,
+   "auc": 0.8314951290396928,
+   "base_rate_logloss": 0.6393254868665389
   }
  ],
  "two_pl": false,
  "a_median": 1.0,
  "theta_irt": {
-  "openrouter-deepseek-v4.1-flash": -1.097,
-  "openrouter-qwen3.8-flash": -2.25,
-  "openrouter-minimax-m3.1-flash": -1.819,
-  "openrouter-gemini-3.8-flash": -1.326,
-  "openrouter-gpt-6.1-sol": 0.212
+  "openrouter-deepseek-v4.1-flash": -0.98,
+  "openrouter-qwen3.8-flash": -2.307,
+  "openrouter-minimax-m3.1-flash": -1.94,
+  "openrouter-gemini-3.8-flash": -1.334,
+  "openrouter-gpt-6.1-sol": 0.551,
+  "claude-haiku-5.5": -0.422,
+  "claude-sonnet-5.5": 0.173,
+  "claude-opus-5.5": -0.162,
+  "codex-gpt-6-luna": -1.489
  },
  "theta_se": {
-  "openrouter-deepseek-v4.1-flash": 0.131,
-  "openrouter-qwen3.8-flash": 0.15,
-  "openrouter-minimax-m3.1-flash": 0.139,
-  "openrouter-gemini-3.8-flash": 0.137,
-  "openrouter-gpt-6.1-sol": 0.13
+  "openrouter-deepseek-v4.1-flash": 0.09,
+  "openrouter-qwen3.8-flash": 0.106,
+  "openrouter-minimax-m3.1-flash": 0.1,
+  "openrouter-gemini-3.8-flash": 0.093,
+  "openrouter-gpt-6.1-sol": 0.089,
+  "claude-haiku-5.5": 0.13,
+  "claude-sonnet-5.5": 0.131,
+  "claude-opus-5.5": 0.211,
+  "codex-gpt-6-luna": 0.139
  },
  "link": {
-  "alpha": 8.465231836234992,
+  "alpha": 8.510518913012463,
   "gamma": 0.8333333333333334,
-  "alpha_se": 0.4633451821259458,
-  "n_anchors": 5,
-  "anchor_resid_mad": 0.47018274070959265,
-  "theilsen_slope": 0.4531068520770172,
-  "theilsen_intercept": 8.19104510303929,
+  "alpha_se": 0.26666666666666666,
+  "n_anchors": 9,
+  "anchor_resid_mad": 0.34190546236794717,
+  "theilsen_slope": 0.6209644028424547,
+  "theilsen_intercept": 8.098444578042628,
   "theilsen_slope_ci": [
-   -7.57778017638531,
-   2.3170149371455744
+   0.07537356109392998,
+   1.0952941147487054
   ],
   "anchors": [
    {
     "card": "openrouter-deepseek-v4.1-flash",
-    "card_mean_theta": 6.09,
+    "card_mean_theta": 7.49,
     "card_mean_se": 0.9,
-    "theta_irt": -1.097
+    "theta_irt": -0.98
    },
    {
     "card": "openrouter-qwen3.8-flash",
     "card_mean_theta": 6.59,
     "card_mean_se": 1.5,
-    "theta_irt": -2.25
+    "theta_irt": -2.307
    },
    {
     "card": "openrouter-minimax-m3.1-flash",
-    "card_mean_theta": 7.59,
-    "card_mean_se": 0.9,
-    "theta_irt": -1.819
+    "card_mean_theta": 7.236,
+    "card_mean_se": 0.767,
+    "theta_irt": -1.94
    },
    {
     "card": "openrouter-gemini-3.8-flash",
-    "card_mean_theta": 7.83,
-    "card_mean_se": 0.8,
-    "theta_irt": -1.326
+    "card_mean_theta": 7.527,
+    "card_mean_se": 0.738,
+    "theta_irt": -1.334
    },
    {
     "card": "openrouter-gpt-6.1-sol",
-    "card_mean_theta": 8.44,
-    "card_mean_se": 0.9,
-    "theta_irt": 0.212
+    "card_mean_theta": 8.518,
+    "card_mean_se": 0.866,
+    "theta_irt": 0.551
+   },
+   {
+    "card": "claude-haiku-5.5",
+    "card_mean_theta": 6.72,
+    "card_mean_se": 0.8,
+    "theta_irt": -0.422
+   },
+   {
+    "card": "claude-sonnet-5.5",
+    "card_mean_theta": 8.28,
+    "card_mean_se": 0.7,
+    "theta_irt": 0.173
+   },
+   {
+    "card": "claude-opus-5.5",
+    "card_mean_theta": 8.94,
+    "card_mean_se": 0.5,
+    "theta_irt": -0.162
+   },
+   {
+    "card": "codex-gpt-6-luna",
+    "card_mean_theta": 7.27,
+    "card_mean_se": 0.8,
+    "theta_irt": -1.489
    }
   ]
  },
@@ -314,160 +446,160 @@
   0,
   0,
   0,
-  39,
-  48,
-  108,
-  98,
-  218
+  40,
+  105,
+  210,
+  242,
+  282
  ],
- "se_median": 1.277,
- "all_pass": 40,
- "all_fail": 219,
+ "se_median": 0.891,
+ "all_pass": 41,
+ "all_fail": 242,
  "sensitivity_strong_judge": {
-  "n_cells": 609,
+  "n_cells": 659,
   "n_items": 138,
   "pass_rate": {
    "ds-think": {
-    "openrouter-deepseek-v4.1-flash": 0.395,
-    "openrouter-gemini-3.8-flash": 0.368,
-    "openrouter-gpt-6.1-sol": 0.584,
-    "openrouter-minimax-m3.1-flash": 0.273,
-    "openrouter-qwen3.8-flash": 0.264
+    "openrouter-deepseek-v4.1-flash": 0.387,
+    "openrouter-gemini-3.8-flash": 0.353,
+    "openrouter-gpt-6.1-sol": 0.571,
+    "openrouter-minimax-m3.1-flash": 0.264,
+    "openrouter-qwen3.8-flash": 0.252
    },
    "strong": {
-    "openrouter-deepseek-v4.1-flash": 0.116,
-    "openrouter-gemini-3.8-flash": 0.136,
-    "openrouter-gpt-6.1-sol": 0.558,
-    "openrouter-minimax-m3.1-flash": 0.124,
-    "openrouter-qwen3.8-flash": 0.083
+    "openrouter-deepseek-v4.1-flash": 0.109,
+    "openrouter-gemini-3.8-flash": 0.125,
+    "openrouter-gpt-6.1-sol": 0.571,
+    "openrouter-minimax-m3.1-flash": 0.116,
+    "openrouter-qwen3.8-flash": 0.084
    }
   },
   "theta_router_ds-think": {
-   "openrouter-deepseek-v4.1-flash": 8.0,
-   "openrouter-qwen3.8-flash": 7.09,
-   "openrouter-minimax-m3.1-flash": 7.24,
-   "openrouter-gemini-3.8-flash": 7.79,
-   "openrouter-gpt-6.1-sol": 8.76
+   "openrouter-deepseek-v4.1-flash": 7.99,
+   "openrouter-qwen3.8-flash": 7.1,
+   "openrouter-minimax-m3.1-flash": 7.19,
+   "openrouter-gemini-3.8-flash": 7.78,
+   "openrouter-gpt-6.1-sol": 8.91
   },
   "theta_router_strong": {
-   "openrouter-deepseek-v4.1-flash": 6.07,
-   "openrouter-qwen3.8-flash": 5.63,
-   "openrouter-minimax-m3.1-flash": 6.14,
-   "openrouter-gemini-3.8-flash": 6.22,
-   "openrouter-gpt-6.1-sol": 8.86
+   "openrouter-deepseek-v4.1-flash": 6.03,
+   "openrouter-qwen3.8-flash": 5.69,
+   "openrouter-minimax-m3.1-flash": 6.07,
+   "openrouter-gemini-3.8-flash": 6.19,
+   "openrouter-gpt-6.1-sol": 9.01
   }
  },
  "spearman_irt_b": {
   "train/val": [
    {
     "subset": "all",
-    "n": 511,
-    "v2": 0.418,
-    "teacher": 0.409
+    "n": 879,
+    "v2": 0.449,
+    "teacher": 0.446
    },
    {
     "subset": "bugfix",
-    "n": 105,
-    "v2": 0.477,
-    "teacher": 0.433
+    "n": 168,
+    "v2": 0.468,
+    "teacher": 0.448
    },
    {
     "subset": "chat_simple",
-    "n": 37,
-    "v2": 0.024,
-    "teacher": -0.088
+    "n": 63,
+    "v2": 0.172,
+    "teacher": 0.188
    },
    {
     "subset": "code_review",
-    "n": 37,
-    "v2": -0.415,
-    "teacher": -0.427
+    "n": 68,
+    "v2": -0.11,
+    "teacher": -0.114
    },
    {
     "subset": "data_analysis",
-    "n": 33,
-    "v2": 0.29,
-    "teacher": 0.335
+    "n": 63,
+    "v2": 0.272,
+    "teacher": 0.277
    },
    {
     "subset": "devops_infra",
-    "n": 27,
-    "v2": 0.535,
-    "teacher": 0.487
+    "n": 40,
+    "v2": 0.578,
+    "teacher": 0.504
    },
    {
     "subset": "docs_writing",
-    "n": 33,
-    "v2": 0.651,
-    "teacher": 0.563
+    "n": 61,
+    "v2": 0.527,
+    "teacher": 0.453
    },
    {
     "subset": "implementation",
-    "n": 65,
-    "v2": 0.543,
-    "teacher": 0.503
+    "n": 108,
+    "v2": 0.652,
+    "teacher": 0.623
    },
    {
     "subset": "math_reasoning",
-    "n": 34,
-    "v2": 0.629,
-    "teacher": 0.624
+    "n": 52,
+    "v2": 0.668,
+    "teacher": 0.663
    },
    {
     "subset": "planning",
-    "n": 37,
-    "v2": 0.503,
-    "teacher": 0.475
+    "n": 73,
+    "v2": 0.397,
+    "teacher": 0.406
    },
    {
     "subset": "refactor",
-    "n": 22,
-    "v2": 0.156,
-    "teacher": 0.283
+    "n": 40,
+    "v2": 0.434,
+    "teacher": 0.459
    },
    {
     "subset": "research",
-    "n": 36,
-    "v2": 0.477,
-    "teacher": 0.499
+    "n": 60,
+    "v2": 0.333,
+    "teacher": 0.377
    },
    {
     "subset": "test_writing",
-    "n": 25,
-    "v2": 0.637,
-    "teacher": 0.564
+    "n": 43,
+    "v2": 0.472,
+    "teacher": 0.476
    },
    {
     "subset": "ui_frontend",
-    "n": 20,
-    "v2": 0.496,
-    "teacher": 0.56
+    "n": 40,
+    "v2": 0.452,
+    "teacher": 0.466
    }
   ],
   "val (v2 held-out)": [
    {
     "subset": "all",
-    "n": 47,
-    "v2": 0.165,
-    "teacher": 0.231
+    "n": 77,
+    "v2": 0.349,
+    "teacher": 0.339
    },
    {
     "subset": "bugfix",
-    "n": 12,
-    "v2": 0.761,
-    "teacher": 0.747
+    "n": 17,
+    "v2": 0.721,
+    "teacher": 0.77
    },
    {
     "subset": "chat_simple",
-    "n": 1,
+    "n": 3,
     "v2": null,
     "teacher": null
    },
    {
     "subset": "code_review",
-    "n": 6,
-    "v2": null,
-    "teacher": null
+    "n": 13,
+    "v2": -0.052,
+    "teacher": -0.058
    },
    {
     "subset": "data_analysis",
@@ -477,53 +609,53 @@
    },
    {
     "subset": "devops_infra",
-    "n": 1,
+    "n": 3,
     "v2": null,
     "teacher": null
    },
    {
     "subset": "docs_writing",
-    "n": 3,
-    "v2": null,
-    "teacher": null
-   },
-   {
-    "subset": "implementation",
     "n": 4,
     "v2": null,
     "teacher": null
    },
    {
+    "subset": "implementation",
+    "n": 6,
+    "v2": null,
+    "teacher": null
+   },
+   {
     "subset": "planning",
-    "n": 3,
+    "n": 5,
     "v2": null,
     "teacher": null
    },
    {
     "subset": "refactor",
+    "n": 8,
+    "v2": 0.169,
+    "teacher": 0.289
+   },
+   {
+    "subset": "test_writing",
     "n": 7,
     "v2": null,
     "teacher": null
    },
    {
-    "subset": "test_writing",
-    "n": 3,
-    "v2": null,
-    "teacher": null
-   },
-   {
     "subset": "ui_frontend",
-    "n": 6,
-    "v2": null,
-    "teacher": null
+    "n": 10,
+    "v2": 0.612,
+    "teacher": 0.64
    }
   ],
   "gold": [
    {
     "subset": "all",
     "n": 150,
-    "v2": 0.109,
-    "teacher": 0.421
+    "v2": 0.1,
+    "teacher": 0.428
    },
    {
     "subset": "bugfix",
@@ -534,8 +666,8 @@
    {
     "subset": "chat_simple",
     "n": 43,
-    "v2": 0.101,
-    "teacher": 0.376
+    "v2": 0.053,
+    "teacher": 0.423
    },
    {
     "subset": "code_review",
@@ -546,8 +678,8 @@
    {
     "subset": "data_analysis",
     "n": 8,
-    "v2": -0.156,
-    "teacher": 0.561
+    "v2": 0.071,
+    "teacher": 0.74
    },
    {
     "subset": "devops_infra",
@@ -558,26 +690,26 @@
    {
     "subset": "docs_writing",
     "n": 12,
-    "v2": 0.507,
-    "teacher": 0.523
+    "v2": 0.548,
+    "teacher": 0.583
    },
    {
     "subset": "implementation",
     "n": 18,
     "v2": 0.711,
-    "teacher": 0.804
+    "teacher": 0.755
    },
    {
     "subset": "math_reasoning",
     "n": 16,
-    "v2": -0.032,
-    "teacher": 0.477
+    "v2": -0.041,
+    "teacher": 0.47
    },
    {
     "subset": "planning",
     "n": 13,
-    "v2": -0.555,
-    "teacher": 0.211
+    "v2": -0.455,
+    "teacher": 0.291
    },
    {
     "subset": "refactor",
@@ -588,8 +720,8 @@
    {
     "subset": "research",
     "n": 9,
-    "v2": 0.387,
-    "teacher": 0.213
+    "v2": 0.307,
+    "teacher": 0.252
    },
    {
     "subset": "test_writing",
@@ -609,113 +741,113 @@
   "train/val": [
    {
     "subset": "all",
-    "n": 511,
-    "v2": 0.31,
-    "teacher": 0.304
+    "n": 879,
+    "v2": 0.389,
+    "teacher": 0.39
    },
    {
     "subset": "bugfix",
-    "n": 105,
-    "v2": 0.197,
-    "teacher": 0.175
+    "n": 168,
+    "v2": 0.361,
+    "teacher": 0.365
    },
    {
     "subset": "chat_simple",
-    "n": 37,
-    "v2": 0.064,
-    "teacher": -0.045
+    "n": 63,
+    "v2": 0.174,
+    "teacher": 0.18
    },
    {
     "subset": "code_review",
-    "n": 37,
-    "v2": -0.393,
-    "teacher": -0.433
+    "n": 68,
+    "v2": -0.137,
+    "teacher": -0.112
    },
    {
     "subset": "data_analysis",
-    "n": 33,
-    "v2": 0.163,
-    "teacher": 0.22
+    "n": 63,
+    "v2": 0.183,
+    "teacher": 0.212
    },
    {
     "subset": "devops_infra",
-    "n": 27,
-    "v2": 0.629,
-    "teacher": 0.573
+    "n": 40,
+    "v2": 0.616,
+    "teacher": 0.564
    },
    {
     "subset": "docs_writing",
-    "n": 33,
-    "v2": 0.665,
-    "teacher": 0.572
-   },
-   {
-    "subset": "implementation",
-    "n": 65,
-    "v2": 0.391,
-    "teacher": 0.355
-   },
-   {
-    "subset": "math_reasoning",
-    "n": 34,
-    "v2": 0.406,
+    "n": 61,
+    "v2": 0.459,
     "teacher": 0.398
    },
    {
+    "subset": "implementation",
+    "n": 108,
+    "v2": 0.544,
+    "teacher": 0.494
+   },
+   {
+    "subset": "math_reasoning",
+    "n": 52,
+    "v2": 0.7,
+    "teacher": 0.688
+   },
+   {
     "subset": "planning",
-    "n": 37,
-    "v2": 0.416,
-    "teacher": 0.394
+    "n": 73,
+    "v2": 0.399,
+    "teacher": 0.402
    },
    {
     "subset": "refactor",
-    "n": 22,
-    "v2": 0.07,
-    "teacher": 0.232
+    "n": 40,
+    "v2": 0.408,
+    "teacher": 0.411
    },
    {
     "subset": "research",
-    "n": 36,
-    "v2": 0.644,
-    "teacher": 0.734
+    "n": 60,
+    "v2": 0.306,
+    "teacher": 0.369
    },
    {
     "subset": "test_writing",
-    "n": 25,
-    "v2": 0.389,
-    "teacher": 0.313
+    "n": 43,
+    "v2": 0.312,
+    "teacher": 0.319
    },
    {
     "subset": "ui_frontend",
-    "n": 20,
-    "v2": 0.45,
-    "teacher": 0.536
+    "n": 40,
+    "v2": 0.385,
+    "teacher": 0.401
    }
   ],
   "val (v2 held-out)": [
    {
     "subset": "all",
-    "n": 47,
-    "v2": -0.011,
-    "teacher": 0.033
+    "n": 77,
+    "v2": 0.2,
+    "teacher": 0.208
    },
    {
     "subset": "bugfix",
-    "n": 12,
-    "v2": -0.007,
-    "teacher": 0.172
+    "n": 17,
+    "v2": 0.584,
+    "teacher": 0.776
    },
    {
     "subset": "chat_simple",
-    "n": 1,
+    "n": 3,
     "v2": null,
     "teacher": null
    },
    {
     "subset": "code_review",
-    "n": 6,
-    "v2": null,
-    "teacher": null
+    "n": 13,
+    "v2": -0.084,
+    "teacher": 0.075
    },
    {
     "subset": "data_analysis",
@@ -725,53 +857,53 @@
    },
    {
     "subset": "devops_infra",
-    "n": 1,
+    "n": 3,
     "v2": null,
     "teacher": null
    },
    {
     "subset": "docs_writing",
-    "n": 3,
-    "v2": null,
-    "teacher": null
-   },
-   {
-    "subset": "implementation",
     "n": 4,
     "v2": null,
     "teacher": null
    },
    {
+    "subset": "implementation",
+    "n": 6,
+    "v2": null,
+    "teacher": null
+   },
+   {
     "subset": "planning",
-    "n": 3,
+    "n": 5,
     "v2": null,
     "teacher": null
    },
    {
     "subset": "refactor",
+    "n": 8,
+    "v2": 0.198,
+    "teacher": 0.272
+   },
+   {
+    "subset": "test_writing",
     "n": 7,
     "v2": null,
     "teacher": null
    },
    {
-    "subset": "test_writing",
-    "n": 3,
-    "v2": null,
-    "teacher": null
-   },
-   {
     "subset": "ui_frontend",
-    "n": 6,
-    "v2": null,
-    "teacher": null
+    "n": 10,
+    "v2": 0.518,
+    "teacher": 0.635
    }
   ],
   "gold": [
    {
     "subset": "all",
     "n": 150,
-    "v2": 0.087,
-    "teacher": 0.393
+    "v2": 0.104,
+    "teacher": 0.425
    },
    {
     "subset": "bugfix",
@@ -782,8 +914,8 @@
    {
     "subset": "chat_simple",
     "n": 43,
-    "v2": 0.097,
-    "teacher": 0.37
+    "v2": 0.061,
+    "teacher": 0.442
    },
    {
     "subset": "code_review",
@@ -794,8 +926,8 @@
    {
     "subset": "data_analysis",
     "n": 8,
-    "v2": -0.086,
-    "teacher": 0.563
+    "v2": 0.06,
+    "teacher": 0.72
    },
    {
     "subset": "devops_infra",
@@ -806,26 +938,26 @@
    {
     "subset": "docs_writing",
     "n": 12,
-    "v2": 0.507,
-    "teacher": 0.523
+    "v2": 0.545,
+    "teacher": 0.555
    },
    {
     "subset": "implementation",
     "n": 18,
-    "v2": 0.668,
-    "teacher": 0.743
+    "v2": 0.716,
+    "teacher": 0.775
    },
    {
     "subset": "math_reasoning",
     "n": 16,
-    "v2": -0.032,
-    "teacher": 0.477
+    "v2": -0.041,
+    "teacher": 0.47
    },
    {
     "subset": "planning",
     "n": 13,
-    "v2": -0.545,
-    "teacher": 0.224
+    "v2": -0.375,
+    "teacher": 0.354
    },
    {
     "subset": "refactor",
@@ -836,8 +968,8 @@
    {
     "subset": "research",
     "n": 9,
-    "v2": 0.33,
-    "teacher": 0.216
+    "v2": 0.307,
+    "teacher": 0.252
    },
    {
     "subset": "test_writing",
@@ -853,213 +985,25 @@
    }
   ]
  },
- "routing": {
-  "cards_before": {
-   "pool": [
-    "openrouter-deepseek-v4.1-flash",
-    "openrouter-qwen3.8-flash",
-    "openrouter-minimax-m3.1-flash",
-    "openrouter-gemini-3.8-flash",
-    "openrouter-gpt-6.1-sol"
-   ],
-   "cheapest": "openrouter-qwen3.8-flash",
-   "strongest": "openrouter-gpt-6.1-sol",
-   "v2:cheapest_above_threshold": {
-    "success_per_100": 49.3,
-    "cost_per_100_usd": 0.088,
-    "picks": {
-     "openrouter-qwen3.8-flash": 128,
-     "openrouter-minimax-m3.1-flash": 10,
-     "openrouter-gpt-6.1-sol": 1,
-     "openrouter-gemini-3.8-flash": 1
-    }
-   },
-   "v2:max_utility": {
-    "success_per_100": 45.7,
-    "cost_per_100_usd": 0.114,
-    "picks": {
-     "openrouter-minimax-m3.1-flash": 140
-    }
-   },
-   "v2:max_quality": {
-    "success_per_100": 78.6,
-    "cost_per_100_usd": 1.061,
-    "picks": {
-     "openrouter-gpt-6.1-sol": 140
-    }
-   },
-   "always_cheapest": {
-    "success_per_100": 47.1,
-    "cost_per_100_usd": 0.064,
-    "picks": {
-     "openrouter-qwen3.8-flash": 140
-    }
-   },
-   "always_strongest": {
-    "success_per_100": 78.6,
-    "cost_per_100_usd": 1.061,
-    "picks": {
-     "openrouter-gpt-6.1-sol": 140
-    }
-   },
-   "always:openrouter-deepseek-v4.1-flash": {
-    "success_per_100": 67.9,
-    "cost_per_100_usd": 0.148,
-    "picks": {
-     "openrouter-deepseek-v4.1-flash": 140
-    }
-   },
-   "always:openrouter-qwen3.8-flash": {
-    "success_per_100": 47.1,
-    "cost_per_100_usd": 0.064,
-    "picks": {
-     "openrouter-qwen3.8-flash": 140
-    }
-   },
-   "always:openrouter-minimax-m3.1-flash": {
-    "success_per_100": 45.7,
-    "cost_per_100_usd": 0.114,
-    "picks": {
-     "openrouter-minimax-m3.1-flash": 140
-    }
-   },
-   "always:openrouter-gemini-3.8-flash": {
-    "success_per_100": 60.7,
-    "cost_per_100_usd": 0.474,
-    "picks": {
-     "openrouter-gemini-3.8-flash": 140
-    }
-   },
-   "always:openrouter-gpt-6.1-sol": {
-    "success_per_100": 78.6,
-    "cost_per_100_usd": 1.061,
-    "picks": {
-     "openrouter-gpt-6.1-sol": 140
-    }
-   },
-   "oracle_cheapest_passing": {
-    "success_per_100": 90.0,
-    "cost_per_100_usd": 0.196,
-    "picks": {
-     "openrouter-qwen3.8-flash": 80,
-     "openrouter-deepseek-v4.1-flash": 24,
-     "openrouter-minimax-m3.1-flash": 20,
-     "openrouter-gpt-6.1-sol": 11,
-     "openrouter-gemini-3.8-flash": 5
-    }
-   },
-   "n_tasks": 140
-  },
-  "cards_after": {
-   "pool": [
-    "openrouter-deepseek-v4.1-flash",
-    "openrouter-qwen3.8-flash",
-    "openrouter-minimax-m3.1-flash",
-    "openrouter-gemini-3.8-flash",
-    "openrouter-gpt-6.1-sol"
-   ],
-   "cheapest": "openrouter-qwen3.8-flash",
-   "strongest": "openrouter-gpt-6.1-sol",
-   "v2:cheapest_above_threshold": {
-    "success_per_100": 50.0,
-    "cost_per_100_usd": 0.095,
-    "picks": {
-     "openrouter-qwen3.8-flash": 128,
-     "openrouter-minimax-m3.1-flash": 10,
-     "openrouter-gpt-6.1-sol": 2
-    }
-   },
-   "v2:max_utility": {
-    "success_per_100": 45.7,
-    "cost_per_100_usd": 0.114,
-    "picks": {
-     "openrouter-minimax-m3.1-flash": 140
-    }
-   },
-   "v2:max_quality": {
-    "success_per_100": 78.6,
-    "cost_per_100_usd": 1.061,
-    "picks": {
-     "openrouter-gpt-6.1-sol": 140
-    }
-   },
-   "always_cheapest": {
-    "success_per_100": 47.1,
-    "cost_per_100_usd": 0.064,
-    "picks": {
-     "openrouter-qwen3.8-flash": 140
-    }
-   },
-   "always_strongest": {
-    "success_per_100": 78.6,
-    "cost_per_100_usd": 1.061,
-    "picks": {
-     "openrouter-gpt-6.1-sol": 140
-    }
-   },
-   "always:openrouter-deepseek-v4.1-flash": {
-    "success_per_100": 67.9,
-    "cost_per_100_usd": 0.148,
-    "picks": {
-     "openrouter-deepseek-v4.1-flash": 140
-    }
-   },
-   "always:openrouter-qwen3.8-flash": {
-    "success_per_100": 47.1,
-    "cost_per_100_usd": 0.064,
-    "picks": {
-     "openrouter-qwen3.8-flash": 140
-    }
-   },
-   "always:openrouter-minimax-m3.1-flash": {
-    "success_per_100": 45.7,
-    "cost_per_100_usd": 0.114,
-    "picks": {
-     "openrouter-minimax-m3.1-flash": 140
-    }
-   },
-   "always:openrouter-gemini-3.8-flash": {
-    "success_per_100": 60.7,
-    "cost_per_100_usd": 0.474,
-    "picks": {
-     "openrouter-gemini-3.8-flash": 140
-    }
-   },
-   "always:openrouter-gpt-6.1-sol": {
-    "success_per_100": 78.6,
-    "cost_per_100_usd": 1.061,
-    "picks": {
-     "openrouter-gpt-6.1-sol": 140
-    }
-   },
-   "oracle_cheapest_passing": {
-    "success_per_100": 90.0,
-    "cost_per_100_usd": 0.196,
-    "picks": {
-     "openrouter-qwen3.8-flash": 80,
-     "openrouter-deepseek-v4.1-flash": 24,
-     "openrouter-minimax-m3.1-flash": 20,
-     "openrouter-gpt-6.1-sol": 11,
-     "openrouter-gemini-3.8-flash": 5
-    }
-   },
-   "n_tasks": 140
-  }
- },
+ "routing": {},
  "spend": {
-  "attempts": 13.62,
+  "attempts": 26.39,
   "total_logged": 44.55
  },
  "finish_length_rate": {
-  "openrouter-deepseek-v4.1-flash": 0.308,
-  "openrouter-gemini-3.8-flash": 0.004,
+  "claude-haiku-5.5": 0.0,
+  "claude-opus-5.5": 0.0,
+  "claude-sonnet-5.5": 0.0,
+  "codex-gpt-6-luna": 0.0,
+  "openrouter-deepseek-v4.1-flash": 0.278,
+  "openrouter-gemini-3.8-flash": 0.002,
   "openrouter-gpt-6.1-sol": 0.0,
-  "openrouter-minimax-m3.1-flash": 0.26,
-  "openrouter-qwen3.8-flash": 0.045
+  "openrouter-minimax-m3.1-flash": 0.245,
+  "openrouter-qwen3.8-flash": 0.056
  },
  "verify": {
-  "null": 2899,
-  "false": 29,
-  "true": 10
+  "null": 6899,
+  "false": 88,
+  "true": 72
  }
 }

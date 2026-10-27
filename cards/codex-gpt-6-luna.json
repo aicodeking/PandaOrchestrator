@@ -14,8 +14,8 @@
   ],
   "skills": {
     "coding": {
-      "theta": 7.7,
-      "se": 0.8
+      "theta": 6.76,
+      "se": 0.41
     },
     "debugging": {
       "theta": 7.4,
@@ -42,8 +42,8 @@
       "se": 0.8
     },
     "planning": {
-      "theta": 7.1,
-      "se": 0.8
+      "theta": 7.78,
+      "se": 0.41
     },
     "ui_frontend": {
       "theta": 7.1,
@@ -95,7 +95,7 @@
     "harness:codex",
     "tier:mid"
   ],
-  "card_version": "2026-10-25",
+  "card_version": "2026-10-27",
   "provenance": "benchmark-informed",
   "field_provenance": {
     "cost": "verified",
@@ -107,9 +107,10 @@
     "https://developers.openai.com/api/docs/models/gpt-6-luna",
     "https://developers.openai.com/api/docs/pricing",
     "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)",
-    "https://openrouter.ai/openai/gpt-6-luna"
+    "https://openrouter.ai/openai/gpt-6-luna",
+    "data/outcomes/REPORT_v4_attempts.md (attempt-and-grade IRT v4, 9 attempters; judges deepseek-v4.1-flash ds-think / dsh)"
   ],
-  "notes": "Max input 922k tokens; prompts >272k tokens billed 2x input / 1.5x output.",
+  "notes": "Max input 922k tokens; prompts >272k tokens billed 2x input / 1.5x output. verified (attempt-grade v4): axes coding 7.7->6.76, planning 7.1->7.78 fitted (1PL IRT, router scale) from single-turn, no-tool attempts on non-SWE tasks, graded by deepseek-v4.1-flash (ds-think, kappa 0.85 vs kimi-k3.1-pro; dsh harness for the rest, kappa 0.75 vs ds-think); for the 5 OpenRouter models applied only where the direction also holds under gpt-6.1-sol grading. Location anchored on the 9 attempters' own card means (deltas are relative to their consensus). Other axes and supersedes unchanged. See data/outcomes/REPORT_v4_attempts.md.",
   "supersedes": [
     "codex-gpt-5.6-luna"
   ]

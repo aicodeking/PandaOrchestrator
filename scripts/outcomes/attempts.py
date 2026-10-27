@@ -26,6 +26,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from panda_router.outcomes.cli_chat import dsh_chat  # noqa: E402
 from panda_router.outcomes.grade import (ATTEMPT_SYSTEM, JUDGE_PROMPT, RUBRIC_PROMPT, STRICT_JUDGE_PROMPT,  # noqa: E402
                                          chat, code_check, format_criteria, parse_json, strict_verdict)
 
@@ -45,7 +46,8 @@ JUDGES = {"ds": ("deepseek/deepseek-v4.1-flash", {"enabled": False}),
           "ds-think": ("deepseek/deepseek-v4.1-flash", LOW),
           "ds-strict": ("deepseek/deepseek-v4.1-flash", {"enabled": False}),  # STRICT_JUDGE_PROMPT, verdict in code
           "strong": ("openai/gpt-6.1-sol", LOW),
-          "kimi": ("moonshotai/kimi-k3.1-pro", LOW)}  # non-attempter cross-check of the strong judge (self-preference)
+          "kimi": ("moonshotai/kimi-k3.1-pro", LOW),  # non-attempter cross-check of the strong judge (self-preference)
+          "dsh": ("dsh", None)}  # v4: DeepSeek via the dsh harness (subscription, no OpenRouter), same JUDGE_PROMPT
 RUBRIC_JUDGE = "ds"
 ATTEMPT_MAX_TOKENS, JUDGE_MAX_TOKENS = 5000, 8000
 N_TRAINVAL, N_GOLD, N_VALIDATE, N_SUBSET = 1500, 150, 100, 1000
@@ -231,8 +233,8 @@ def grade_one(t: dict, crit: list, ans: dict, judge: str) -> dict:
         text += "\n\n[ANSWER TRUNCATED AT THE TOKEN LIMIT]"
     slug, reasoning = JUDGES[judge]
     prompt = STRICT_JUDGE_PROMPT if judge.endswith("strict") else JUDGE_PROMPT
-    o = chat(slug, [{"role": "user", "content": prompt.format(task=t["text"], criteria=format_criteria(crit),
-                                                              answer=text)}], JUDGE_MAX_TOKENS, reasoning)
+    full = prompt.format(task=t["text"], criteria=format_criteria(crit), answer=text)
+    o = dsh_chat(full) if judge == "dsh" else chat(slug, [{"role": "user", "content": full}], JUDGE_MAX_TOKENS, reasoning)
     j = parse_json(o["text"]) or {}
     verdict = strict_verdict(j, crit) if judge.endswith("strict") else j.get("pass")
     verify = code_check(ans["answer"]) if t["category"] not in ("chat_simple", "docs_writing") else None

@@ -46,6 +46,7 @@ class TrainConfig:
     single_teacher_weight: float = 0.5
     anchors: str | None = None
     anchor_weight: float = 0.0
+    under_w: float = 1.0  # >1 penalises under-predicting difficulty (CORN positives, anchor loss)
     outcome_anchors: str | None = None  # jsonl of difficulty-only outcome rows (scripts/train/outcome_anchors.py)
     outcome_val: str | None = None  # held-out outcome rows: Spearman logged per epoch (not used for selection)
     distill_from: str | None = None
@@ -170,7 +171,7 @@ def train(cfg: TrainConfig) -> dict:
             with autocast(device, cfg.bf16):
                 o = model(b["input_ids"].to(device), b["attention_mask"].to(device))
             o = {k: v.float() for k, v in o.items()}
-            parts = head_losses(o, y)
+            parts = head_losses(o, y, cfg.under_w)
             loss = 0.0
             if "teacher" in b:
                 kd = distill_losses(o, _to(b["teacher"], device), cfg.distill_T, y["w"])
@@ -185,7 +186,7 @@ def train(cfg: TrainConfig) -> dict:
                 if pl is not None:
                     parts["pair"] = pl
                     loss = loss + cfg.pair_weight * norm("pair", pl)
-            if use_anchor and (al := anchor_loss(o, y["anchor"], y["anchor_w"])) is not None:
+            if use_anchor and (al := anchor_loss(o, y["anchor"], y["anchor_w"], cfg.under_w)) is not None:
                 parts["anchor"] = al
                 loss = loss + cfg.anchor_weight * norm("anchor", al)
             if cfg.regret_weight > 0 and bool((y["w"] > 0).any()):

@@ -43,10 +43,12 @@ def corn_targets_to_logits(targets: torch.Tensor, eps: float = 1e-6) -> torch.Te
     return torch.log(t) - torch.log1p(-t)
 
 
-def corn_loss(logits: torch.Tensor, q: torch.Tensor, reduce: bool = True) -> torch.Tensor:
+def corn_loss(logits: torch.Tensor, q: torch.Tensor, reduce: bool = True, under_w: float = 1.0) -> torch.Tensor:
     """Soft-label CORN loss. logits (..., K-1), q (..., K). Returns mean (or per-row (...)) loss."""
     targets, weights = soft_to_corn_targets(q.float())
     bce = F.binary_cross_entropy_with_logits(logits.float(), targets, reduction="none")
+    if under_w != 1.0:  # missing a 'level > k' target = under-prediction: weight it up
+        bce = bce * (1 + (under_w - 1) * targets)
     per_row = (weights * bce).sum(-1) / logits.shape[-1]
     return per_row.mean() if reduce else per_row
 

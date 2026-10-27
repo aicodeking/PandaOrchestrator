@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-from .router import Router, load_profiler, profiler_name
+from .router import Router, default_artifacts, load_profiler, profiler_name
 from .server import make_server
 
 
@@ -13,7 +13,8 @@ def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(prog="python -m panda_router.serve", description="Panda Router HTTP server")
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, default=8765)
-    ap.add_argument("--artifacts", default=None, help="ONNX profiler artifacts dir (default: heuristic profiler)")
+    ap.add_argument("--artifacts", default=default_artifacts(),
+                    help="ONNX profiler artifacts dir (default: $PANDA_ROUTER_ARTIFACTS or artifacts/panda-router-v4)")
     ap.add_argument("--db", default=None, help="SQLite log path (default: $PANDA_ROUTER_DB or data/cache/router_log.sqlite)")
     ap.add_argument("--cards", default=None, help="cards directory (default: cards/)")
     args = ap.parse_args(argv)

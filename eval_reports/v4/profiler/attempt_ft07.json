@@ -1,0 +1,66 @@
+{
+  "profiler": "onnx:/tmp/v4ft_0.7",
+  "attempt_irt": {
+    "n": 150,
+    "spearman": 0.1437,
+    "mean_pred": 4.021,
+    "sd_pred": 1.222
+  },
+  "routing": {
+    "n": 150,
+    "pool": [
+      "openrouter-deepseek-v4.1-flash",
+      "openrouter-qwen3.8-flash",
+      "openrouter-minimax-m3.1-flash",
+      "openrouter-gemini-3.8-flash",
+      "openrouter-gpt-6.1-sol"
+    ],
+    "cost": "logged attempt cost only",
+    "policies": {
+      "always_cheapest": {
+        "n": 150,
+        "success_per_100": 45.3,
+        "cost_per_100_usd": 0.067,
+        "picks": {
+          "openrouter-qwen3.8-flash": 150
+        }
+      },
+      "always_strongest": {
+        "n": 150,
+        "success_per_100": 79.3,
+        "cost_per_100_usd": 1.114,
+        "picks": {
+          "openrouter-gpt-6.1-sol": 150
+        }
+      },
+      "cheapest_above_threshold": {
+        "n": 150,
+        "success_per_100": 51.3,
+        "cost_per_100_usd": 0.17,
+        "picks": {
+          "openrouter-deepseek-v4.1-flash": 15,
+          "openrouter-gpt-6.1-sol": 8,
+          "openrouter-minimax-m3.1-flash": 15,
+          "openrouter-qwen3.8-flash": 112
+        }
+      },
+      "max_utility": {
+        "n": 150,
+        "success_per_100": 65.3,
+        "cost_per_100_usd": 0.16,
+        "picks": {
+          "openrouter-deepseek-v4.1-flash": 149,
+          "openrouter-gpt-6.1-sol": 1
+        }
+      },
+      "max_quality": {
+        "n": 150,
+        "success_per_100": 79.3,
+        "cost_per_100_usd": 1.114,
+        "picks": {
+          "openrouter-gpt-6.1-sol": 150
+        }
+      }
+    }
+  }
+}

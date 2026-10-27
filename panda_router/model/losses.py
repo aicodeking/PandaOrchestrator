@@ -23,12 +23,12 @@ def _wmean(per_row: torch.Tensor, w: torch.Tensor | None) -> torch.Tensor:
     return (per_row * w).sum() / w.sum().clamp_min(1e-8)
 
 
-def head_losses(out: dict, y: dict) -> dict:
+def head_losses(out: dict, y: dict, under_w: float = 1.0) -> dict:
     """Per-head label losses; rows are weighted by y["w"] if present (e.g. single-teacher labels < 1)."""
     w = y.get("w")
     return {
         "category": _wmean(-(y["category"] * F.log_softmax(out["category"], -1)).sum(-1), w),
-        "difficulty": _wmean(corn_loss(out["difficulty"], y["difficulty"], reduce=False), w),
+        "difficulty": _wmean(corn_loss(out["difficulty"], y["difficulty"], reduce=False, under_w=under_w), w),
         "skills": _wmean(corn_loss(out["skills"], y["skills"], reduce=False).mean(-1), w),
         "flags": _wmean(F.binary_cross_entropy_with_logits(out["flags"], y["flags"], reduction="none").mean(-1), w),
         "checklist": _wmean(F.binary_cross_entropy_with_logits(out["checklist"], y["checklist"],
@@ -37,13 +37,16 @@ def head_losses(out: dict, y: dict) -> dict:
     }
 
 
-def anchor_loss(out: dict, anchor: torch.Tensor, weight: torch.Tensor | None = None) -> torch.Tensor | None:
+def anchor_loss(out: dict, anchor: torch.Tensor, weight: torch.Tensor | None = None,
+                under_w: float = 1.0) -> torch.Tensor | None:
     """Weighted smooth-L1 between expected difficulty (1..10) and an outcome anchor (NaN = no anchor)."""
     m = torch.isfinite(anchor)
     if not bool(m.any()):
         return None
     ed = expected_level(corn_level_probs(out["difficulty"]), 1.0)
     per_row = F.smooth_l1_loss(ed[m], anchor[m], reduction="none")
+    if under_w != 1.0:
+        per_row = per_row * torch.where(ed[m] < anchor[m], under_w, 1.0)
     return _wmean(per_row, None if weight is None else weight[m])
 
 

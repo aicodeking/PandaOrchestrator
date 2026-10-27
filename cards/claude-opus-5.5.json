@@ -15,8 +15,8 @@
   ],
   "skills": {
     "coding": {
-      "theta": 9.3,
-      "se": 0.5
+      "theta": 8.62,
+      "se": 0.45
     },
     "debugging": {
       "theta": 9.1,
@@ -95,7 +95,7 @@
     "harness:claude-code",
     "tier:frontier"
   ],
-  "card_version": "2026-10-25",
+  "card_version": "2026-10-27",
   "provenance": "benchmark-informed",
   "field_provenance": {
     "cost": "verified",
@@ -107,6 +107,8 @@
     "https://platform.claude.com/docs/en/about-claude/pricing",
     "https://platform.claude.com/docs/en/models/overview",
     "https://atlas.kevinhu.io/benchmarks/swe-bench-verified (SWE-bench Verified, saturated >90%; used only for ordering)",
-    "https://realswe.com/"
-  ]
+    "https://realswe.com/",
+    "data/outcomes/REPORT_v4_attempts.md (attempt-and-grade IRT v4, 9 attempters; judges deepseek-v4.1-flash ds-think / dsh)"
+  ],
+  "notes": " verified (attempt-grade v4): axes coding 9.3->8.62 fitted (1PL IRT, router scale) from single-turn, no-tool attempts on non-SWE tasks, graded by deepseek-v4.1-flash (ds-think, kappa 0.85 vs kimi-k3.1-pro; dsh harness for the rest, kappa 0.75 vs ds-think); for the 5 OpenRouter models applied only where the direction also holds under gpt-6.1-sol grading. Location anchored on the 9 attempters' own card means (deltas are relative to their consensus). Other axes and supersedes unchanged. See data/outcomes/REPORT_v4_attempts.md."
 }

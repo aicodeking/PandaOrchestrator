@@ -31,6 +31,7 @@ def main():
     ap.add_argument("--outcome-anchors", default=None,
                     help="difficulty-only outcome rows, e.g. checkpoints/outcome/train.jsonl (needs --anchor-weight > 0)")
     ap.add_argument("--outcome-val", default=None, help="held-out outcome rows; Spearman is logged per epoch")
+    ap.add_argument("--under-w", type=float, default=1.0, help="weight on difficulty under-prediction (e.g. 2.5)")
     ap.add_argument("--regret-mode", default="max_utility", choices=["max_utility", "cheapest"])
     ap.add_argument("--distill-from", default=None, help="teacher cache .pt from scripts/train/cache_teacher.py")
     ap.add_argument("--distill-T", type=float, default=3.0)
@@ -49,7 +50,7 @@ def main():
                       patience=a.patience, max_len=a.max_len, max_steps=a.max_steps, limit_train=a.limit_train,
                       device=a.device, bf16=not a.no_bf16, calibrate=not a.no_calibrate,
                       single_teacher_weight=a.single_teacher_weight, anchors=a.anchors, anchor_weight=a.anchor_weight,
-                      outcome_anchors=a.outcome_anchors, outcome_val=a.outcome_val, regret_mode=a.regret_mode)
+                      outcome_anchors=a.outcome_anchors, outcome_val=a.outcome_val, regret_mode=a.regret_mode, under_w=a.under_w)
     s = train(cfg)
     print(json.dumps({k: s[k] for k in ("best_val_score", "epochs_run", "steps", "train_examples_per_s", "best_dir")}))
 

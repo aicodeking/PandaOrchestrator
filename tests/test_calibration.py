@@ -3,11 +3,16 @@ import json
 import numpy as np
 import pytest
 
-from panda_router.matcher import Matcher
+from panda_router.matcher import Matcher as _Matcher
 from panda_router.matcher.calibration import DEFAULT_PATH, load_calibration, transform
 from panda_router.matcher.core import p_by_level
 from panda_router.profile import TaskProfile
 from panda_router.taxonomy import CATEGORIES, CHECKLIST_IDS, FLAGS, SKILL_AXES
+
+
+def Matcher(**kw) -> _Matcher:
+    """Card-P calibration is a v3-policy feature; the v4 head replaces P for the cards it was trained on."""
+    return _Matcher(policy="v3", success_head=None, **kw)
 
 POOL = ["openrouter-qwen3.8-flash", "openrouter-deepseek-v4.1-flash", "openrouter-gpt-6.1-sol"]
 
@@ -19,7 +24,7 @@ def profile(diff: int) -> TaskProfile:
                        flags={f: 0.0 for f in FLAGS}, checklist={c: 0.0 for c in CHECKLIST_IDS})
 
 
-def p_of(m: Matcher, diff: int) -> dict[str, float]:
+def p_of(m: _Matcher, diff: int) -> dict[str, float]:
     r = m.route({"task": {"text": "x", "context": {}}, "pool": POOL, "return_top_k": 5}, profile(diff))
     return {row["model_id"]: row["p_success"] for row in r["ranking"]}
 
