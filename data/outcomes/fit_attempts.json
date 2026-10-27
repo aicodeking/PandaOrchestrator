@@ -1,0 +1,1065 @@
+{
+ "label_judge": "openai/gpt-6.1-sol (reasoning effort low)",
+ "judge_validation": {
+  "pairs": {
+   "ds vs kimi": {
+    "n": 100,
+    "agreement": 0.76,
+    "kappa": 0.459,
+    "kappa_ci95": [
+     0.282,
+     0.63
+    ],
+    "pass_rate": 0.78,
+    "ref_pass_rate": 0.6
+   },
+   "ds vs strong": {
+    "n": 100,
+    "agreement": 0.59,
+    "kappa": 0.24,
+    "kappa_ci95": [
+     0.111,
+     0.386
+    ],
+    "pass_rate": 0.78,
+    "ref_pass_rate": 0.43
+   },
+   "ds-think vs kimi": {
+    "n": 99,
+    "agreement": 0.929,
+    "kappa": 0.851,
+    "kappa_ci95": [
+     0.738,
+     0.938
+    ],
+    "pass_rate": 0.616,
+    "ref_pass_rate": 0.606
+   },
+   "ds-think vs strong": {
+    "n": 99,
+    "agreement": 0.758,
+    "kappa": 0.53,
+    "kappa_ci95": [
+     0.373,
+     0.685
+    ],
+    "pass_rate": 0.616,
+    "ref_pass_rate": 0.434
+   },
+   "ds-strict vs kimi": {
+    "n": 99,
+    "agreement": 0.667,
+    "kappa": 0.385,
+    "kappa_ci95": [
+     0.247,
+     0.521
+    ],
+    "pass_rate": 0.283,
+    "ref_pass_rate": 0.596
+   },
+   "ds-strict vs strong": {
+    "n": 99,
+    "agreement": 0.687,
+    "kappa": 0.336,
+    "kappa_ci95": [
+     0.156,
+     0.512
+    ],
+    "pass_rate": 0.283,
+    "ref_pass_rate": 0.434
+   },
+   "strong vs kimi": {
+    "n": 100,
+    "agreement": 0.81,
+    "kappa": 0.63,
+    "kappa_ci95": [
+     0.491,
+     0.78
+    ],
+    "pass_rate": 0.43,
+    "ref_pass_rate": 0.6
+   },
+   "kimi vs strong": {
+    "n": 100,
+    "agreement": 0.81,
+    "kappa": 0.63,
+    "kappa_ci95": [
+     0.489,
+     0.763
+    ],
+    "pass_rate": 0.6,
+    "ref_pass_rate": 0.43
+   }
+  },
+  "passes_by_answer_model": {
+   "openrouter-deepseek-v4.1-flash": {
+    "ds": 15,
+    "ds-think": 11,
+    "ds-strict": 7,
+    "strong": 3,
+    "kimi": 11,
+    "n": 18
+   },
+   "openrouter-qwen3.8-flash": {
+    "ds": 8,
+    "ds-think": 8,
+    "ds-strict": 2,
+    "strong": 4,
+    "kimi": 8,
+    "n": 19
+   },
+   "openrouter-minimax-m3.1-flash": {
+    "ds": 11,
+    "ds-think": 8,
+    "ds-strict": 5,
+    "strong": 6,
+    "kimi": 7,
+    "n": 17
+   },
+   "openrouter-gemini-3.8-flash": {
+    "ds": 17,
+    "ds-think": 10,
+    "ds-strict": 3,
+    "strong": 7,
+    "kimi": 9,
+    "n": 17
+   },
+   "openrouter-gpt-6.1-sol": {
+    "ds": 27,
+    "ds-think": 24,
+    "ds-strict": 11,
+    "strong": 23,
+    "kimi": 25,
+    "n": 29
+   }
+  }
+ },
+ "n_cells": 2938,
+ "n_trainval_items": 511,
+ "n_gold_items": 150,
+ "pass_rate_by_model": {
+  "train/val": {
+   "openrouter-deepseek-v4.1-flash": 0.332,
+   "openrouter-gemini-3.8-flash": 0.322,
+   "openrouter-gpt-6.1-sol": 0.549,
+   "openrouter-minimax-m3.1-flash": 0.241,
+   "openrouter-qwen3.8-flash": 0.209
+  },
+  "gold": {
+   "openrouter-deepseek-v4.1-flash": 0.66,
+   "openrouter-gemini-3.8-flash": 0.612,
+   "openrouter-gpt-6.1-sol": 0.788,
+   "openrouter-minimax-m3.1-flash": 0.446,
+   "openrouter-qwen3.8-flash": 0.459
+  }
+ },
+ "pass_rate_by_category": {
+  "openrouter-deepseek-v4.1-flash": {
+   "bugfix": 0.3,
+   "chat_simple": 0.75,
+   "code_review": 0.21,
+   "data_analysis": 0.39,
+   "devops_infra": 0.28,
+   "docs_writing": 0.55,
+   "implementation": 0.27,
+   "math_reasoning": 0.24,
+   "planning": 0.42,
+   "refactor": 0.21,
+   "research": 0.26,
+   "test_writing": 0.16,
+   "ui_frontend": 0.15
+  },
+  "openrouter-gemini-3.8-flash": {
+   "bugfix": 0.32,
+   "chat_simple": 0.61,
+   "code_review": 0.09,
+   "data_analysis": 0.25,
+   "devops_infra": 0.19,
+   "docs_writing": 0.41,
+   "implementation": 0.42,
+   "math_reasoning": 0.44,
+   "planning": 0.26,
+   "refactor": 0.05,
+   "research": 0.31,
+   "test_writing": 0.17,
+   "ui_frontend": 0.39
+  },
+  "openrouter-gpt-6.1-sol": {
+   "bugfix": 0.54,
+   "chat_simple": 0.62,
+   "code_review": 0.28,
+   "data_analysis": 0.63,
+   "devops_infra": 0.61,
+   "docs_writing": 0.48,
+   "implementation": 0.59,
+   "math_reasoning": 0.76,
+   "planning": 0.77,
+   "refactor": 0.4,
+   "research": 0.48,
+   "test_writing": 0.47,
+   "ui_frontend": 0.41
+  },
+  "openrouter-minimax-m3.1-flash": {
+   "bugfix": 0.19,
+   "chat_simple": 0.39,
+   "code_review": 0.18,
+   "data_analysis": 0.19,
+   "devops_infra": 0.3,
+   "docs_writing": 0.29,
+   "implementation": 0.3,
+   "math_reasoning": 0.19,
+   "planning": 0.43,
+   "refactor": 0.05,
+   "research": 0.16,
+   "test_writing": 0.21,
+   "ui_frontend": 0.22
+  },
+  "openrouter-qwen3.8-flash": {
+   "bugfix": 0.22,
+   "chat_simple": 0.44,
+   "code_review": 0.09,
+   "data_analysis": 0.31,
+   "devops_infra": 0.09,
+   "docs_writing": 0.19,
+   "implementation": 0.22,
+   "math_reasoning": 0.21,
+   "planning": 0.14,
+   "refactor": 0.1,
+   "research": 0.14,
+   "test_writing": 0.18,
+   "ui_frontend": 0.32
+  }
+ },
+ "diag": [
+  {
+   "model": "1PL",
+   "heldout_cells": 347,
+   "heldout_trials": 347,
+   "logloss": 0.406254503629314,
+   "auc": 0.8773032148639273,
+   "base_rate_logloss": 0.6223583837025144
+  },
+  {
+   "model": "2PL",
+   "heldout_cells": 347,
+   "heldout_trials": 347,
+   "logloss": 0.410136927942679,
+   "auc": 0.8724654999614525,
+   "base_rate_logloss": 0.6223583837025144
+  }
+ ],
+ "two_pl": false,
+ "a_median": 1.0,
+ "theta_irt": {
+  "openrouter-deepseek-v4.1-flash": -1.097,
+  "openrouter-qwen3.8-flash": -2.25,
+  "openrouter-minimax-m3.1-flash": -1.819,
+  "openrouter-gemini-3.8-flash": -1.326,
+  "openrouter-gpt-6.1-sol": 0.212
+ },
+ "theta_se": {
+  "openrouter-deepseek-v4.1-flash": 0.131,
+  "openrouter-qwen3.8-flash": 0.15,
+  "openrouter-minimax-m3.1-flash": 0.139,
+  "openrouter-gemini-3.8-flash": 0.137,
+  "openrouter-gpt-6.1-sol": 0.13
+ },
+ "link": {
+  "alpha": 8.465231836234992,
+  "gamma": 0.8333333333333334,
+  "alpha_se": 0.4633451821259458,
+  "n_anchors": 5,
+  "anchor_resid_mad": 0.47018274070959265,
+  "theilsen_slope": 0.4531068520770172,
+  "theilsen_intercept": 8.19104510303929,
+  "theilsen_slope_ci": [
+   -7.57778017638531,
+   2.3170149371455744
+  ],
+  "anchors": [
+   {
+    "card": "openrouter-deepseek-v4.1-flash",
+    "card_mean_theta": 6.09,
+    "card_mean_se": 0.9,
+    "theta_irt": -1.097
+   },
+   {
+    "card": "openrouter-qwen3.8-flash",
+    "card_mean_theta": 6.59,
+    "card_mean_se": 1.5,
+    "theta_irt": -2.25
+   },
+   {
+    "card": "openrouter-minimax-m3.1-flash",
+    "card_mean_theta": 7.59,
+    "card_mean_se": 0.9,
+    "theta_irt": -1.819
+   },
+   {
+    "card": "openrouter-gemini-3.8-flash",
+    "card_mean_theta": 7.83,
+    "card_mean_se": 0.8,
+    "theta_irt": -1.326
+   },
+   {
+    "card": "openrouter-gpt-6.1-sol",
+    "card_mean_theta": 8.44,
+    "card_mean_se": 0.9,
+    "theta_irt": 0.212
+   }
+  ]
+ },
+ "b_router_hist": [
+  0,
+  0,
+  0,
+  0,
+  39,
+  48,
+  108,
+  98,
+  218
+ ],
+ "se_median": 1.277,
+ "all_pass": 40,
+ "all_fail": 219,
+ "sensitivity_strong_judge": {
+  "n_cells": 609,
+  "n_items": 138,
+  "pass_rate": {
+   "ds-think": {
+    "openrouter-deepseek-v4.1-flash": 0.395,
+    "openrouter-gemini-3.8-flash": 0.368,
+    "openrouter-gpt-6.1-sol": 0.584,
+    "openrouter-minimax-m3.1-flash": 0.273,
+    "openrouter-qwen3.8-flash": 0.264
+   },
+   "strong": {
+    "openrouter-deepseek-v4.1-flash": 0.116,
+    "openrouter-gemini-3.8-flash": 0.136,
+    "openrouter-gpt-6.1-sol": 0.558,
+    "openrouter-minimax-m3.1-flash": 0.124,
+    "openrouter-qwen3.8-flash": 0.083
+   }
+  },
+  "theta_router_ds-think": {
+   "openrouter-deepseek-v4.1-flash": 8.0,
+   "openrouter-qwen3.8-flash": 7.09,
+   "openrouter-minimax-m3.1-flash": 7.24,
+   "openrouter-gemini-3.8-flash": 7.79,
+   "openrouter-gpt-6.1-sol": 8.76
+  },
+  "theta_router_strong": {
+   "openrouter-deepseek-v4.1-flash": 6.07,
+   "openrouter-qwen3.8-flash": 5.63,
+   "openrouter-minimax-m3.1-flash": 6.14,
+   "openrouter-gemini-3.8-flash": 6.22,
+   "openrouter-gpt-6.1-sol": 8.86
+  }
+ },
+ "spearman_irt_b": {
+  "train/val": [
+   {
+    "subset": "all",
+    "n": 511,
+    "v2": 0.418,
+    "teacher": 0.409
+   },
+   {
+    "subset": "bugfix",
+    "n": 105,
+    "v2": 0.477,
+    "teacher": 0.433
+   },
+   {
+    "subset": "chat_simple",
+    "n": 37,
+    "v2": 0.024,
+    "teacher": -0.088
+   },
+   {
+    "subset": "code_review",
+    "n": 37,
+    "v2": -0.415,
+    "teacher": -0.427
+   },
+   {
+    "subset": "data_analysis",
+    "n": 33,
+    "v2": 0.29,
+    "teacher": 0.335
+   },
+   {
+    "subset": "devops_infra",
+    "n": 27,
+    "v2": 0.535,
+    "teacher": 0.487
+   },
+   {
+    "subset": "docs_writing",
+    "n": 33,
+    "v2": 0.651,
+    "teacher": 0.563
+   },
+   {
+    "subset": "implementation",
+    "n": 65,
+    "v2": 0.543,
+    "teacher": 0.503
+   },
+   {
+    "subset": "math_reasoning",
+    "n": 34,
+    "v2": 0.629,
+    "teacher": 0.624
+   },
+   {
+    "subset": "planning",
+    "n": 37,
+    "v2": 0.503,
+    "teacher": 0.475
+   },
+   {
+    "subset": "refactor",
+    "n": 22,
+    "v2": 0.156,
+    "teacher": 0.283
+   },
+   {
+    "subset": "research",
+    "n": 36,
+    "v2": 0.477,
+    "teacher": 0.499
+   },
+   {
+    "subset": "test_writing",
+    "n": 25,
+    "v2": 0.637,
+    "teacher": 0.564
+   },
+   {
+    "subset": "ui_frontend",
+    "n": 20,
+    "v2": 0.496,
+    "teacher": 0.56
+   }
+  ],
+  "val (v2 held-out)": [
+   {
+    "subset": "all",
+    "n": 47,
+    "v2": 0.165,
+    "teacher": 0.231
+   },
+   {
+    "subset": "bugfix",
+    "n": 12,
+    "v2": 0.761,
+    "teacher": 0.747
+   },
+   {
+    "subset": "chat_simple",
+    "n": 1,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "code_review",
+    "n": 6,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "data_analysis",
+    "n": 1,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "devops_infra",
+    "n": 1,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "docs_writing",
+    "n": 3,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "implementation",
+    "n": 4,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "planning",
+    "n": 3,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "refactor",
+    "n": 7,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "test_writing",
+    "n": 3,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "ui_frontend",
+    "n": 6,
+    "v2": null,
+    "teacher": null
+   }
+  ],
+  "gold": [
+   {
+    "subset": "all",
+    "n": 150,
+    "v2": 0.109,
+    "teacher": 0.421
+   },
+   {
+    "subset": "bugfix",
+    "n": 7,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "chat_simple",
+    "n": 43,
+    "v2": 0.101,
+    "teacher": 0.376
+   },
+   {
+    "subset": "code_review",
+    "n": 4,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "data_analysis",
+    "n": 8,
+    "v2": -0.156,
+    "teacher": 0.561
+   },
+   {
+    "subset": "devops_infra",
+    "n": 5,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "docs_writing",
+    "n": 12,
+    "v2": 0.507,
+    "teacher": 0.523
+   },
+   {
+    "subset": "implementation",
+    "n": 18,
+    "v2": 0.711,
+    "teacher": 0.804
+   },
+   {
+    "subset": "math_reasoning",
+    "n": 16,
+    "v2": -0.032,
+    "teacher": 0.477
+   },
+   {
+    "subset": "planning",
+    "n": 13,
+    "v2": -0.555,
+    "teacher": 0.211
+   },
+   {
+    "subset": "refactor",
+    "n": 6,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "research",
+    "n": 9,
+    "v2": 0.387,
+    "teacher": 0.213
+   },
+   {
+    "subset": "test_writing",
+    "n": 4,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "ui_frontend",
+    "n": 5,
+    "v2": null,
+    "teacher": null
+   }
+  ]
+ },
+ "spearman_models_failed": {
+  "train/val": [
+   {
+    "subset": "all",
+    "n": 511,
+    "v2": 0.31,
+    "teacher": 0.304
+   },
+   {
+    "subset": "bugfix",
+    "n": 105,
+    "v2": 0.197,
+    "teacher": 0.175
+   },
+   {
+    "subset": "chat_simple",
+    "n": 37,
+    "v2": 0.064,
+    "teacher": -0.045
+   },
+   {
+    "subset": "code_review",
+    "n": 37,
+    "v2": -0.393,
+    "teacher": -0.433
+   },
+   {
+    "subset": "data_analysis",
+    "n": 33,
+    "v2": 0.163,
+    "teacher": 0.22
+   },
+   {
+    "subset": "devops_infra",
+    "n": 27,
+    "v2": 0.629,
+    "teacher": 0.573
+   },
+   {
+    "subset": "docs_writing",
+    "n": 33,
+    "v2": 0.665,
+    "teacher": 0.572
+   },
+   {
+    "subset": "implementation",
+    "n": 65,
+    "v2": 0.391,
+    "teacher": 0.355
+   },
+   {
+    "subset": "math_reasoning",
+    "n": 34,
+    "v2": 0.406,
+    "teacher": 0.398
+   },
+   {
+    "subset": "planning",
+    "n": 37,
+    "v2": 0.416,
+    "teacher": 0.394
+   },
+   {
+    "subset": "refactor",
+    "n": 22,
+    "v2": 0.07,
+    "teacher": 0.232
+   },
+   {
+    "subset": "research",
+    "n": 36,
+    "v2": 0.644,
+    "teacher": 0.734
+   },
+   {
+    "subset": "test_writing",
+    "n": 25,
+    "v2": 0.389,
+    "teacher": 0.313
+   },
+   {
+    "subset": "ui_frontend",
+    "n": 20,
+    "v2": 0.45,
+    "teacher": 0.536
+   }
+  ],
+  "val (v2 held-out)": [
+   {
+    "subset": "all",
+    "n": 47,
+    "v2": -0.011,
+    "teacher": 0.033
+   },
+   {
+    "subset": "bugfix",
+    "n": 12,
+    "v2": -0.007,
+    "teacher": 0.172
+   },
+   {
+    "subset": "chat_simple",
+    "n": 1,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "code_review",
+    "n": 6,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "data_analysis",
+    "n": 1,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "devops_infra",
+    "n": 1,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "docs_writing",
+    "n": 3,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "implementation",
+    "n": 4,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "planning",
+    "n": 3,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "refactor",
+    "n": 7,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "test_writing",
+    "n": 3,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "ui_frontend",
+    "n": 6,
+    "v2": null,
+    "teacher": null
+   }
+  ],
+  "gold": [
+   {
+    "subset": "all",
+    "n": 150,
+    "v2": 0.087,
+    "teacher": 0.393
+   },
+   {
+    "subset": "bugfix",
+    "n": 7,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "chat_simple",
+    "n": 43,
+    "v2": 0.097,
+    "teacher": 0.37
+   },
+   {
+    "subset": "code_review",
+    "n": 4,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "data_analysis",
+    "n": 8,
+    "v2": -0.086,
+    "teacher": 0.563
+   },
+   {
+    "subset": "devops_infra",
+    "n": 5,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "docs_writing",
+    "n": 12,
+    "v2": 0.507,
+    "teacher": 0.523
+   },
+   {
+    "subset": "implementation",
+    "n": 18,
+    "v2": 0.668,
+    "teacher": 0.743
+   },
+   {
+    "subset": "math_reasoning",
+    "n": 16,
+    "v2": -0.032,
+    "teacher": 0.477
+   },
+   {
+    "subset": "planning",
+    "n": 13,
+    "v2": -0.545,
+    "teacher": 0.224
+   },
+   {
+    "subset": "refactor",
+    "n": 6,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "research",
+    "n": 9,
+    "v2": 0.33,
+    "teacher": 0.216
+   },
+   {
+    "subset": "test_writing",
+    "n": 4,
+    "v2": null,
+    "teacher": null
+   },
+   {
+    "subset": "ui_frontend",
+    "n": 5,
+    "v2": null,
+    "teacher": null
+   }
+  ]
+ },
+ "routing": {
+  "cards_before": {
+   "pool": [
+    "openrouter-deepseek-v4.1-flash",
+    "openrouter-qwen3.8-flash",
+    "openrouter-minimax-m3.1-flash",
+    "openrouter-gemini-3.8-flash",
+    "openrouter-gpt-6.1-sol"
+   ],
+   "cheapest": "openrouter-qwen3.8-flash",
+   "strongest": "openrouter-gpt-6.1-sol",
+   "v2:cheapest_above_threshold": {
+    "success_per_100": 49.3,
+    "cost_per_100_usd": 0.088,
+    "picks": {
+     "openrouter-qwen3.8-flash": 128,
+     "openrouter-minimax-m3.1-flash": 10,
+     "openrouter-gpt-6.1-sol": 1,
+     "openrouter-gemini-3.8-flash": 1
+    }
+   },
+   "v2:max_utility": {
+    "success_per_100": 45.7,
+    "cost_per_100_usd": 0.114,
+    "picks": {
+     "openrouter-minimax-m3.1-flash": 140
+    }
+   },
+   "v2:max_quality": {
+    "success_per_100": 78.6,
+    "cost_per_100_usd": 1.061,
+    "picks": {
+     "openrouter-gpt-6.1-sol": 140
+    }
+   },
+   "always_cheapest": {
+    "success_per_100": 47.1,
+    "cost_per_100_usd": 0.064,
+    "picks": {
+     "openrouter-qwen3.8-flash": 140
+    }
+   },
+   "always_strongest": {
+    "success_per_100": 78.6,
+    "cost_per_100_usd": 1.061,
+    "picks": {
+     "openrouter-gpt-6.1-sol": 140
+    }
+   },
+   "always:openrouter-deepseek-v4.1-flash": {
+    "success_per_100": 67.9,
+    "cost_per_100_usd": 0.148,
+    "picks": {
+     "openrouter-deepseek-v4.1-flash": 140
+    }
+   },
+   "always:openrouter-qwen3.8-flash": {
+    "success_per_100": 47.1,
+    "cost_per_100_usd": 0.064,
+    "picks": {
+     "openrouter-qwen3.8-flash": 140
+    }
+   },
+   "always:openrouter-minimax-m3.1-flash": {
+    "success_per_100": 45.7,
+    "cost_per_100_usd": 0.114,
+    "picks": {
+     "openrouter-minimax-m3.1-flash": 140
+    }
+   },
+   "always:openrouter-gemini-3.8-flash": {
+    "success_per_100": 60.7,
+    "cost_per_100_usd": 0.474,
+    "picks": {
+     "openrouter-gemini-3.8-flash": 140
+    }
+   },
+   "always:openrouter-gpt-6.1-sol": {
+    "success_per_100": 78.6,
+    "cost_per_100_usd": 1.061,
+    "picks": {
+     "openrouter-gpt-6.1-sol": 140
+    }
+   },
+   "oracle_cheapest_passing": {
+    "success_per_100": 90.0,
+    "cost_per_100_usd": 0.196,
+    "picks": {
+     "openrouter-qwen3.8-flash": 80,
+     "openrouter-deepseek-v4.1-flash": 24,
+     "openrouter-minimax-m3.1-flash": 20,
+     "openrouter-gpt-6.1-sol": 11,
+     "openrouter-gemini-3.8-flash": 5
+    }
+   },
+   "n_tasks": 140
+  },
+  "cards_after": {
+   "pool": [
+    "openrouter-deepseek-v4.1-flash",
+    "openrouter-qwen3.8-flash",
+    "openrouter-minimax-m3.1-flash",
+    "openrouter-gemini-3.8-flash",
+    "openrouter-gpt-6.1-sol"
+   ],
+   "cheapest": "openrouter-qwen3.8-flash",
+   "strongest": "openrouter-gpt-6.1-sol",
+   "v2:cheapest_above_threshold": {
+    "success_per_100": 50.0,
+    "cost_per_100_usd": 0.095,
+    "picks": {
+     "openrouter-qwen3.8-flash": 128,
+     "openrouter-minimax-m3.1-flash": 10,
+     "openrouter-gpt-6.1-sol": 2
+    }
+   },
+   "v2:max_utility": {
+    "success_per_100": 45.7,
+    "cost_per_100_usd": 0.114,
+    "picks": {
+     "openrouter-minimax-m3.1-flash": 140
+    }
+   },
+   "v2:max_quality": {
+    "success_per_100": 78.6,
+    "cost_per_100_usd": 1.061,
+    "picks": {
+     "openrouter-gpt-6.1-sol": 140
+    }
+   },
+   "always_cheapest": {
+    "success_per_100": 47.1,
+    "cost_per_100_usd": 0.064,
+    "picks": {
+     "openrouter-qwen3.8-flash": 140
+    }
+   },
+   "always_strongest": {
+    "success_per_100": 78.6,
+    "cost_per_100_usd": 1.061,
+    "picks": {
+     "openrouter-gpt-6.1-sol": 140
+    }
+   },
+   "always:openrouter-deepseek-v4.1-flash": {
+    "success_per_100": 67.9,
+    "cost_per_100_usd": 0.148,
+    "picks": {
+     "openrouter-deepseek-v4.1-flash": 140
+    }
+   },
+   "always:openrouter-qwen3.8-flash": {
+    "success_per_100": 47.1,
+    "cost_per_100_usd": 0.064,
+    "picks": {
+     "openrouter-qwen3.8-flash": 140
+    }
+   },
+   "always:openrouter-minimax-m3.1-flash": {
+    "success_per_100": 45.7,
+    "cost_per_100_usd": 0.114,
+    "picks": {
+     "openrouter-minimax-m3.1-flash": 140
+    }
+   },
+   "always:openrouter-gemini-3.8-flash": {
+    "success_per_100": 60.7,
+    "cost_per_100_usd": 0.474,
+    "picks": {
+     "openrouter-gemini-3.8-flash": 140
+    }
+   },
+   "always:openrouter-gpt-6.1-sol": {
+    "success_per_100": 78.6,
+    "cost_per_100_usd": 1.061,
+    "picks": {
+     "openrouter-gpt-6.1-sol": 140
+    }
+   },
+   "oracle_cheapest_passing": {
+    "success_per_100": 90.0,
+    "cost_per_100_usd": 0.196,
+    "picks": {
+     "openrouter-qwen3.8-flash": 80,
+     "openrouter-deepseek-v4.1-flash": 24,
+     "openrouter-minimax-m3.1-flash": 20,
+     "openrouter-gpt-6.1-sol": 11,
+     "openrouter-gemini-3.8-flash": 5
+    }
+   },
+   "n_tasks": 140
+  }
+ },
+ "spend": {
+  "attempts": 13.62,
+  "total_logged": 44.55
+ },
+ "finish_length_rate": {
+  "openrouter-deepseek-v4.1-flash": 0.308,
+  "openrouter-gemini-3.8-flash": 0.004,
+  "openrouter-gpt-6.1-sol": 0.0,
+  "openrouter-minimax-m3.1-flash": 0.26,
+  "openrouter-qwen3.8-flash": 0.045
+ },
+ "verify": {
+  "null": 2899,
+  "false": 29,
+  "true": 10
+ }
+}

@@ -5,12 +5,12 @@ JSON Schemas live in [schemas/](../schemas/): [route_request](../schemas/route_r
 [route_response](../schemas/route_response.schema.json), [route_outcome](../schemas/route_outcome.schema.json),
 [model_card](../schemas/model_card.schema.json).
 
-Examples below were run against `artifacts/panda-router-v2` (see the README for where the profiler comes from).
+Examples below were run against `artifacts/panda-router-v3` (see the README for where the profiler comes from).
 
 ## HTTP
 
 ```sh
-panda-router-serve --port 8765 --artifacts artifacts/panda-router-v2 [--host 127.0.0.1] [--db PATH] [--cards DIR]
+panda-router-serve --port 8765 --artifacts artifacts/panda-router-v3 [--host 127.0.0.1] [--db PATH] [--cards DIR]
 ```
 
 The server binds to `127.0.0.1` by default and has no authentication. Do not expose it to a network
@@ -23,7 +23,7 @@ input, `404` for unknown paths, `500` for internal errors.
 curl -s localhost:8765/health
 ```
 ```json
-{"ok": true, "version": "panda-router-0.1.0", "profiler": "OnnxProfiler(panda-router-v2/model.int8.onnx)", "cards": 65, "db": "/tmp/pr-docs.sqlite"}
+{"ok": true, "version": "panda-router-0.1.0", "profiler": "OnnxProfiler(panda-router-v3/model.int8.onnx)", "cards": 65, "db": "/tmp/pr-docs.sqlite"}
 ```
 
 ### `POST /route`
@@ -37,7 +37,7 @@ Body is a RouteRequest.
 | `task.context` | object | `repo_languages[]`, `files_in_scope`, `estimated_input_tokens`, `has_images`, `requires_tools` |
 | `pool` | array | card ids, model names/aliases, or inline model cards. Default: every card in `cards/` |
 | `constraints` | object | `max_cost_usd`, `max_latency_ms`, `local_only`, `require[]` (`tools`, `vision`, `json_mode`, `web`), `exclude[]` |
-| `preferences.mode` | enum | `cheapest_above_threshold` (default), `max_utility`, `max_quality` |
+| `preferences.mode` | enum | `max_utility` (default), `cheapest_above_threshold`, `max_quality` |
 | `preferences` | object | `min_p_success`, `floor`, `default_model`, `weights{quality,cost,latency}`, `explore_epsilon`, `explore_temperature`, `seed` |
 | `questions` | array | any of `choice`, `difficulty`, `flags`, `category`, `profile`; add `profile` to get the full TaskProfile |
 | `return_top_k` | int 1-50 | ranking length |
@@ -147,7 +147,7 @@ Server flags (`panda-router-serve`): `--host`, `--port`, `--artifacts`, `--db`, 
 ```python
 from panda_router.serve.router import Router, load_profiler
 
-router = Router(profiler=load_profiler("artifacts/panda-router-v2"), db_path="/tmp/router.sqlite")
+router = Router(profiler=load_profiler("artifacts/panda-router-v3"), db_path="/tmp/router.sqlite")
 req = {"task": {"text": "Add retry with backoff to the S3 uploader"},
        "pool": ["claude-sonnet-5.5", "claude-haiku-5.5", "ollama-qwen3-coder-30b"]}
 
@@ -174,7 +174,7 @@ panda-router-mcp [--artifacts DIR] [--cards DIR] [--db PATH]
 ```
 
 Env equivalents: `PANDA_ROUTER_ARTIFACTS`, `PANDA_ROUTER_CARDS`, `PANDA_ROUTER_DB`. If `--artifacts` is absent it uses
-`artifacts/panda-router-v2` in the source checkout when present, otherwise the heuristic profiler (with a warning on
+`artifacts/panda-router-v3` in the source checkout when present, otherwise the heuristic profiler (with a warning on
 stderr). Newline-delimited JSON-RPC 2.0, protocol version `2025-06-18`, tools only. Logs go to stderr.
 
 | tool | arguments | returns |

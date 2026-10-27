@@ -1,65 +1,63 @@
 {
-  "n": 329,
-  "dropped_lt_min_teachers": 30,
+  "n": 359,
+  "dropped_lt_min_teachers": 0,
   "dropped_duplicate_of_train": [
     "gold-wil-b090490cce"
   ],
   "swe_repo_in_train": {
-    "false": 75,
-    "true": 58
+    "false": 79,
+    "true": 66
   },
   "by_source": {
-    "swe-rebench": 109,
-    "swe-smith": 24,
-    "wildchat": 196
+    "swe-rebench": 120,
+    "swe-smith": 25,
+    "wildchat": 214
   },
   "teacher_sets": {
-    "codex+ollama": 205,
-    "codex+deepseek": 45,
-    "codex+grok+ollama": 25,
-    "codex+grok": 54
+    "codex+deepseek": 280,
+    "codex+deepseek+grok": 79
   },
   "top_category": {
-    "bugfix": 116,
-    "chat_simple": 55,
-    "implementation": 44,
-    "planning": 19,
-    "math_reasoning": 19,
-    "docs_writing": 14,
-    "data_analysis": 12,
-    "research": 11,
-    "refactor": 10,
-    "code_review": 10,
-    "ui_frontend": 7,
-    "devops_infra": 6,
-    "test_writing": 6
+    "bugfix": 125,
+    "chat_simple": 60,
+    "implementation": 49,
+    "planning": 23,
+    "math_reasoning": 20,
+    "docs_writing": 16,
+    "research": 13,
+    "refactor": 11,
+    "ui_frontend": 11,
+    "code_review": 8,
+    "data_analysis": 8,
+    "devops_infra": 8,
+    "test_writing": 7
   },
   "difficulty_expected_hist": {
-    "5": 76,
-    "3": 77,
-    "6": 54,
-    "7": 9,
-    "4": 64,
+    "5": 82,
+    "6": 57,
+    "3": 80,
+    "4": 76,
+    "7": 18,
     "2": 38,
-    "1": 11
+    "1": 8
   },
-  "difficulty_expected_mean": 4.198,
-  "mean_agreement": 0.8887,
+  "difficulty_expected_mean": 4.298,
+  "mean_agreement": 0.9091,
   "pairs": {
     "codex~deepseek": {
-      "n": 45,
-      "category_agree": 0.8889,
-      "category_kappa": 0.8654,
-      "difficulty_spearman": 0.8434,
-      "difficulty_mae": 0.6444,
-      "difficulty_within1": 0.8889,
+      "n": 359,
+      "category_agree": 0.844,
+      "category_kappa": 0.8088,
+      "difficulty_spearman": 0.8661,
+      "difficulty_mae": 0.624,
+      "difficulty_within1": 0.9304,
       "difficulty_mean": [
-        4.244,
-        3.867
+        4.376,
+        4.22
       ],
-      "skill_mae": 0.4956,
-      "flag_agree": 0.9206,
-      "checklist_agree": 0.9176
+      "skill_mae": 0.5786,
+      "flag_agree": 0.9033,
+      "checklist_agree": 0.9177
     },
     "codex~grok": {
       "n": 79,
@@ -76,35 +74,20 @@
       "flag_agree": 0.9349,
       "checklist_agree": 0.9256
     },
-    "codex~ollama": {
-      "n": 230,
-      "category_agree": 0.7826,
-      "category_kappa": 0.7285,
-      "difficulty_spearman": 0.8048,
-      "difficulty_mae": 0.8435,
-      "difficulty_within1": 0.8435,
+    "deepseek~grok": {
+      "n": 79,
+      "category_agree": 0.8608,
+      "category_kappa": 0.8254,
+      "difficulty_spearman": 0.8452,
+      "difficulty_mae": 0.5696,
+      "difficulty_within1": 0.962,
       "difficulty_mean": [
-        4.404,
-        3.97
+        4.253,
+        4.19
       ],
-      "skill_mae": 0.703,
-      "flag_agree": 0.8702,
-      "checklist_agree": 0.8862
-    },
-    "grok~ollama": {
-      "n": 25,
-      "category_agree": 0.88,
-      "category_kappa": 0.8359,
-      "difficulty_spearman": 0.8614,
-      "difficulty_mae": 0.68,
-      "difficulty_within1": 0.92,
-      "difficulty_mean": [
-        4.2,
-        4.32
-      ],
-      "skill_mae": 0.676,
-      "flag_agree": 0.9086,
-      "checklist_agree": 0.905
+      "skill_mae": 0.6063,
+      "flag_agree": 0.8951,
+      "checklist_agree": 0.9225
     }
   }
 }

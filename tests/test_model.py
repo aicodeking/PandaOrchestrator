@@ -97,6 +97,36 @@ def test_encode_labels_weight_and_anchor(fake_dir):
     assert np.isnan(encode_labels({**ex, "meta": {}})["anchor"]) and encode_labels({**ex, "meta": {}})["w"] == 1.0
 
 
+def test_encode_labels_supports_precision_weighted_id_anchors(fake_dir, tmp_path):
+    from panda_router.train.data import encode_labels, load_anchors, load_jsonl
+
+    ex = load_jsonl(fake_dir / "train.jsonl")[0]
+    anchors = tmp_path / "attempt_anchors.jsonl"
+    anchors.write_text(json.dumps({"id": ex["id"], "difficulty_1_10": 7.25, "w": 0.4}) + "\n")
+
+    loaded = load_anchors(anchors)
+    lab = encode_labels(ex, anchor=loaded[ex["id"]])
+    assert lab["anchor"] == np.float32(7.25)
+    assert lab["anchor_w"] == np.float32(0.4)
+
+
+def test_attempt_irt_anchor_rows_keep_informative_weighted_items():
+    from panda_router.train.attempt_anchors import build_rows
+
+    tasks = [
+        # The attempts file records its old split; the current data split is authoritative.
+        {"task_id": "keep", "split": "val", "n_models": 5, "n_pass": 2, "se": 0.5,
+         "irt_b": 0.2, "irt_b_router_scale": 7.25},
+        {"task_id": "all-fail", "split": "train", "n_models": 5, "n_pass": 0, "se": 0.5,
+         "irt_b": 2.0, "irt_b_router_scale": 10.0},
+        {"task_id": "thin", "split": "train", "n_models": 3, "n_pass": 1, "se": 0.5,
+         "irt_b": 0.0, "irt_b_router_scale": 6.0},
+    ]
+    rows = build_rows(tasks, {"keep", "all-fail", "thin"})
+    assert rows == [{"id": "keep", "source": "attempt-irt-anchor", "difficulty_1_10": 7.25,
+                     "w": 1.0, "irt_b": 0.2, "se": 0.5, "n_models": 5, "n_pass": 2}]
+
+
 def test_outcome_row_trains_difficulty_only(fake_dir):
     from panda_router.model.losses import anchor_loss, distill_losses
     from panda_router.train.data import encode_labels, load_jsonl

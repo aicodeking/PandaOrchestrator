@@ -61,6 +61,29 @@ def test_metric_primitives():
     assert M.expected([0, 1, 0], np.array([1.0, 2.0, 3.0])) == 2.0
 
 
+def test_true_attempt_routing_scores_observed_outcomes_and_costs():
+    from panda_router.eval.attempts import score_picks
+
+    cells = {
+        ("a", "cheap"): {"pass": False, "cost_attempt": 0.001},
+        ("a", "strong"): {"pass": True, "cost_attempt": 0.004},
+        ("b", "cheap"): {"pass": True, "cost_attempt": 0.002},
+        ("b", "strong"): {"pass": True, "cost_attempt": 0.005},
+    }
+    result = score_picks({"a": "cheap", "b": "strong"}, cells)
+    assert result["n"] == 2
+    assert result["success_per_100"] == 50.0
+    assert result["cost_per_100_usd"] == pytest.approx(0.3)
+    assert result["picks"] == {"cheap": 1, "strong": 1}
+
+
+def test_fresh_split_keeps_current_labels_while_excluding_reference_ids():
+    from panda_router.eval.fresh import fresh_rows
+
+    rows = [{"id": "v2-seen", "labels": {"difficulty": [1]}}, {"id": "new", "labels": {"difficulty": [2]}}]
+    assert fresh_rows(rows, {"v2-seen"}) == [{"id": "new", "labels": {"difficulty": [2]}}]
+
+
 def test_wrong_predictions_are_penalised(labels):
     rng = random.Random(1)
     shuffled = labels[:]

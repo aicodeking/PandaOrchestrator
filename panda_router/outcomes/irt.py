@@ -84,3 +84,29 @@ def heldout_metrics(s, i, k, n, n_sys, n_items, two_pl: bool, frac: float = 0.1,
     base_ll = -(base * np.log(base) + (1 - base) * np.log(1 - base))
     return {"model": "2PL" if two_pl else "1PL", "heldout_cells": int(test.sum()), "heldout_trials": int(nt.sum()),
             "logloss": float(logloss), "auc": float(roc_auc_score(y, sc)), "base_rate_logloss": float(base_ll)}
+
+
+def _map_location(c, a, k, n, g, n_groups, sign, prior_mu, prior_sd, iters=50):
+    """Per-group MAP of u in logit P = a * sign * (u - c), prior u ~ N(prior_mu, prior_sd^2); Newton (concave)."""
+    c, a, k, n = (np.asarray(x, float) for x in (c, a, k, n))
+    mu = np.broadcast_to(np.asarray(prior_mu, float), (n_groups,))
+    u = mu.copy()
+    for _ in range(iters):
+        p = 1.0 / (1.0 + np.exp(-a * sign * (u[g] - c)))
+        grad = np.bincount(g, weights=a * sign * (k - n * p), minlength=n_groups) - (u - mu) / prior_sd ** 2
+        info = np.bincount(g, weights=n * p * (1 - p) * a ** 2, minlength=n_groups) + 1.0 / prior_sd ** 2
+        step = np.clip(grad / info, -2.0, 2.0)
+        u = u + step
+        if np.abs(step).max() < 1e-8:
+            break
+    return u, 1.0 / np.sqrt(info)
+
+
+def fit_b_given_theta(theta, a, k, n, item, n_items, prior_sd: float = PRIOR_B):
+    """Item difficulties with person abilities (per cell: theta[s], a) held fixed. Returns (b, se_b)."""
+    return _map_location(theta, a, k, n, np.asarray(item), n_items, -1.0, 0.0, prior_sd)
+
+
+def fit_theta_given_b(b, a, k, n, person, n_persons, prior_mu=0.0, prior_sd: float = 1.0):
+    """Person abilities with item parameters (per cell: b[i], a[i]) held fixed. Returns (theta, se_theta)."""
+    return _map_location(b, a, k, n, np.asarray(person), n_persons, 1.0, prior_mu, prior_sd)

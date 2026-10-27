@@ -16,6 +16,12 @@ from .jsonio import append_jsonl, read_jsonl
 
 BATCH = 40
 OUT = paths.PAIRWISE / "judgments.jsonl"
+OUT_DEEPSEEK = paths.PAIRWISE / "judgments_deepseek.jsonl"
+_OUT = {"codex": OUT, "deepseek": OUT_DEEPSEEK}
+
+
+def read_judgments() -> list[dict]:
+    return read_jsonl(OUT) + read_jsonl(OUT_DEEPSEEK)
 MAX_CHARS = 1200
 
 PROMPT = """For each pair below, decide which task is HARDER for an AI assistant to complete correctly (needs a stronger model:
@@ -72,28 +78,28 @@ def _parser(pids):
     return parse
 
 
-async def _batch(rows: list[tuple[str, str]], texts: dict[str, str]) -> None:
+async def _batch(rows: list[tuple[str, str]], texts: dict[str, str], teacher: str = "codex") -> None:
     pids = [f"p{i:02d}" for i in range(len(rows))]
     blocks = [f"### pair {pid}\n[A]\n{_clip(texts[a])}\n[B]\n{_clip(texts[b])}\n" for pid, (a, b) in zip(pids, rows)]
-    got = await teachers.call("codex", PROMPT.format(pairs="\n".join(blocks)), _parser(pids), purpose="pairwise")
+    got = await teachers.call(teacher, PROMPT.format(pairs="\n".join(blocks)), _parser(pids), purpose="pairwise")
     out = []
     for pid, (a, b) in zip(pids, rows):
         if pid in got:
             h = got[pid]
             out.append({"a": a, "b": b, "harder": "tie" if h == "TIE" else (a if h == "A" else b)})
-    append_jsonl(OUT, out)
+    append_jsonl(_OUT[teacher], out)
     print(f"[pairwise] +{len(out)}/{len(rows)}", flush=True)
 
 
-async def judge(pairs: list[tuple[str, str]], texts: dict[str, str], seed: int = 0) -> None:
-    """Ask Codex about each pair in BOTH presentation orders, in different (shuffled) batches."""
+async def judge(pairs: list[tuple[str, str]], texts: dict[str, str], seed: int = 0, teacher: str = "codex") -> None:
+    """Ask `teacher` about each pair in BOTH presentation orders, in different (shuffled) batches."""
     paths.ensure()
-    done = {(r["a"], r["b"]) for r in read_jsonl(OUT)}
+    done = {(r["a"], r["b"]) for r in read_jsonl(_OUT[teacher])}
     ordered = [(a, b) for a, b in pairs] + [(b, a) for a, b in pairs]
     todo = [p for p in ordered if p not in done]
     random.Random(seed).shuffle(todo)
     print(f"[pairwise] {len(todo)} ordered judgments to run", flush=True)
-    await teachers.gather_limited([_batch(todo[i:i + BATCH], texts) for i in range(0, len(todo), BATCH)])
+    await teachers.gather_limited([_batch(todo[i:i + BATCH], texts, teacher) for i in range(0, len(todo), BATCH)])
 
 
 def fit_bt(judgments: list[dict], iters: int = 500, prior: float = 0.1) -> dict[str, float]:

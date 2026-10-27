@@ -46,16 +46,16 @@ pip install -e .            # core: serving only (onnxruntime, transformers toke
 pip install -e ".[train]"   # optional: torch and friends, only needed to retrain or export (see docs below)
 ```
 
-The trained profiler ships in the repo at `artifacts/panda-router-v2/` (31 MB int8 ONNX `model.int8.onnx`,
+The trained profiler ships in the repo at `artifacts/panda-router-v3/` (31 MB int8 ONNX `model.int8.onnx`,
 `heads.json`, tokenizer files). The 128 MB fp32 export is not committed; the router only needs the int8 model.
 Without `--artifacts` the CLI falls back to a keyword heuristic profiler, which works but is clearly weaker
-(see [Results](#results)); the HTTP and MCP servers default to `artifacts/panda-router-v2` in a source
+(see [Results](#results)); the HTTP and MCP servers default to `artifacts/panda-router-v3` in a source
 checkout. An explicitly given `--artifacts` directory that fails to load is an error, not a silent fallback.
 
 **Route one task (CLI)**
 
 ```sh
-panda-router route --artifacts artifacts/panda-router-v2 --no-log \
+panda-router route --artifacts artifacts/panda-router-v3 --no-log \
   --task 'Rename a variable in utils.py' \
   --pool claude/sonnet-5-5,claude-haiku-5.5,gpt-oss:20b --mode max_utility --top-k 3
 ```
@@ -67,21 +67,21 @@ panda-router route --artifacts artifacts/panda-router-v2 --no-log \
 **Start the HTTP server**
 
 ```sh
-panda-router-serve --port 8765 --artifacts artifacts/panda-router-v2
-# [panda-router] listening on http://127.0.0.1:8765 (profiler=OnnxProfiler(panda-router-v2/model.int8.onnx), ...)
+panda-router-serve --port 8765 --artifacts artifacts/panda-router-v3
+# [panda-router] listening on http://127.0.0.1:8765 (profiler=OnnxProfiler(panda-router-v3/model.int8.onnx), ...)
 curl -s localhost:8765/health
 ```
 
 **Start the MCP server (stdio)**
 
 ```sh
-panda-router-mcp --artifacts artifacts/panda-router-v2
+panda-router-mcp --artifacts artifacts/panda-router-v3
 ```
 
 It speaks newline-delimited JSON-RPC on stdin/stdout and exposes `route_task`, `escalate_task`,
 `record_outcome` and `list_models`. Clients normally launch it for you; see
 [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md). In a source checkout, `--artifacts` defaults to
-`artifacts/panda-router-v2` when that directory exists.
+`artifacts/panda-router-v3` when that directory exists.
 
 ## Example
 
@@ -113,7 +113,7 @@ Real output (the `difficulty.distribution` array is shortened to two entries):
   "flags": {"needs_tools": 0.1835, "needs_vision": 0.0057, "long_context": 0.0082, "needs_review": 0.8608,
             "ambiguous_spec": 0.9294, "multi_file": 0.9169, "needs_web": 0.0538},
   "fallback": {"triggered": false, "floor": 0.55, "default_model": "claude-opus-5.5"},
-  "router": {"version": "panda-router-0.1.0", "profiler": "OnnxProfiler(panda-router-v2/model.int8.onnx)",
+  "router": {"version": "panda-router-0.1.0", "profiler": "OnnxProfiler(panda-router-v3/model.int8.onnx)",
              "latency_ms": 22.67, "pool_hash": "..."},
   "trace_id": "r_8f10ab11a5394f35a79c2032"
 }
@@ -125,51 +125,44 @@ task is harder. Report the final result with `/outcome`. Details: [docs/API.md](
 
 ## Results
 
-Evaluated on 329 real tasks (the gold set) that were never trained on. All labels come from teacher LLMs, see
-[Limitations](#limitations). Full tables: [eval_reports/compare_v2.md](eval_reports/compare_v2.md); release
-decision: [RESULTS.md](RESULTS.md).
+### Real routed success (v3)
 
-| profiler | gold category acc | gold difficulty MAE | max_utility agreement | cheapest agreement | cheapest P<0.75 | held-out outcome Spearman |
+140 held-out real tasks (non-coding and small coding, single-turn), each actually attempted by five OpenRouter
+models (qwen3.8-flash, deepseek-v4.1-flash, minimax-m3.1-flash, gemini-3.8-flash, gpt-6.1-sol) and graded
+pass/fail by DeepSeek V4.1 Flash (kappa 0.85 against a Kimi K3.1 Pro reference). The router picks from those
+five; we count how often its pick actually passed. Report: [data/outcomes/REPORT_attempts.md](data/outcomes/REPORT_attempts.md).
+
+| policy | success / 100 | $ / 100 tasks |
+|---|---:|---:|
+| always cheapest (qwen3.8-flash) | 47.1 | 0.064 |
+| v2, old default (`cheapest_above_threshold`) | 50.0 | 0.095 |
+| v3, `cheapest_above_threshold` | 51.4 | 0.142 |
+| **v3, `max_utility` (new default)** | **67.9** | **0.156** |
+| always strongest (gpt-6.1-sol) | 78.6 | 1.061 |
+| oracle (cheapest model that passed) | 90.0 | 0.192 |
+
+The default mode is now `max_utility`: it gets 86% of always-strongest's successes at 15% of its cost. The gap to
+the oracle is still large; better model cards are the main lever (see Limitations).
+
+### Profiler quality
+
+Evaluated on 359 real tasks (the gold set) that were never trained on, labelled by Codex + DeepSeek V4.1 Flash.
+Full tables: [eval_reports/compare_v3.md](eval_reports/compare_v3.md); release notes: [RESULTS.md](RESULTS.md).
+
+| profiler | gold category acc | gold difficulty MAE / rho | gold flags AUROC | attempt-IRT rho | SWE held-out rho | hard-task pass |
 |---|---:|---:|---:|---:|---:|---:|
-| fixed average | 0.353 | 1.760 | 0.817 | 0.262 | 4.3% | n/a |
-| keyword heuristic | 0.492 | 1.374 | 0.863 | 0.539 | 42.4% | -0.005 |
-| kNN | 0.562 | 1.190 | 0.870 | 0.518 | 13.5% | n/a |
-| v1 (Ettin-32M) | 0.623 | 0.882 | 0.902 | 0.636 | 19.7% | 0.025 |
-| v2 direct 32M | **0.660** | **0.877** | 0.905 | 0.648 | 23.2% | 0.100 |
-| **v2 distilled 32M (shipped)** | 0.623 | 0.904 | 0.902 | 0.641 | 23.3% | 0.119 |
-| v2 150M teacher (too slow, not shipped) | 0.675 | 0.867 | 0.908 | 0.650 | 23.6% | 0.139 |
+| v1 | 0.624 | 0.900 / 0.675 | 0.885 | 0.178 | 0.025 | 0.80 |
+| v2 | 0.641 | 0.897 / 0.705 | 0.886 | 0.115 | **0.119** | 0.85 |
+| **v3 (shipped)** | **0.688** | **0.825 / 0.747** | **0.901** | **0.212** | 0.081 | 0.85 |
 
-- *Agreement*: how often the pick equals the pick made with the teacher-label profile (the "oracle"), averaged
-  over 50 random card pools per gold task. About 90 of 100 in `max_utility` mode and about 64 of 100 in
-  `cheapest_above_threshold` mode.
-- *Cheapest P<0.75*: share of cheapest-mode picks whose P(success) under the oracle profile is below 0.75.
-- *Outcome Spearman*: rank correlation between the profiler's expected difficulty and SWE-bench item difficulty
-  fitted from public per-instance results, on 980 tasks from repos never trained on (95% CI 0.048 to 0.175 for the
-  shipped model).
-- Latency (batch 1, int8, busy shared host): profiler p50 9.6 ms, p95 18.6 ms. End to end, one route measured
-  about 23 ms in the examples above.
-
-The shipped model is the distilled 32M because it has the lowest max-utility regret of the shippable models
-(0.00171 vs 0.00190 for v1) and picks cheaper models (cost ratio 0.660 vs 0.784), not because it is the best
-pure profiler: on gold it only ties v1 on category accuracy and its difficulty MAE is slightly worse than v1's.
-
-## Limitations
-
-- **Labels are LLM opinions.** Category, difficulty and skill labels for training and for the "oracle" come from
-  teacher LLMs (Codex, plus Gemma, DeepSeek, Grok or Kimi on some rows), not from measured model success.
-  Agreement with the oracle measures consistency with those teachers, not real-world success.
-- **Weak link to real coding outcomes.** Held-out Spearman against SWE-bench item difficulty is 0.12 (0.14
-  within-repo). That is better than v1 (0.03) and a keyword baseline (about 0), but it is a weak signal.
-- **Cards are estimates.** Prices and context limits were checked against vendor pages on 2026-10-25. Skill
-  levels are benchmark-informed or estimated, latency is estimated, and only a handful of cards are calibrated on
-  public outcome data. See [cards/README.md](cards/README.md).
-- **Local models may not be installed.** Ollama cards are tagged `not-installed`. Run `ollama pull <model>` or
-  keep them out of `pool`. Because they cost $0, they win many cheap routes.
-- **Cheapest mode is aggressive.** About 23% of the shipped model's `cheapest_above_threshold` picks fall under
-  P(success) 0.75 by the oracle. Raise `min_p_success` for more caution.
-- **Gold set composition is mixed** (205 rows labelled by Codex+Gemma, 45 by Codex+DeepSeek) and the 700 hard
-  training tasks are Codex-only. More in [RESULTS.md](RESULTS.md).
-- English-centric data. Not evaluated on non-English tasks.
+- v3 is a direct Ettin-32M trained on 8,247 tasks (every row labelled by at least two teachers, DeepSeek V4.1
+  Flash on all of them) with real-outcome difficulty from SWE-bench and from the attempt-and-grade runs as an
+  auxiliary target (weight 0.3). 31 MB int8.
+- *attempt-IRT rho*: rank correlation between predicted difficulty and difficulty fitted from the real
+  attempts above. *SWE held-out rho*: the same against SWE-bench item difficulty on repos never trained on; v3 is
+  lower here than v2 (0.08 vs 0.12, both weak).
+- Latency: v1-v3 share one 32M architecture; on an idle host the profiler runs at about 10 ms p50 / 19 ms p95
+  (batch 1, CPU, int8).
 
 ## Model cards
 

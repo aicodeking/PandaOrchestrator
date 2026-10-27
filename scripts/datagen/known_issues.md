@@ -1,14 +1,14 @@
 - **Teacher families and quotas.** The plan was Codex + Kimi. The Kimi CLI hit its 5-hour usage limit (HTTP 429) after
   about 25 successful calls (the quota is shared with other workers). Teacher B then became `grok` (grok-4.7-build-fast
-  via `grok -p`, xAI family). Grok then failed with HTTP 402 "usage balance exhausted" after about 3000 tasks. A free
-  DeepSeek model via `opencode run` timed out (20 min for one batch), so it was not used. Only the ~200 pilot tasks carry
+  via `grok -p`, xAI family). Grok then failed with HTTP 402 "usage balance exhausted" after about 3000 tasks. The free
+  DeepSeek model via `opencode run` was too slow, so v3 calls DeepSeek V4.1 Flash directly through the OpenRouter API. Only the ~200 pilot tasks carry
   Kimi labels. `meta.teachers` lists each record's teachers. A record with 3 full-label teachers is averaged over all 3.
   Most failed calls in the call log are these fast 429/402 rejections.
 - **Single-teacher minimal pairs.** Codex labelled all 1100 minimal pairs, but the second teacher ran out first. The 691
   pairs with only Codex labels are kept (`meta.single_teacher=true`, `meta.agreement=null`), so that the pair margin loss
-  has enough data. Filter on `len(meta.teachers) >= 2` to drop them. Every original has >= 2 teachers.
+  has enough data. Filter on `len(meta.teachers) >= 2` to drop them. In data v3 DeepSeek labelled them all, so none are single-teacher any more.
 - **Unlabelled pool.** About 4100 pooled tasks (mostly synthetic, plus the rest of the real seeds) have Codex-only labels or
-  no labels, and they are excluded. Resume with `run.py label --teachers kimi` (or `grok`) once a quota resets, then `build`.
+  no labels, and they are excluded. In v3, 404 pool tasks with no labels at all remain excluded; every row in the splits has >= 2 full-label teachers.
 - **The Ollama tie-break covers category and difficulty only.** gemma4:26b with `think=false` takes ~15 s per task with
   full labels. That is too slow for full third labels on ~20% of the data, so the tie-break prompt asks only for
   category + difficulty, and those join the soft label for those two fields. Disputed tasks are processed most-disputed
@@ -37,3 +37,17 @@
   target).
 - The installed `datasets==2.14.4` is incompatible with `pyarrow==26`, so the raw parquet shards are fetched with
   `huggingface_hub` into `data/raw/hf/`.
+
+## Data v2 changes (2026-10-26)
+
+- **Leak fix**: real SWE rows' `files_in_scope` / `estimated_input_tokens` come from the issue text only (distinct file paths / repo modules named in the text, omitted when none; tokens = len/4 + 4000 fixed repo allowance). Spearman(files_in_scope, multi_file) on SWE rows: train/val/test 0.93 -> 0.08, gold 0.87 -> 0.11.
+- **Hard tail**: 700 synthetic tasks (`hrd-*`: 400 hard 7-10, 150 deceptively simple, 150 scary-sounding easy). In v2 they were Codex-only; v3 adds DeepSeek labels.
+
+## Data v3 changes (2026-10-26)
+
+- **DeepSeek V4.1 Flash is the second teacher everywhere** (`deepseek/deepseek-v4.1-flash` via the OpenRouter chat API, reasoning disabled, temperature 0.2, 6-8 calls in parallel, 15 tasks per call, 429/5xx backoff; key read at runtime from the opencode auth store, never written). Usage and cost are logged to `data/cache/deepseek_usage.jsonl`.
+- Pilot (30 tasks vs Codex): category accuracy 0.80, difficulty Spearman 0.856. Full run: 8,074 new labels (all pooled Codex-only tasks, the 700 hard tasks, the minimal pairs, every split row) on top of the 300 earlier free-tier ones.
+- Merge with 3 teachers is unchanged: difficulty/skill distributions are the mean of the per-teacher Gaussians, category is the mean of one-hots, flags/checklist the mean of bits (the mean of the three points rather than a median keeps disagreement visible in the soft label).
+- **Gold**: all 360 candidates have codex + deepseek (79 rows also grok). Ollama (gemma4 no-think) answers stay in `meta.teacher_answers` but no longer enter the soft labels (`gold.EXTRA_TEACHERS`).
+- **Pairwise**: 1,000 extra DeepSeek judgements (500 pairs, both orders) in `data/cache/pairwise/judgments_deepseek.jsonl`, joined with the Codex ones for the BT fit.
+- Remaining caveat: both main teachers share a prompt, and DeepSeek rates ~0.4 lower than Codex on average (5.37 vs 5.80); the soft label averages the two.

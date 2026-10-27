@@ -43,8 +43,8 @@
       "se": 0.9
     },
     "planning": {
-      "theta": 8.4,
-      "se": 0.9
+      "theta": 9.18,
+      "se": 0.56
     },
     "ui_frontend": {
       "theta": 8.4,
@@ -88,7 +88,7 @@
     "harness:openrouter",
     "tier:strong"
   ],
-  "card_version": "2026-10-25",
+  "card_version": "2026-10-26",
   "provenance": "benchmark-informed",
   "field_provenance": {
     "cost": "verified",
@@ -99,9 +99,10 @@
   "sources": [
     "https://openrouter.ai/api/v1/models",
     "https://openrouter.ai/rankings",
-    "https://openrouter.ai/api/v1/models (benchmarks.artificial_analysis, Artificial Analysis indices)"
+    "https://openrouter.ai/api/v1/models (benchmarks.artificial_analysis, Artificial Analysis indices)",
+    "data/outcomes/REPORT_attempts.md (attempt-and-grade IRT; judge deepseek-v4.1-flash validated vs kimi-k3.1-pro)"
   ],
-  "notes": "AA intelligence 51.8 (no coding index); between terra (8.4) and sonnet-5.5 (8.6, II 56). Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured.",
+  "notes": "AA intelligence 51.8 (no coding index); between terra (8.4) and sonnet-5.5 (8.6, II 56). Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured. verified (attempt-grade 2026-10): axes planning 8.4->9.18 fitted (1PL IRT, router scale) from single-turn, no-tool attempts on non-SWE tasks, graded by deepseek-v4.1-flash (kappa 0.85 vs kimi-k3.1-pro); applied only where the direction also holds under gpt-6.1-sol grading. Location anchored on the 5 attempters' own card means (deltas are relative to their consensus). Other axes and supersedes unchanged. See data/outcomes/REPORT_attempts.md.",
   "supersedes": [
     "openrouter-gpt-6-sol"
   ]

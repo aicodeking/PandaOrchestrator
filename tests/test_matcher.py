@@ -45,14 +45,15 @@ POOL = [STRONG, MID, WEAK]
 
 
 def req(pool=POOL, **kw):
-    r = {"task": {"text": "do the thing", "context": {"estimated_input_tokens": 2000}}, "pool": pool}
+    r = {"task": {"text": "do the thing", "context": {"estimated_input_tokens": 2000}}, "pool": pool,
+         "preferences": {"mode": "cheapest_above_threshold"}}  # these tests exercise the threshold policy
     r.update(kw)
     return r
 
 
 @pytest.fixture(scope="module")
 def m():
-    return Matcher()
+    return Matcher(calibration=False)
 
 
 # ----------------------------------------------------------------------------- cards / schemas
@@ -196,7 +197,7 @@ def test_max_utility_tradeoff(m):
 
 
 def test_threshold_relaxes_when_none_above(m):
-    r = m.route(req(preferences={"min_p_success": 0.999}), make_profile())
+    r = m.route(req(preferences={"mode": "cheapest_above_threshold", "min_p_success": 0.999}), make_profile())
     assert r["choice"]["model_id"] == "strong"
     assert r["choice"]["decided_by"].endswith("relaxed_to_max_quality")
     assert not r["fallback"]["triggered"]

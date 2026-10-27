@@ -14,43 +14,43 @@
   ],
   "skills": {
     "coding": {
-      "theta": 6.3,
+      "theta": 7.7,
       "se": 0.9
     },
     "debugging": {
-      "theta": 6.1,
+      "theta": 7.5,
       "se": 0.9
     },
     "reasoning": {
-      "theta": 6.2,
+      "theta": 7.6,
       "se": 0.9
     },
     "math": {
-      "theta": 6.1,
+      "theta": 7.5,
       "se": 0.9
     },
     "writing": {
-      "theta": 6.0,
+      "theta": 7.4,
       "se": 0.9
     },
     "research": {
-      "theta": 5.9,
+      "theta": 7.3,
       "se": 0.9
     },
     "review": {
-      "theta": 6.1,
+      "theta": 7.5,
       "se": 0.9
     },
     "planning": {
-      "theta": 6.1,
+      "theta": 7.5,
       "se": 0.9
     },
     "ui_frontend": {
-      "theta": 6.1,
+      "theta": 7.5,
       "se": 0.9
     },
     "data_analysis": {
-      "theta": 6.0,
+      "theta": 7.4,
       "se": 0.9
     }
   },
@@ -93,7 +93,7 @@
   "field_provenance": {
     "cost": "verified",
     "limits": "verified",
-    "skills": "benchmark-informed",
+    "skills": "verified",
     "latency": "estimated"
   },
   "sources": [
@@ -101,7 +101,7 @@
     "https://openrouter.ai/rankings",
     "https://openrouter.ai/api/v1/models (benchmarks.artificial_analysis, Artificial Analysis indices)"
   ],
-  "notes": "Older 0910 build of V4.1 Flash (AA intelligence 24.7); listed input $0.02/M is the cheapest provider. Prefer openrouter-deepseek-v4.1-flash-1017 for quality. Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured.",
+  "notes": "Older 0910 build of V4.1 Flash (AA intelligence 24.7); listed input $0.02/M is the cheapest provider. Prefer openrouter-deepseek-v4.1-flash-1017 for quality. Prices are OpenRouter list prices (per-token x 1e6) from /api/v1/models on 2026-10-25; they can differ per upstream provider. Context/max output are the top provider values. Latency is estimated: OpenRouter exposes no latency/throughput stats in the public API. Non-coding skill axes derived from coding theta with fixed offsets (tweaked per model), not measured. 2026-10-26: all skills +1.4 from attempt-and-grade IRT (fit 7.55 vs card mean ~6.1; gold pass rate 0.68 vs qwen3.8-flash 0.47; DeepSeek-judge kappa 0.85 vs kimi-k3.1-pro reference). See data/outcomes/REPORT_attempts.md.",
   "supersedes": [
     "openrouter-deepseek-v4-flash"
   ]

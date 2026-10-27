@@ -49,6 +49,7 @@ def main() -> None:
     p.add_argument("--teachers", default="codex,grok")
     p.add_argument("--real-limit", type=int, default=None)
     p.add_argument("--need-second", action="store_true", help="only tasks with < 2 full-label teacher answers so far")
+    p.add_argument("--labelled-only", action="store_true", help="only tasks that already have >= 1 full-label teacher answer")
     p.add_argument("--synthetic-batches", type=int, default=None, help="only label synthetic tasks from batches < N")
     p = sub.add_parser("pairs")
     p.add_argument("--n", type=int, required=True)
@@ -57,6 +58,8 @@ def main() -> None:
     p.add_argument("--limit", type=int, default=None)
     p = sub.add_parser("pairwise")
     p.add_argument("--pairs", type=int, default=3000)
+    p.add_argument("--judge", default="codex", choices=["codex", "deepseek"])
+    p.add_argument("--seed", type=int, default=0)
     p = sub.add_parser("build")
     p.add_argument("--single-teacher-pairs", action="store_true", help="keep minimal pairs labelled by only one teacher")
     a = ap.parse_args()
@@ -79,6 +82,11 @@ def main() -> None:
         if a.need_second:
             ans = pipeline.load_all_answers()
             originals = [r for r in originals if len(pipeline.answers_for(r["id"], ans)[1]) < 2]
+        if a.labelled_only:
+            ans = pipeline.load_all_answers()
+            has = lambda r: len(pipeline.answers_for(r["id"], ans)[1]) >= 1  # noqa: E731
+            originals = [r for r in originals if has(r)]
+            pairs = [p for p in pairs if has(p)]
         ids = {r["id"] for r in originals}
         tasks = {"originals": originals, "pairs": [p for p in pairs if p["pair_of"] in ids],
                  "all": originals + [p for p in pairs if p["pair_of"] in ids]}[a.what]
@@ -95,7 +103,7 @@ def main() -> None:
         print("tie-broken:", asyncio.run(pipeline.tiebreak(originals + pairs, a.limit)))
     elif a.cmd == "pairwise":
         originals, _ = pipeline.load_pool(include_pairs=False)
-        asyncio.run(pipeline.run_pairwise(originals, a.pairs))
+        asyncio.run(pipeline.run_pairwise(originals, a.pairs, a.seed, a.judge))
     elif a.cmd == "build":
         rep = pipeline.finalize(single_teacher_pairs=a.single_teacher_pairs)
         print(rep["validation"], rep["dedup"]["near_dup_dropped"], rep.get("bt"))

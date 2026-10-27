@@ -33,11 +33,12 @@ ANSWERS = GOLD / "teacher_answers.jsonl"
 GOLD_PATH = GOLD / "gold.jsonl"
 
 TEACHERS = ("codex", "grok", "kimi", "ollama", "deepseek")
+EXTRA_TEACHERS = ("ollama",)  # answers kept in meta.teacher_answers but not merged into the soft labels
 BATCH = 5
 CODEX_MODEL = os.environ.get("PANDA_CODEX_MODEL", "gpt-5.6-luna")
 OLLAMA_MODEL = os.environ.get("PANDA_OLLAMA_MODEL", "gemma4:26b")
 GROK_MODEL = os.environ.get("PANDA_GROK_MODEL", "grok-4.7-build-fast")
-DEEPSEEK_MODEL = os.environ.get("PANDA_DEEPSEEK_MODEL", "opencode/deepseek-v4.1-flash-free")  # via `opencode run`
+DEEPSEEK_MODEL = os.environ.get("PANDA_DEEPSEEK_MODEL", "deepseek/deepseek-v4.1-flash")  # OpenRouter direct API
 OLLAMA_URL = os.environ.get("PANDA_OLLAMA_URL", "http://localhost:11434/api/generate")
 TIMEOUT_S = int(os.environ.get("PANDA_TEACHER_TIMEOUT", "1500"))
 # gemma4 thinks by default (~3000 thinking tokens per batch at ~26 tok/s); thinking is disabled so the shared
@@ -440,7 +441,9 @@ async def raw_call(teacher: str, prompt: str) -> str:
     if teacher == "grok":
         return await _run_cli(["grok", "-m", GROK_MODEL, "--disable-web-search", "-p", prompt])
     if teacher == "deepseek":
-        return await _run_cli(["opencode", "run", "-m", DEEPSEEK_MODEL, prompt])
+        from ..datagen.teachers import openrouter_chat
+
+        return await asyncio.to_thread(openrouter_chat, prompt, DEEPSEEK_MODEL)
     if teacher == "ollama":
         return await asyncio.to_thread(_ollama_sync, prompt)
     raise ValueError(teacher)
@@ -610,9 +613,13 @@ def merge_gold(min_teachers: int = 2, out: Path | None = None) -> dict:
             dropped += 1
             continue
         names = sorted(got)
-        answers = [got[t]["ans"] for t in names]
-        per_task[c["id"]] = {t: got[t]["ans"] for t in names}
-        meta = {**c.get("meta", {}), "teachers": names, "agreement": agreement(answers),
+        core = [t for t in names if t not in EXTRA_TEACHERS]
+        if len(core) < min_teachers:
+            dropped += 1
+            continue
+        answers = [got[t]["ans"] for t in core]
+        per_task[c["id"]] = {t: got[t]["ans"] for t in core}
+        meta = {**c.get("meta", {}), "teachers": core, "agreement": agreement(answers),
                 "teacher_models": {t: got[t].get("model") for t in names},
                 "teacher_answers": {t: got[t]["ans"] for t in names}, "split": "gold"}
         rows.append({"id": c["id"], "source": c["source"], "pair_of": None, "task": c["task"],

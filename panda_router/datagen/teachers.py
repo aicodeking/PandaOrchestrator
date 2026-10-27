@@ -10,6 +10,7 @@ import json
 import os
 import random
 import time
+import urllib.error
 import urllib.request
 from typing import Any, Awaitable, Callable
 
@@ -21,12 +22,18 @@ OLLAMA_MODEL = os.environ.get("PANDA_OLLAMA_MODEL", "gemma4:26b")
 OLLAMA_URL = os.environ.get("PANDA_OLLAMA_URL", "http://localhost:11434/api/generate")
 TIMEOUT_S = int(os.environ.get("PANDA_TEACHER_TIMEOUT", "1200"))
 GROK_MODEL = os.environ.get("PANDA_GROK_MODEL", "grok-4.7-build-fast")
-DEEPSEEK_MODEL = os.environ.get("PANDA_DEEPSEEK_MODEL", "opencode/deepseek-v4.1-flash-free")  # via `opencode run`
+DEEPSEEK_MODEL = os.environ.get("PANDA_DEEPSEEK_MODEL", "deepseek/deepseek-v4.1-flash")  # OpenRouter slug, direct API
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_AUTH = os.path.expanduser("~/.local/share/opencode/auth.json")
+DEEPSEEK_REASONING = os.environ.get("PANDA_DEEPSEEK_REASONING", "off")  # off | low | default
+USAGE_LOG = paths.CACHE / "deepseek_usage.jsonl"
+# $/Mtok, used only when the API response carries no usage.cost
+DEEPSEEK_PRICE = (0.02, 1.00)
 CONCURRENCY = {
     "codex": int(os.environ.get("PANDA_CODEX_CONC", "6")),
     "kimi": int(os.environ.get("PANDA_KIMI_CONC", "6")),
     "grok": int(os.environ.get("PANDA_GROK_CONC", "4")),
-    "deepseek": int(os.environ.get("PANDA_DEEPSEEK_CONC", "4")),
+    "deepseek": int(os.environ.get("PANDA_DEEPSEEK_CONC", "6")),
     "ollama": int(os.environ.get("PANDA_OLLAMA_CONC", "1")),
 }
 _RATE_HINTS = ("rate limit", "429", "quota", "too many requests", "usage limit")
@@ -85,6 +92,56 @@ def _ollama_sync(prompt: str) -> str:
         return json.loads(r.read())["response"]
 
 
+_or_key: str | None = None
+
+
+def _openrouter_key() -> str:
+    global _or_key  # read once at runtime, held in memory only
+    if _or_key is None:
+        _or_key = json.load(open(OPENROUTER_AUTH))["openrouter"]["key"]
+    return _or_key
+
+
+def openrouter_chat(prompt: str, model: str | None = None, retries: int = 6) -> str:
+    """Blocking chat completion with 429/5xx backoff; appends token usage and cost to USAGE_LOG."""
+    body = {"model": model or DEEPSEEK_MODEL, "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.2, "usage": {"include": True}}
+    if DEEPSEEK_REASONING == "off":
+        body["reasoning"] = {"enabled": False}
+    elif DEEPSEEK_REASONING == "low":
+        body["reasoning"] = {"effort": "low"}
+    data = json.dumps(body).encode()
+    for attempt in range(retries):
+        req = urllib.request.Request(OPENROUTER_URL, data=data, headers={
+            "Content-Type": "application/json", "Authorization": f"Bearer {_openrouter_key()}"})
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT_S) as r:
+                j = json.loads(r.read())
+            break
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 500, 502, 503, 529) and attempt < retries - 1:
+                time.sleep(min(120, 5 * 2 ** attempt) + random.random() * 3)
+                continue
+            raise TeacherError(f"{'ratelimit' if e.code == 429 else 'http'}:{e.code}:{e.read()[-200:]!r}")
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+            if attempt < retries - 1:
+                time.sleep(5 * 2 ** attempt)
+                continue
+            raise TeacherError(f"net:{e}")
+    u = j.get("usage") or {}
+    cost = u.get("cost")
+    if cost is None:
+        cost = (u.get("prompt_tokens", 0) * DEEPSEEK_PRICE[0] + u.get("completion_tokens", 0) * DEEPSEEK_PRICE[1]) / 1e6
+    append_jsonl(USAGE_LOG, [{"ts": round(time.time(), 1), "model": body["model"], "prompt_tokens": u.get("prompt_tokens"),
+                              "completion_tokens": u.get("completion_tokens"),
+                              "reasoning_tokens": (u.get("completion_tokens_details") or {}).get("reasoning_tokens"),
+                              "cost": cost}])
+    try:
+        return j["choices"][0]["message"]["content"] or ""
+    except (KeyError, IndexError):
+        raise TeacherError(f"bad response: {str(j)[:200]}")
+
+
 async def _raw_call(teacher: str, prompt: str) -> str:
     if teacher == "codex":
         code, out, err = await _run_cli(["codex", "exec", "--skip-git-repo-check", "-m", CODEX_MODEL, prompt])
@@ -93,7 +150,7 @@ async def _raw_call(teacher: str, prompt: str) -> str:
     elif teacher == "grok":
         code, out, err = await _run_cli(["grok", "-m", GROK_MODEL, "--disable-web-search", "-p", prompt])
     elif teacher == "deepseek":
-        code, out, err = await _run_cli(["opencode", "run", "-m", DEEPSEEK_MODEL, prompt])
+        return await asyncio.to_thread(openrouter_chat, prompt)
     elif teacher == "ollama":
         return await asyncio.to_thread(_ollama_sync, prompt)
     else:

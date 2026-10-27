@@ -1,0 +1,27 @@
+{
+  "params": {
+    "delta": 4.373529560269389,
+    "slope": 0.8381641586018563,
+    "a_mult": 0.44032488425781424,
+    "tier_shift": {}
+  },
+  "provenance": {
+    "fitted_by": "scripts/outcomes/calibrate_matcher.py",
+    "date": "2026-10-26",
+    "data": "data/outcomes/attempts.jsonl (split train+val, gold excluded)",
+    "n_cells": 2204,
+    "n_tasks": 511,
+    "profiler": "onnx:artifacts/panda-router-v2",
+    "cards": "cards/ at fit time (5 OpenRouter attempters)",
+    "variant": "delta+slope+a",
+    "cv_logloss": {
+      "none": 1.1671,
+      "delta": 0.6129,
+      "delta+slope": 0.5815,
+      "delta+slope+a": 0.5611,
+      "delta+slope+a+tier": 0.558
+    },
+    "judge": "deepseek-v4.1-flash, reasoning effort low (kappa 0.85 vs kimi-k3.1-pro)",
+    "report": "data/outcomes/REPORT_calibration.md"
+  }
+}

@@ -139,3 +139,10 @@ succeeds".
 - SWE `files_in_scope` / `estimated_input_tokens` now derive from the issue text only (no patch info). Spearman with `multi_file`: 0.87 -> 0.11.
 - `gold-wil-b090490cce` dropped (normalised text duplicated a train row); SWE rows carry `meta.repo_in_train`.
 - Grok (402 balance exhausted) and Kimi (5h limit) were unavailable; DeepSeek (opencode free) labelled 45 more rows before its limit, so gold has 329 rows and 45 rows use codex+deepseek. Ollama answers are kept as an extra.
+
+## v3 relabel (DeepSeek V4.1 Flash)
+
+All candidates were labelled with `deepseek/deepseek-v4.1-flash` (OpenRouter), so every gold row has codex + deepseek
+(79 also grok). gemma4 answers are kept in `meta.teacher_answers` as extras but are no longer merged into the soft labels
+(`gold.EXTRA_TEACHERS`). Rows 329 -> 359 (one candidate dropped as a train duplicate), mean agreement 0.889 -> 0.909,
+codex~deepseek category agreement 0.844 (kappa 0.81), difficulty Spearman 0.866. Per-pair stats: `agreement.json`.

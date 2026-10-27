@@ -55,3 +55,29 @@ def test_norm_model():
     assert norm_model("x-ai/grok-4.5") == "grok-4.5"
     assert norm_model("Qwen/Qwen3.6-35B-A3B") == "qwen3.6-35b-a3b"
     assert norm_model("gpt-5|claude-sonnet-4") == ""
+
+
+def test_fixed_parameter_fits_recover_truth():
+    from panda_router.outcomes.irt import fit_b_given_theta, fit_theta_given_b
+
+    th, b, a, s, i, k, n = _synthetic(False, n_sys=60, n_items=200, seed=1)
+    bh, se_b = fit_b_given_theta(th[s], a[i], k, n, i, len(b))
+    assert spearmanr(bh, b)[0] > 0.9 and (se_b > 0).all()
+    thh, se_t = fit_theta_given_b(b[i], a[i], k, n, s, len(th), prior_sd=3.0)
+    assert spearmanr(thh, th)[0] > 0.95 and np.abs(thh - th).mean() < 0.3
+    # a strong prior pins the estimate at its mean
+    th0, _ = fit_theta_given_b(b[i], a[i], k, n, s, len(th), prior_mu=th + 1.0, prior_sd=1e-3)
+    assert np.allclose(th0, th + 1.0, atol=0.01)
+
+
+def test_strict_verdict_and_kappa():
+    from panda_router.outcomes.grade import cohen_kappa, strict_verdict
+
+    cr = [{"id": 1, "text": "x", "critical": True}, {"id": 2, "text": "y"}, {"id": 3, "text": "z"}]
+    ok = {"criteria": [{"id": 1, "evidence": "q", "met": True}, {"id": 2, "evidence": "q", "met": True}],
+          "material_errors": []}
+    assert strict_verdict(ok, cr) is True
+    assert strict_verdict({**ok, "material_errors": ["off by one"]}, cr) is False
+    assert strict_verdict({"criteria": [{"id": 2, "evidence": "q", "met": True}], "material_errors": []}, cr) is False
+    assert strict_verdict({}, cr) is None
+    assert cohen_kappa([True, False] * 5, [True, False] * 5) == 1.0

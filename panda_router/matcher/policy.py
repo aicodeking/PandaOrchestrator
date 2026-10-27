@@ -15,13 +15,14 @@ import numpy as np
 
 from .. import __version__
 from ..profile import TaskProfile
+from .calibration import load_calibration, tier_shifts, transform
 from .cards import PoolCache, load_cards, validate_card
 from .core import (ability_moments, axis_weights, difficulty_posterior_after_failure, expected_skills,
                    p_by_level)
 
 MODES = ("cheapest_above_threshold", "max_utility", "max_quality")
 DEFAULTS = {
-    "mode": "cheapest_above_threshold",
+    "mode": "max_utility",  # best real success per $ on gold attempts (RESULTS.md)
     "min_p_success": 0.75,
     "floor": 0.55,
     "weights": {"quality": 1.0, "cost": 0.3, "latency": 0.1},
@@ -110,8 +111,12 @@ def _norm(x: np.ndarray) -> np.ndarray:
 
 class Matcher:
     def __init__(self, cards_dir: str | Path | None = None, default_model: str = DEFAULT_MODEL,
-                 floor: float = DEFAULTS["floor"], version: str | None = None):
+                 floor: float = DEFAULTS["floor"], version: str | None = None,
+                 calibration: bool | str | Path | dict | None = None):
+        """calibration: None = off unless PANDA_ROUTER_CALIBRATION=on, True = shipped calibration.json, False = raw P,
+        a path or params dict = that calibration."""
         self.cards_dir = cards_dir
+        self.calibration = load_calibration(calibration)
         self.default_model = default_model
         self.floor = floor
         self.version = version or f"panda-router-{__version__}"
@@ -153,6 +158,10 @@ class Matcher:
         self._resolved[key] = (known, self._pools.get(cards), unknown)
         return self._resolved[key][1:]
 
+    def _p_by_level(self, pool, mu: np.ndarray, sd: np.ndarray, rows: slice = slice(None)) -> np.ndarray:
+        shift = tier_shifts(self.calibration, pool.cards[rows])
+        return p_by_level(*transform(mu, sd, pool.a[rows], shift, self.calibration))
+
     # ------------------------------------------------------------------ routing
     def route(self, request: dict, profile: TaskProfile, trace_id: str | None = None,
               profiler_name: str | None = None) -> dict:
@@ -171,7 +180,7 @@ class Matcher:
         w = axis_weights(exp)
         i = pool.index(failed_model_id)
         mu, sd = ability_moments(w, exp, pool.theta[i:i + 1], pool.se[i:i + 1])
-        post = difficulty_posterior_after_failure(prior, p_by_level(mu, sd, pool.a[i:i + 1])[0])
+        post = difficulty_posterior_after_failure(prior, self._p_by_level(pool, mu, sd, slice(i, i + 1))[0])
         failed = list((response.get("escalation") or {}).get("failed_models", [])) + [failed_model_id]
         escalation = {"parent_trace_id": response.get("trace_id"), "failed_models": failed,
                       "prior_difficulty": [round(float(p), 6) for p in prior],
@@ -203,7 +212,7 @@ class Matcher:
         exp = expected_skills(profile.skills)
         w = axis_weights(exp)
         mu, sd = ability_moments(w, exp, pool.theta, pool.se)
-        p = np.clip(p_by_level(mu, sd, pool.a) @ diff, 0.0, 1.0)
+        p = np.clip(self._p_by_level(pool, mu, sd) @ diff, 0.0, 1.0)
         quality = np.clip(mu / 10.0, 0.0, 1.0)
 
         # --- cost / latency.

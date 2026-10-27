@@ -6,6 +6,8 @@ data/raw/
 data/cache/
 artifacts/*
 !artifacts/panda-router-v2/
+!artifacts/panda-router-v3/
+artifacts/panda-router-v3/model.onnx
 artifacts/panda-router-v2/model.onnx
 checkpoints/
 *.onnx
@@ -16,4 +18,5 @@ data/gold/raw/
 data/gold/cache/
 eval_reports/cache/
 !artifacts/panda-router-v2/model.int8.onnx
+!artifacts/panda-router-v3/model.int8.onnx
 *.egg-info/

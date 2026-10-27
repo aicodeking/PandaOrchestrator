@@ -8,7 +8,7 @@ from . import label as L
 from . import paths
 from .common import CHECKLIST_IDS, FLAGS
 from .jsonio import read_jsonl
-from .teachers import CODEX_MODEL, GROK_MODEL, OLLAMA_MODEL
+from .teachers import CODEX_MODEL, DEEPSEEK_MODEL, GROK_MODEL, OLLAMA_MODEL
 
 KNOWN_ISSUES_FILE = paths.ROOT / "scripts" / "datagen" / "known_issues.md"  # hand notes merged into STATS.md
 
@@ -123,6 +123,17 @@ def _table(counter: Counter, total: int) -> str:
     return "\n".join(lines)
 
 
+def _deepseek_cost_md() -> list[str]:
+    from .teachers import USAGE_LOG
+
+    rows = read_jsonl(USAGE_LOG)
+    if not rows:
+        return []
+    pt, ct = sum(r["prompt_tokens"] or 0 for r in rows), sum(r["completion_tokens"] or 0 for r in rows)
+    return ["### DeepSeek OpenRouter spend", "",
+            f"- {len(rows)} calls, {pt:,} prompt + {ct:,} completion tokens, **${sum(r['cost'] or 0 for r in rows):.2f}** total (`data/cache/deepseek_usage.jsonl`)", ""]
+
+
 def write_stats(splits: dict[str, list[dict]], report: dict) -> None:
     allr = [r for rows in splits.values() for r in rows]
     by_id = {r["id"]: r for r in allr}
@@ -165,8 +176,9 @@ def write_stats(splits: dict[str, list[dict]], report: dict) -> None:
         "## Per primary category (argmax of soft label)", "", _table(cat, n), "",
         "## Per difficulty (rounded expected difficulty of the final soft label)", "", _table(diff, n), "",
         "## Teacher agreement (raw point answers, per teacher pair)", "",
-        f"Teachers: codex = {CODEX_MODEL}, kimi = Kimi CLI default, grok = {GROK_MODEL}, ollama = {OLLAMA_MODEL} (tie-break: category + difficulty only).", "",
-        *[line for t1, t2 in (("codex", "grok"), ("codex", "kimi"), ("kimi", "grok")) for line in _agreement_md(t1, t2, [r["id"] for r in allr])],
+        f"Teachers: deepseek = {DEEPSEEK_MODEL} (OpenRouter), codex = {CODEX_MODEL}, kimi = Kimi CLI default, grok = {GROK_MODEL}, ollama = {OLLAMA_MODEL} (tie-break: category + difficulty only).", "",
+        *[line for t1, t2 in (("codex", "deepseek"), ("grok", "deepseek"), ("codex", "grok"), ("codex", "kimi"), ("kimi", "grok")) for line in _agreement_md(t1, t2, [r["id"] for r in allr])],
+        *_deepseek_cost_md(),
         "## Pairwise difficulty (Bradley-Terry)", "",
         f"- {report['bt']}",
         "- Pairs are sampled within the primary category (half random, half |Δ teacher diff| ≤ 2). Codex judges each pair in",

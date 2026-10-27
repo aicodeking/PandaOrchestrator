@@ -1,0 +1,113 @@
+{
+  "val_examples": 629,
+  "fp32": {
+    "category_acc": 0.7837837837837838,
+    "category_top2": 0.9030206677265501,
+    "category_ece": 0.06358256971159537,
+    "difficulty_mae": 0.7784545013257643,
+    "difficulty_spearman": 0.8353522265531022,
+    "difficulty_qwk": 0.7797640507756598,
+    "difficulty_ece": 0.024541193445834282,
+    "skill_mae": 0.7335238704853065,
+    "skill_ece": 0.0995443844574801,
+    "flags_f1": 0.8222533240027992,
+    "flags_macro_f1": 0.7878627407844764,
+    "flags_ece": 0.03340040182131832,
+    "checklist_f1": 0.8145509499136442,
+    "checklist_macro_f1": 0.7348482501378258,
+    "checklist_ece": 0.025657779944102774,
+    "flags_auroc": 0.921418504228252,
+    "out_tokens_mae": 0.1652994567146362,
+    "out_tokens_coverage80": 0.7885532591414944,
+    "primary_category": 78.37837837837837,
+    "primary_difficulty": 91.35050554082484,
+    "primary_skills": 92.66476129514693,
+    "primary_flags": 82.22533240027991,
+    "primary_checklist": 81.45509499136442,
+    "primary_out_tokens": 95.8675135821341,
+    "val_score": 86.99026436468809
+  },
+  "int8": {
+    "category_acc": 0.7837837837837838,
+    "category_top2": 0.9030206677265501,
+    "category_ece": 0.06046021800623039,
+    "difficulty_mae": 0.7712867881717165,
+    "difficulty_spearman": 0.8358123276431894,
+    "difficulty_qwk": 0.7802742366304174,
+    "difficulty_ece": 0.03329629253175282,
+    "skill_mae": 0.7341602594179267,
+    "skill_ece": 0.09935340712431527,
+    "flags_f1": 0.826222684703434,
+    "flags_macro_f1": 0.7951494236919642,
+    "flags_ece": 0.028805982201428323,
+    "checklist_f1": 0.8169255490091055,
+    "checklist_macro_f1": 0.7403201644307377,
+    "checklist_ece": 0.022095159077403084,
+    "flags_auroc": 0.9216210032524594,
+    "out_tokens_mae": 0.1652094573019419,
+    "out_tokens_coverage80": 0.794912559618442,
+    "primary_category": 78.37837837837837,
+    "primary_difficulty": 91.43014679809204,
+    "primary_skills": 92.65839740582074,
+    "primary_flags": 82.6222684703434,
+    "primary_checklist": 81.69255490091055,
+    "primary_out_tokens": 95.86976356745144,
+    "val_score": 87.10858492016608
+  },
+  "int8_drops_points": {
+    "category": 0.0,
+    "difficulty": -0.07964125726719828,
+    "skills": 0.006363889326195249,
+    "flags": -0.3969360700634894,
+    "checklist": -0.23745990954613205,
+    "out_tokens": -0.0022499853173485462
+  },
+  "int8_within_tolerance": true,
+  "quant_attempts": [
+    {
+      "n_excluded": 0,
+      "drops": {
+        "category": 0.0,
+        "difficulty": -0.07964125726719828,
+        "skills": 0.006363889326195249,
+        "flags": -0.3969360700634894,
+        "checklist": -0.23745990954613205,
+        "out_tokens": -0.0022499853173485462
+      }
+    }
+  ],
+  "torch_vs_onnx_max_abs": 4.76837158203125e-06,
+  "size_mb": {
+    "fp32": 122.1031379699707,
+    "int8": 31.034499168395996
+  },
+  "cpu_latency_batch1": {
+    "threads": null,
+    "int8": {
+      "n": 300,
+      "p50_ms": 40.13047899934463,
+      "p95_ms": 170.6953979126411,
+      "mean_ms": 60.785589536535554
+    },
+    "int8_long": {
+      "n": 300,
+      "p50_ms": 111.00616652402095,
+      "p95_ms": 212.85442742228048,
+      "mean_ms": 112.75397710249915,
+      "tokens": 512
+    },
+    "fp32": {
+      "n": 300,
+      "p50_ms": 31.089583499124274,
+      "p95_ms": 133.21853125235066,
+      "mean_ms": 44.9265374802053
+    },
+    "fp32_long": {
+      "n": 300,
+      "p50_ms": 66.4707710093353,
+      "p95_ms": 210.56673513667195,
+      "mean_ms": 90.96357916695221,
+      "tokens": 512
+    }
+  }
+}

@@ -76,7 +76,7 @@ def teacher_mean_diff(answers: list[dict]) -> float:
     return sum(a["diff"] for a in answers) / len(answers)
 
 
-async def run_pairwise(originals: list[dict], n_pairs: int, seed: int = 0) -> None:
+async def run_pairwise(originals: list[dict], n_pairs: int, seed: int = 0, teacher: str = "codex") -> None:
     ans = load_all_answers()
     items = []
     for r in originals:
@@ -86,11 +86,11 @@ async def run_pairwise(originals: list[dict], n_pairs: int, seed: int = 0) -> No
             items.append({"id": r["id"], "category": cat, "diff_mean": teacher_mean_diff(a + extra)})
     pairs = pairwise.sample_pairs(items, n_pairs, seed)
     texts = {r["id"]: r["task"]["text"] for r in originals}
-    await pairwise.judge(pairs, texts, seed)
+    await pairwise.judge(pairs, texts, seed, teacher)
 
 
 def bt_calibration(records_answers: dict[str, list[dict]]) -> tuple[dict[str, float], dict[str, float], dict]:
-    js = [j for j in read_jsonl(pairwise.OUT) if j["a"] in records_answers and j["b"] in records_answers]
+    js = [j for j in pairwise.read_judgments() if j["a"] in records_answers and j["b"] in records_answers]
     if not js:
         return {}, {}, {"judgments": 0}
     scores = pairwise.fit_bt(js)

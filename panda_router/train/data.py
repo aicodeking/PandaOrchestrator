@@ -21,8 +21,17 @@ def load_jsonl(path) -> list[dict]:
 
 
 def load_anchors(path) -> dict:
-    """{record id: difficulty_1_10} from checkpoints/anchors_train.jsonl (scripts/train/anchors_train.py)."""
-    return {r["id"]: float(r["difficulty_1_10"]) for r in load_jsonl(path)}
+    """Map record ids to outcome targets, retaining optional precision weights.
+
+    Legacy anchor files contain only ``difficulty_1_10`` and retain weight 1.0.
+    Attempt-IRT anchors also carry ``w`` so uncertain fitted difficulties do not
+    outweigh a direct teacher label.
+    """
+    out = {}
+    for row in load_jsonl(path):
+        difficulty = float(row["difficulty_1_10"])
+        out[row["id"]] = (difficulty, float(row["w"])) if "w" in row else difficulty
+    return out
 
 
 def _norm(v):
@@ -37,7 +46,7 @@ def _unlabelled() -> dict:
             "out_tokens_log10": 3.0}
 
 
-def encode_labels(ex: dict, single_teacher_weight: float = 1.0, anchor: float | None = None) -> dict:
+def encode_labels(ex: dict, single_teacher_weight: float = 1.0, anchor: float | tuple[float, float] | None = None) -> dict:
     """Label arrays plus `w` (per-row weight of the label losses), `anchor` (outcome difficulty, NaN if none)
     and `anchor_w` (its trust weight). Rows with `outcome` and no `labels` (scripts/train/outcome_anchors.py)
     train the difficulty head only, through the anchor loss."""
@@ -46,6 +55,8 @@ def encode_labels(ex: dict, single_teacher_weight: float = 1.0, anchor: float | 
     if lab is None and outcome is None:
         raise ValueError(f"{ex.get('id')}: neither labels nor outcome")
     anchor_w = 1.0
+    if isinstance(anchor, tuple):
+        anchor, anchor_w = anchor
     if outcome is not None:
         anchor, anchor_w = float(outcome["difficulty"]), float(outcome.get("w", 1.0))
     ctx = (ex.get("task") or {}).get("context") or {}

@@ -126,3 +126,12 @@ Applied with `scripts/outcomes/cards.py --apply`: grok-4.5 +0.9, openrouter-mini
 codex-gpt-5.6-luna −0.2, openrouter-deepseek-v4-pro ±0 (these four → skills `verified`: only coding/debugging are
 fitted; other axes are shifted by the same delta), ollama-qwen3.6-35b −0.4 (Q4 local, provenance kept). Note
 grok-4.5 (8.6) now sits above its successor grok-4.6 (8.4); the lower-bound violation is within se, so grok-4.6 is unchanged.
+
+## Attempt-and-grade calibration (2026-10-26)
+
+`data/outcomes/REPORT_attempts.md`: the 5 OpenRouter attempters (deepseek-v4.1-flash, qwen3.8-flash, minimax-m3.1-flash,
+gemini-3.8-flash, gpt-6.1-sol) answered ~1,000 non-SWE train/val tasks in one turn without tools. deepseek-v4.1-flash
+graded them (κ 0.85 vs kimi-k3.1-pro), and a 1PL IRT fit was mapped to this scale, anchored on these cards' consensus.
+`build_attempts.py --apply` updated only the per-axis thetas whose direction also holds under gpt-6.1-sol grading:
+minimax-m3.1-flash coding/debugging/math/reasoning −0.7..−1.2, gemini-3.8-flash data_analysis/planning/reasoning −0.8..−1.3,
+gpt-6.1-sol planning +0.8. Notes say 'verified (attempt-grade 2026-10)'; provenance enums and `supersedes` are unchanged.

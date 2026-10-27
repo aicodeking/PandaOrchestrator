@@ -1,4 +1,59 @@
-# Panda Router v2: evaluated release
+# Panda Router v3
+
+## What changed
+
+- **Teacher:** DeepSeek V4.1 Flash (OpenRouter, $2.77 for 8,074 labels) labels every training and gold row;
+  data grew from 4,895 to 8,247 rows, 100% with >= 2 teachers. Gold: 359 rows, Codex + DeepSeek on all.
+- **Real outcomes, attempt-and-grade:** 999 train/val + 150 gold tasks attempted by five OpenRouter models and
+  graded by DeepSeek V4.1 Flash with thinking (kappa 0.85 vs Kimi K3.1 Pro). Stopped at $44.55 when the
+  account ran out of credits: 511 train/val tasks and 140 gold tasks have graded outcomes. Cards adjusted from
+  the fit: minimax-m3.1-flash and gemini-3.8-flash down on several axes, gpt-6.1-sol planning up,
+  deepseek-v4.1-flash +1.4 on all axes (passed 68% of gold tasks vs qwen3.8-flash 47%, but its card ranked it
+  below qwen). `data/outcomes/REPORT_attempts.md`.
+- **Profiler:** direct Ettin-32M (`checkpoints/v3_32_a03`, outcome-anchor weight 0.3). The planned 150M teacher
+  + distillation was dropped: the host was too loaded (~9 ex/s). Weight 1.0 was worse (ablation a10).
+- **Matcher:** default mode is now `max_utility`. Outcome calibration of P(success) is implemented but opt-in.
+
+## Real routed success (140 gold tasks, pool = the five attempters)
+
+| policy | success / 100 | $ / 100 |
+|---|---:|---:|
+| always cheapest | 47.1 | 0.064 |
+| v2, cheapest_above_threshold (old default) | 50.0 | 0.095 |
+| v3, cheapest_above_threshold | 51.4 | 0.142 |
+| **v3, max_utility (new default)** | **67.9** | **0.156** |
+| v3, any mode with calibration on (default min_p) | 78.6 | 1.061 |
+| always strongest | 78.6 | 1.061 |
+| oracle | 90.0 | 0.192 |
+
+Calibration (`data/outcomes/REPORT_calibration.md`) cuts gold ECE from 0.33 to 0.13, but the calibrated
+probabilities are low enough that every threshold policy at min_p >= 0.7 picks the strongest model; at lower
+thresholds it never beat a mix of always-cheapest and always-strongest. So it is shipped off
+(`PANDA_ROUTER_CALIBRATION=on` to enable). The card fix plus `max_utility` is what moved success from 50 to 68.
+
+## Profiler quality (gold, 359 tasks)
+
+| model | category | difficulty MAE / rho | flags AUROC | attempt-IRT rho | SWE held-out rho | max-utility regret | hard tasks |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| v1 | 0.624 | 0.900 / 0.675 | 0.885 | 0.178 | 0.025 | 0.0025 | 0.80 |
+| v2 | 0.641 | 0.897 / 0.705 | 0.886 | 0.115 | 0.119 | 0.0022 | 0.85 |
+| **v3** | **0.688** | **0.825 / 0.747** | **0.901** | **0.212** | 0.081 | **0.0021** | 0.85 |
+| v3 a10 (anchor 1.0) | 0.652 | 1.032 / 0.549 | 0.890 | 0.164 | 0.117 | 0.0028 | 0.90 |
+
+v3 beats v2 on every gold head and on attempt-outcome correlation; it is lower on SWE held-out rho (both weak).
+Full tables: `eval_reports/compare_v3.md`. Same 32M architecture and int8 size (31 MB) as v2.
+
+## Next steps
+
+1. Top up OpenRouter (~$5) and finish grading the ~2,170 pending answers (`REPORT_attempts.md` has the
+   commands), then refit cards from all attempts: the calibration report shows refitted card thetas alone take
+   `max_utility` to 68.6 at $0.185 on the five-model pool, and they generalise to any pool.
+2. Extend attempt-and-grade to agentic coding with the models you actually route to.
+3. Train the 150M teacher + distilled 32M on an idle machine.
+
+---
+
+# Panda Router v2: evaluated release (superseded by v3)
 
 ## Ship decision
 
