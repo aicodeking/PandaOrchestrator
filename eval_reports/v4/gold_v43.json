@@ -1,0 +1,1503 @@
+{
+ "pools": {
+  "9-model": {
+   "n_tasks": 150,
+   "cheap_models": [
+    "claude-haiku-5.5",
+    "codex-gpt-6-luna",
+    "openrouter-minimax-m3.1-flash",
+    "openrouter-qwen3.8-flash"
+   ],
+   "rows": {
+    "always claude-haiku-5.5": {
+     "n": 150,
+     "success_per_100": 64.0,
+     "usd_per_100": 0.1213,
+     "under_est_rate": 0.293,
+     "over_spend_rate": 0.56,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      56.0,
+      70.6667
+     ],
+     "usd_ci95": [
+      0.1033,
+      0.1416
+     ],
+     "under_ci95": [
+      0.2267,
+      0.3667
+     ],
+     "cheap_pick_rate": 1.0,
+     "cheap_pick_fail_rate": 0.36,
+     "picks": {
+      "claude-haiku-5.5": 150
+     }
+    },
+    "always claude-opus-5.5": {
+     "n": 150,
+     "success_per_100": 76.7,
+     "usd_per_100": 4.0299,
+     "under_est_rate": 0.0,
+     "over_spend_rate": 0.76,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      70.0,
+      83.3333
+     ],
+     "usd_ci95": [
+      3.5781,
+      4.4721
+     ],
+     "under_ci95": [
+      0.0,
+      0.0
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "claude-opus-5.5": 150
+     }
+    },
+    "always claude-sonnet-5.5": {
+     "n": 150,
+     "success_per_100": 73.3,
+     "usd_per_100": 2.0398,
+     "under_est_rate": 0.193,
+     "over_spend_rate": 0.72,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      66.0,
+      80.0167
+     ],
+     "usd_ci95": [
+      1.8119,
+      2.279
+     ],
+     "under_ci95": [
+      0.1333,
+      0.26
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "claude-sonnet-5.5": 150
+     }
+    },
+    "always codex-gpt-6-luna": {
+     "n": 150,
+     "success_per_100": 51.3,
+     "usd_per_100": 0.0349,
+     "under_est_rate": 0.42,
+     "over_spend_rate": 0.007,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      43.3167,
+      59.3333
+     ],
+     "usd_ci95": [
+      0.0295,
+      0.0408
+     ],
+     "under_ci95": [
+      0.34,
+      0.4935
+     ],
+     "cheap_pick_rate": 1.0,
+     "cheap_pick_fail_rate": 0.487,
+     "picks": {
+      "codex-gpt-6-luna": 150
+     }
+    },
+    "always openrouter-deepseek-v4.1-flash": {
+     "n": 150,
+     "success_per_100": 65.3,
+     "usd_per_100": 0.1523,
+     "under_est_rate": 0.28,
+     "over_spend_rate": 0.52,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      57.3333,
+      72.6667
+     ],
+     "usd_ci95": [
+      0.1352,
+      0.1715
+     ],
+     "under_ci95": [
+      0.2067,
+      0.3533
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "openrouter-deepseek-v4.1-flash": 150
+     }
+    },
+    "always openrouter-gemini-3.8-flash": {
+     "n": 150,
+     "success_per_100": 60.7,
+     "usd_per_100": 0.4924,
+     "under_est_rate": 0.327,
+     "over_spend_rate": 0.593,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      52.65,
+      68.6667
+     ],
+     "usd_ci95": [
+      0.4465,
+      0.5383
+     ],
+     "under_ci95": [
+      0.2533,
+      0.4067
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "openrouter-gemini-3.8-flash": 150
+     }
+    },
+    "always openrouter-gpt-6.1-sol": {
+     "n": 150,
+     "success_per_100": 79.3,
+     "usd_per_100": 1.1143,
+     "under_est_rate": 0.107,
+     "over_spend_rate": 0.747,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      72.6667,
+      85.3333
+     ],
+     "usd_ci95": [
+      0.9856,
+      1.2459
+     ],
+     "under_ci95": [
+      0.06,
+      0.16
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "openrouter-gpt-6.1-sol": 150
+     }
+    },
+    "always openrouter-minimax-m3.1-flash": {
+     "n": 150,
+     "success_per_100": 45.3,
+     "usd_per_100": 0.1196,
+     "under_est_rate": 0.487,
+     "over_spend_rate": 0.373,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      37.3333,
+      53.3333
+     ],
+     "usd_ci95": [
+      0.1057,
+      0.133
+     ],
+     "under_ci95": [
+      0.4067,
+      0.5667
+     ],
+     "cheap_pick_rate": 1.0,
+     "cheap_pick_fail_rate": 0.547,
+     "picks": {
+      "openrouter-minimax-m3.1-flash": 150
+     }
+    },
+    "always openrouter-qwen3.8-flash": {
+     "n": 150,
+     "success_per_100": 45.3,
+     "usd_per_100": 0.0675,
+     "under_est_rate": 0.487,
+     "over_spend_rate": 0.393,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      36.6667,
+      53.3333
+     ],
+     "usd_ci95": [
+      0.0605,
+      0.075
+     ],
+     "under_ci95": [
+      0.4132,
+      0.5733
+     ],
+     "cheap_pick_rate": 1.0,
+     "cheap_pick_fail_rate": 0.547,
+     "picks": {
+      "openrouter-qwen3.8-flash": 150
+     }
+    },
+    "always-cheapest (card price)": {
+     "n": 150,
+     "success_per_100": 64.0,
+     "usd_per_100": 0.1213,
+     "under_est_rate": 0.293,
+     "over_spend_rate": 0.56,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      56.0,
+      70.6667
+     ],
+     "usd_ci95": [
+      0.1033,
+      0.1416
+     ],
+     "under_ci95": [
+      0.2267,
+      0.3667
+     ],
+     "cheap_pick_rate": 1.0,
+     "cheap_pick_fail_rate": 0.36,
+     "picks": {
+      "claude-haiku-5.5": 150
+     }
+    },
+    "always-strongest (card skills)": {
+     "n": 150,
+     "success_per_100": 76.7,
+     "usd_per_100": 4.0299,
+     "under_est_rate": 0.0,
+     "over_spend_rate": 0.76,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      70.0,
+      83.3333
+     ],
+     "usd_ci95": [
+      3.5781,
+      4.4721
+     ],
+     "under_ci95": [
+      0.0,
+      0.0
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "claude-opus-5.5": 150
+     }
+    },
+    "oracle (cheapest passing)": {
+     "n": 150,
+     "success_per_100": 94.0,
+     "usd_per_100": 0.5597,
+     "under_est_rate": 0.0,
+     "over_spend_rate": 0.0,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      90.0,
+      97.3333
+     ],
+     "usd_ci95": [
+      0.3216,
+      0.8389
+     ],
+     "under_ci95": [
+      0.0,
+      0.0
+     ],
+     "cheap_pick_rate": 0.727,
+     "cheap_pick_fail_rate": 0.0,
+     "picks": {
+      "claude-haiku-5.5": 12,
+      "claude-opus-5.5": 10,
+      "claude-sonnet-5.5": 2,
+      "codex-gpt-6-luna": 76,
+      "openrouter-deepseek-v4.1-flash": 20,
+      "openrouter-gemini-3.8-flash": 2,
+      "openrouter-gpt-6.1-sol": 7,
+      "openrouter-minimax-m3.1-flash": 12,
+      "openrouter-qwen3.8-flash": 9
+     }
+    },
+    "v4 cheapest_above_threshold single-shot": {
+     "n": 150,
+     "success_per_100": 74.0,
+     "usd_per_100": 0.7428,
+     "under_est_rate": 0.18,
+     "over_spend_rate": 0.647,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      66.6667,
+      80.6667
+     ],
+     "usd_ci95": [
+      0.5839,
+      0.9092
+     ],
+     "under_ci95": [
+      0.12,
+      0.2402
+     ],
+     "cheap_pick_rate": 0.093,
+     "cheap_pick_fail_rate": 0.357,
+     "picks": {
+      "claude-haiku-5.5": 14,
+      "claude-opus-5.5": 2,
+      "claude-sonnet-5.5": 5,
+      "openrouter-deepseek-v4.1-flash": 73,
+      "openrouter-gemini-3.8-flash": 3,
+      "openrouter-gpt-6.1-sol": 53
+     }
+    },
+    "v4 max_utility single-shot": {
+     "n": 150,
+     "success_per_100": 77.3,
+     "usd_per_100": 0.9856,
+     "under_est_rate": 0.14,
+     "over_spend_rate": 0.707,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      70.0,
+      84.0
+     ],
+     "usd_ci95": [
+      0.8459,
+      1.1329
+     ],
+     "under_ci95": [
+      0.0867,
+      0.2
+     ],
+     "cheap_pick_rate": 0.02,
+     "cheap_pick_fail_rate": 0.667,
+     "picks": {
+      "claude-haiku-5.5": 3,
+      "claude-sonnet-5.5": 13,
+      "openrouter-deepseek-v4.1-flash": 33,
+      "openrouter-gemini-3.8-flash": 2,
+      "openrouter-gpt-6.1-sol": 99
+     }
+    },
+    "v4 max_utility cascade<= 2 attempts": {
+     "n": 150,
+     "success_per_100": 90.7,
+     "usd_per_100": 1.6823,
+     "under_est_rate": 0.14,
+     "over_spend_rate": 0.707,
+     "mean_attempts": 1.23,
+     "success_ci95": [
+      86.0,
+      94.6667
+     ],
+     "usd_ci95": [
+      1.3742,
+      2.0612
+     ],
+     "under_ci95": [
+      0.0867,
+      0.2
+     ],
+     "cheap_pick_rate": 0.02,
+     "cheap_pick_fail_rate": 0.667,
+     "picks": {
+      "claude-haiku-5.5": 3,
+      "claude-sonnet-5.5": 13,
+      "openrouter-deepseek-v4.1-flash": 33,
+      "openrouter-gemini-3.8-flash": 2,
+      "openrouter-gpt-6.1-sol": 99
+     }
+    },
+    "v4 max_utility cascade<= 3 attempts": {
+     "n": 150,
+     "success_per_100": 92.7,
+     "usd_per_100": 2.074,
+     "under_est_rate": 0.14,
+     "over_spend_rate": 0.707,
+     "mean_attempts": 1.32,
+     "success_ci95": [
+      88.0,
+      96.6667
+     ],
+     "usd_ci95": [
+      1.6468,
+      2.6237
+     ],
+     "under_ci95": [
+      0.0867,
+      0.2
+     ],
+     "cheap_pick_rate": 0.02,
+     "cheap_pick_fail_rate": 0.667,
+     "picks": {
+      "claude-haiku-5.5": 3,
+      "claude-sonnet-5.5": 13,
+      "openrouter-deepseek-v4.1-flash": 33,
+      "openrouter-gemini-3.8-flash": 2,
+      "openrouter-gpt-6.1-sol": 99
+     }
+    },
+    "v4 max_quality single-shot": {
+     "n": 150,
+     "success_per_100": 82.0,
+     "usd_per_100": 1.1983,
+     "under_est_rate": 0.093,
+     "over_spend_rate": 0.76,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      75.3333,
+      88.0
+     ],
+     "usd_ci95": [
+      1.057,
+      1.3594
+     ],
+     "under_ci95": [
+      0.0533,
+      0.1467
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "claude-opus-5.5": 2,
+      "claude-sonnet-5.5": 10,
+      "openrouter-deepseek-v4.1-flash": 7,
+      "openrouter-gemini-3.8-flash": 3,
+      "openrouter-gpt-6.1-sol": 128
+     }
+    },
+    "v3 cheapest_above_threshold single-shot": {
+     "n": 150,
+     "success_per_100": 65.3,
+     "usd_per_100": 0.2024,
+     "under_est_rate": 0.28,
+     "over_spend_rate": 0.533,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      57.3333,
+      72.0
+     ],
+     "usd_ci95": [
+      0.132,
+      0.2898
+     ],
+     "under_ci95": [
+      0.2133,
+      0.3533
+     ],
+     "cheap_pick_rate": 0.953,
+     "cheap_pick_fail_rate": 0.364,
+     "picks": {
+      "claude-haiku-5.5": 137,
+      "claude-opus-5.5": 1,
+      "codex-gpt-6-luna": 6,
+      "openrouter-deepseek-v4.1-flash": 2,
+      "openrouter-gpt-6.1-sol": 4
+     }
+    },
+    "v3 cheapest_above_threshold cascade<= 2 attempts": {
+     "n": 150,
+     "success_per_100": 80.0,
+     "usd_per_100": 0.4917,
+     "under_est_rate": 0.28,
+     "over_spend_rate": 0.533,
+     "mean_attempts": 1.35,
+     "success_ci95": [
+      73.3333,
+      86.0
+     ],
+     "usd_ci95": [
+      0.3456,
+      0.6491
+     ],
+     "under_ci95": [
+      0.2133,
+      0.3533
+     ],
+     "cheap_pick_rate": 0.953,
+     "cheap_pick_fail_rate": 0.364,
+     "picks": {
+      "claude-haiku-5.5": 137,
+      "claude-opus-5.5": 1,
+      "codex-gpt-6-luna": 6,
+      "openrouter-deepseek-v4.1-flash": 2,
+      "openrouter-gpt-6.1-sol": 4
+     }
+    },
+    "v3 cheapest_above_threshold cascade<= 3 attempts": {
+     "n": 150,
+     "success_per_100": 90.0,
+     "usd_per_100": 1.0555,
+     "under_est_rate": 0.28,
+     "over_spend_rate": 0.533,
+     "mean_attempts": 1.55,
+     "success_ci95": [
+      84.6667,
+      94.6667
+     ],
+     "usd_ci95": [
+      0.7453,
+      1.47
+     ],
+     "under_ci95": [
+      0.2133,
+      0.3533
+     ],
+     "cheap_pick_rate": 0.953,
+     "cheap_pick_fail_rate": 0.364,
+     "picks": {
+      "claude-haiku-5.5": 137,
+      "claude-opus-5.5": 1,
+      "codex-gpt-6-luna": 6,
+      "openrouter-deepseek-v4.1-flash": 2,
+      "openrouter-gpt-6.1-sol": 4
+     }
+    },
+    "v3 max_utility single-shot": {
+     "n": 150,
+     "success_per_100": 66.7,
+     "usd_per_100": 0.2342,
+     "under_est_rate": 0.267,
+     "over_spend_rate": 0.58,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      59.3167,
+      73.3333
+     ],
+     "usd_ci95": [
+      0.1598,
+      0.327
+     ],
+     "under_ci95": [
+      0.2067,
+      0.34
+     ],
+     "cheap_pick_rate": 0.887,
+     "cheap_pick_fail_rate": 0.353,
+     "picks": {
+      "claude-haiku-5.5": 133,
+      "openrouter-deepseek-v4.1-flash": 8,
+      "openrouter-gpt-6.1-sol": 9
+     }
+    },
+    "v3 max_utility cascade<= 2 attempts": {
+     "n": 150,
+     "success_per_100": 86.7,
+     "usd_per_100": 0.58,
+     "under_est_rate": 0.267,
+     "over_spend_rate": 0.58,
+     "mean_attempts": 1.33,
+     "success_ci95": [
+      81.3167,
+      92.0
+     ],
+     "usd_ci95": [
+      0.4334,
+      0.7529
+     ],
+     "under_ci95": [
+      0.2067,
+      0.34
+     ],
+     "cheap_pick_rate": 0.887,
+     "cheap_pick_fail_rate": 0.353,
+     "picks": {
+      "claude-haiku-5.5": 133,
+      "openrouter-deepseek-v4.1-flash": 8,
+      "openrouter-gpt-6.1-sol": 9
+     }
+    },
+    "v3 max_utility cascade<= 3 attempts": {
+     "n": 150,
+     "success_per_100": 92.0,
+     "usd_per_100": 0.9437,
+     "under_est_rate": 0.267,
+     "over_spend_rate": 0.58,
+     "mean_attempts": 1.47,
+     "success_ci95": [
+      87.3333,
+      96.0
+     ],
+     "usd_ci95": [
+      0.669,
+      1.2645
+     ],
+     "under_ci95": [
+      0.2067,
+      0.34
+     ],
+     "cheap_pick_rate": 0.887,
+     "cheap_pick_fail_rate": 0.353,
+     "picks": {
+      "claude-haiku-5.5": 133,
+      "openrouter-deepseek-v4.1-flash": 8,
+      "openrouter-gpt-6.1-sol": 9
+     }
+    },
+    "v3 max_quality single-shot": {
+     "n": 150,
+     "success_per_100": 76.7,
+     "usd_per_100": 4.0299,
+     "under_est_rate": 0.0,
+     "over_spend_rate": 0.76,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      70.0,
+      83.3333
+     ],
+     "usd_ci95": [
+      3.5781,
+      4.4721
+     ],
+     "under_ci95": [
+      0.0,
+      0.0
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "claude-opus-5.5": 150
+     }
+    },
+    "v3 max_quality cascade<= 2 attempts": {
+     "n": 150,
+     "success_per_100": 90.0,
+     "usd_per_100": 4.3464,
+     "under_est_rate": 0.0,
+     "over_spend_rate": 0.76,
+     "mean_attempts": 1.23,
+     "success_ci95": [
+      85.3333,
+      94.6667
+     ],
+     "usd_ci95": [
+      3.8297,
+      4.8645
+     ],
+     "under_ci95": [
+      0.0,
+      0.0
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "claude-opus-5.5": 150
+     }
+    },
+    "v3 max_quality cascade<= 3 attempts": {
+     "n": 150,
+     "success_per_100": 92.7,
+     "usd_per_100": 4.6525,
+     "under_est_rate": 0.0,
+     "over_spend_rate": 0.76,
+     "mean_attempts": 1.33,
+     "success_ci95": [
+      88.0,
+      96.6667
+     ],
+     "usd_ci95": [
+      4.1036,
+      5.2624
+     ],
+     "under_ci95": [
+      0.0,
+      0.0
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "claude-opus-5.5": 150
+     }
+    },
+    "v4 escalation_ladder within 1": {
+     "n": 150,
+     "success_per_100": 76.0,
+     "usd_per_100": 0.5641,
+     "under_est_rate": 0.167,
+     "over_spend_rate": 0.66,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      68.6667,
+      82.6667
+     ],
+     "usd_ci95": [
+      0.4315,
+      0.6997
+     ],
+     "under_ci95": [
+      0.1133,
+      0.2267
+     ],
+     "cheap_pick_rate": 0.087,
+     "cheap_pick_fail_rate": 0.231,
+     "picks": {
+      "claude-haiku-5.5": 13,
+      "claude-sonnet-5.5": 11,
+      "openrouter-deepseek-v4.1-flash": 83,
+      "openrouter-gemini-3.8-flash": 23,
+      "openrouter-gpt-6.1-sol": 20
+     }
+    },
+    "v4 escalation_ladder within 2": {
+     "n": 150,
+     "success_per_100": 88.7,
+     "usd_per_100": 0.884,
+     "under_est_rate": 0.167,
+     "over_spend_rate": 0.66,
+     "mean_attempts": 1.24,
+     "success_ci95": [
+      83.3333,
+      93.3333
+     ],
+     "usd_ci95": [
+      0.7001,
+      1.0796
+     ],
+     "under_ci95": [
+      0.1133,
+      0.2267
+     ],
+     "cheap_pick_rate": 0.087,
+     "cheap_pick_fail_rate": 0.231,
+     "picks": {
+      "claude-haiku-5.5": 13,
+      "claude-sonnet-5.5": 11,
+      "openrouter-deepseek-v4.1-flash": 83,
+      "openrouter-gemini-3.8-flash": 23,
+      "openrouter-gpt-6.1-sol": 20
+     }
+    },
+    "v4 escalation_ladder within 3": {
+     "n": 150,
+     "success_per_100": 92.0,
+     "usd_per_100": 1.2342,
+     "under_est_rate": 0.167,
+     "over_spend_rate": 0.66,
+     "mean_attempts": 1.35,
+     "success_ci95": [
+      87.3333,
+      96.0
+     ],
+     "usd_ci95": [
+      0.924,
+      1.5931
+     ],
+     "under_ci95": [
+      0.1133,
+      0.2267
+     ],
+     "cheap_pick_rate": 0.087,
+     "cheap_pick_fail_rate": 0.231,
+     "picks": {
+      "claude-haiku-5.5": 13,
+      "claude-sonnet-5.5": 11,
+      "openrouter-deepseek-v4.1-flash": 83,
+      "openrouter-gemini-3.8-flash": 23,
+      "openrouter-gpt-6.1-sol": 20
+     }
+    }
+   },
+   "calibration": {
+    "v4.1 p_success (calibrated)": {
+     "n_cells": 1350,
+     "ece": 0.1266,
+     "mean_p": 0.4971,
+     "pass_rate": 0.6237,
+     "auc": 0.6504
+    },
+    "v4.1 p_success_lower": {
+     "n_cells": 1350,
+     "ece": 0.1842,
+     "mean_p": 0.4395,
+     "pass_rate": 0.6237,
+     "auc": 0.65
+    }
+   }
+  },
+  "4 subscription": {
+   "n_tasks": 150,
+   "cheap_models": [
+    "claude-haiku-5.5",
+    "codex-gpt-6-luna"
+   ],
+   "rows": {
+    "always claude-haiku-5.5": {
+     "n": 150,
+     "success_per_100": 64.0,
+     "usd_per_100": 0.1213,
+     "under_est_rate": 0.26,
+     "over_spend_rate": 0.407,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      56.0,
+      70.6667
+     ],
+     "usd_ci95": [
+      0.1033,
+      0.1416
+     ],
+     "under_ci95": [
+      0.1933,
+      0.3333
+     ],
+     "cheap_pick_rate": 1.0,
+     "cheap_pick_fail_rate": 0.36,
+     "picks": {
+      "claude-haiku-5.5": 150
+     }
+    },
+    "always claude-sonnet-5.5": {
+     "n": 150,
+     "success_per_100": 73.3,
+     "usd_per_100": 2.0398,
+     "under_est_rate": 0.12,
+     "over_spend_rate": 0.613,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      66.0,
+      80.0167
+     ],
+     "usd_ci95": [
+      1.8119,
+      2.279
+     ],
+     "under_ci95": [
+      0.0733,
+      0.1735
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "claude-sonnet-5.5": 150
+     }
+    },
+    "always claude-opus-5.5": {
+     "n": 150,
+     "success_per_100": 76.7,
+     "usd_per_100": 4.0299,
+     "under_est_rate": 0.0,
+     "over_spend_rate": 0.72,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      70.0,
+      83.3333
+     ],
+     "usd_ci95": [
+      3.5781,
+      4.4721
+     ],
+     "under_ci95": [
+      0.0,
+      0.0
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "claude-opus-5.5": 150
+     }
+    },
+    "always codex-gpt-6-luna": {
+     "n": 150,
+     "success_per_100": 51.3,
+     "usd_per_100": 0.0349,
+     "under_est_rate": 0.4,
+     "over_spend_rate": 0.0,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      43.3167,
+      59.3333
+     ],
+     "usd_ci95": [
+      0.0295,
+      0.0408
+     ],
+     "under_ci95": [
+      0.32,
+      0.48
+     ],
+     "cheap_pick_rate": 1.0,
+     "cheap_pick_fail_rate": 0.487,
+     "picks": {
+      "codex-gpt-6-luna": 150
+     }
+    },
+    "always-cheapest (card price)": {
+     "n": 150,
+     "success_per_100": 64.0,
+     "usd_per_100": 0.1213,
+     "under_est_rate": 0.26,
+     "over_spend_rate": 0.407,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      56.0,
+      70.6667
+     ],
+     "usd_ci95": [
+      0.1033,
+      0.1416
+     ],
+     "under_ci95": [
+      0.1933,
+      0.3333
+     ],
+     "cheap_pick_rate": 1.0,
+     "cheap_pick_fail_rate": 0.36,
+     "picks": {
+      "claude-haiku-5.5": 150
+     }
+    },
+    "always-strongest (card skills)": {
+     "n": 150,
+     "success_per_100": 76.7,
+     "usd_per_100": 4.0299,
+     "under_est_rate": 0.0,
+     "over_spend_rate": 0.72,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      70.0,
+      83.3333
+     ],
+     "usd_ci95": [
+      3.5781,
+      4.4721
+     ],
+     "under_ci95": [
+      0.0,
+      0.0
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "claude-opus-5.5": 150
+     }
+    },
+    "oracle (cheapest passing)": {
+     "n": 150,
+     "success_per_100": 91.3,
+     "usd_per_100": 1.0872,
+     "under_est_rate": 0.0,
+     "over_spend_rate": 0.0,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      86.6667,
+      96.0
+     ],
+     "usd_ci95": [
+      0.7534,
+      1.4783
+     ],
+     "under_ci95": [
+      0.0,
+      0.0
+     ],
+     "cheap_pick_rate": 0.747,
+     "cheap_pick_fail_rate": 0.0,
+     "picks": {
+      "claude-haiku-5.5": 35,
+      "claude-opus-5.5": 20,
+      "claude-sonnet-5.5": 18,
+      "codex-gpt-6-luna": 77
+     }
+    },
+    "v4 cheapest_above_threshold single-shot": {
+     "n": 150,
+     "success_per_100": 68.7,
+     "usd_per_100": 1.7298,
+     "under_est_rate": 0.153,
+     "over_spend_rate": 0.527,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      60.6667,
+      75.3333
+     ],
+     "usd_ci95": [
+      1.3933,
+      2.095
+     ],
+     "under_ci95": [
+      0.1,
+      0.2133
+     ],
+     "cheap_pick_rate": 0.347,
+     "cheap_pick_fail_rate": 0.365,
+     "picks": {
+      "claude-haiku-5.5": 52,
+      "claude-opus-5.5": 20,
+      "claude-sonnet-5.5": 78
+     }
+    },
+    "v4 max_utility single-shot": {
+     "n": 150,
+     "success_per_100": 71.3,
+     "usd_per_100": 1.4552,
+     "under_est_rate": 0.16,
+     "over_spend_rate": 0.573,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      64.0,
+      78.6667
+     ],
+     "usd_ci95": [
+      1.234,
+      1.6926
+     ],
+     "under_ci95": [
+      0.1067,
+      0.22
+     ],
+     "cheap_pick_rate": 0.247,
+     "cheap_pick_fail_rate": 0.459,
+     "picks": {
+      "claude-haiku-5.5": 37,
+      "claude-opus-5.5": 5,
+      "claude-sonnet-5.5": 108
+     }
+    },
+    "v4 max_utility cascade<= 2 attempts": {
+     "n": 150,
+     "success_per_100": 84.0,
+     "usd_per_100": 2.6225,
+     "under_est_rate": 0.16,
+     "over_spend_rate": 0.573,
+     "mean_attempts": 1.29,
+     "success_ci95": [
+      77.3333,
+      90.0
+     ],
+     "usd_ci95": [
+      2.1542,
+      3.1631
+     ],
+     "under_ci95": [
+      0.1067,
+      0.22
+     ],
+     "cheap_pick_rate": 0.247,
+     "cheap_pick_fail_rate": 0.459,
+     "picks": {
+      "claude-haiku-5.5": 37,
+      "claude-opus-5.5": 5,
+      "claude-sonnet-5.5": 108
+     }
+    },
+    "v4 max_utility cascade<= 3 attempts": {
+     "n": 150,
+     "success_per_100": 90.0,
+     "usd_per_100": 2.9662,
+     "under_est_rate": 0.16,
+     "over_spend_rate": 0.573,
+     "mean_attempts": 1.45,
+     "success_ci95": [
+      84.6667,
+      94.0167
+     ],
+     "usd_ci95": [
+      2.4328,
+      3.583
+     ],
+     "under_ci95": [
+      0.1067,
+      0.22
+     ],
+     "cheap_pick_rate": 0.247,
+     "cheap_pick_fail_rate": 0.459,
+     "picks": {
+      "claude-haiku-5.5": 37,
+      "claude-opus-5.5": 5,
+      "claude-sonnet-5.5": 108
+     }
+    },
+    "v4 max_quality single-shot": {
+     "n": 150,
+     "success_per_100": 73.3,
+     "usd_per_100": 2.3718,
+     "under_est_rate": 0.107,
+     "over_spend_rate": 0.62,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      66.0,
+      80.0
+     ],
+     "usd_ci95": [
+      2.0671,
+      2.7133
+     ],
+     "under_ci95": [
+      0.06,
+      0.16
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "claude-opus-5.5": 21,
+      "claude-sonnet-5.5": 129
+     }
+    },
+    "v3 cheapest_above_threshold single-shot": {
+     "n": 150,
+     "success_per_100": 63.3,
+     "usd_per_100": 0.2492,
+     "under_est_rate": 0.253,
+     "over_spend_rate": 0.367,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      55.3333,
+      70.0
+     ],
+     "usd_ci95": [
+      0.1419,
+      0.3911
+     ],
+     "under_ci95": [
+      0.1867,
+      0.3267
+     ],
+     "cheap_pick_rate": 0.967,
+     "cheap_pick_fail_rate": 0.359,
+     "picks": {
+      "claude-haiku-5.5": 139,
+      "claude-opus-5.5": 2,
+      "claude-sonnet-5.5": 3,
+      "codex-gpt-6-luna": 6
+     }
+    },
+    "v3 cheapest_above_threshold cascade<= 2 attempts": {
+     "n": 150,
+     "success_per_100": 80.0,
+     "usd_per_100": 0.9887,
+     "under_est_rate": 0.253,
+     "over_spend_rate": 0.367,
+     "mean_attempts": 1.37,
+     "success_ci95": [
+      73.3333,
+      86.0
+     ],
+     "usd_ci95": [
+      0.643,
+      1.3848
+     ],
+     "under_ci95": [
+      0.1867,
+      0.3267
+     ],
+     "cheap_pick_rate": 0.967,
+     "cheap_pick_fail_rate": 0.359,
+     "picks": {
+      "claude-haiku-5.5": 139,
+      "claude-opus-5.5": 2,
+      "claude-sonnet-5.5": 3,
+      "codex-gpt-6-luna": 6
+     }
+    },
+    "v3 cheapest_above_threshold cascade<= 3 attempts": {
+     "n": 150,
+     "success_per_100": 87.3,
+     "usd_per_100": 1.704,
+     "under_est_rate": 0.253,
+     "over_spend_rate": 0.367,
+     "mean_attempts": 1.57,
+     "success_ci95": [
+      81.3333,
+      92.0
+     ],
+     "usd_ci95": [
+      1.1966,
+      2.3017
+     ],
+     "under_ci95": [
+      0.1867,
+      0.3267
+     ],
+     "cheap_pick_rate": 0.967,
+     "cheap_pick_fail_rate": 0.359,
+     "picks": {
+      "claude-haiku-5.5": 139,
+      "claude-opus-5.5": 2,
+      "claude-sonnet-5.5": 3,
+      "codex-gpt-6-luna": 6
+     }
+    },
+    "v3 max_utility single-shot": {
+     "n": 150,
+     "success_per_100": 64.0,
+     "usd_per_100": 0.1325,
+     "under_est_rate": 0.26,
+     "over_spend_rate": 0.407,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      56.0,
+      70.6667
+     ],
+     "usd_ci95": [
+      0.1067,
+      0.1639
+     ],
+     "under_ci95": [
+      0.1933,
+      0.3333
+     ],
+     "cheap_pick_rate": 0.993,
+     "cheap_pick_fail_rate": 0.362,
+     "picks": {
+      "claude-haiku-5.5": 148,
+      "claude-sonnet-5.5": 1,
+      "codex-gpt-6-luna": 1
+     }
+    },
+    "v3 max_utility cascade<= 2 attempts": {
+     "n": 150,
+     "success_per_100": 83.3,
+     "usd_per_100": 1.0055,
+     "under_est_rate": 0.26,
+     "over_spend_rate": 0.407,
+     "mean_attempts": 1.36,
+     "success_ci95": [
+      76.6667,
+      89.3333
+     ],
+     "usd_ci95": [
+      0.7792,
+      1.2581
+     ],
+     "under_ci95": [
+      0.1933,
+      0.3333
+     ],
+     "cheap_pick_rate": 0.993,
+     "cheap_pick_fail_rate": 0.362,
+     "picks": {
+      "claude-haiku-5.5": 148,
+      "claude-sonnet-5.5": 1,
+      "codex-gpt-6-luna": 1
+     }
+    },
+    "v3 max_utility cascade<= 3 attempts": {
+     "n": 150,
+     "success_per_100": 90.0,
+     "usd_per_100": 1.8744,
+     "under_est_rate": 0.26,
+     "over_spend_rate": 0.407,
+     "mean_attempts": 1.53,
+     "success_ci95": [
+      84.6667,
+      94.0167
+     ],
+     "usd_ci95": [
+      1.3609,
+      2.4634
+     ],
+     "under_ci95": [
+      0.1933,
+      0.3333
+     ],
+     "cheap_pick_rate": 0.993,
+     "cheap_pick_fail_rate": 0.362,
+     "picks": {
+      "claude-haiku-5.5": 148,
+      "claude-sonnet-5.5": 1,
+      "codex-gpt-6-luna": 1
+     }
+    },
+    "v3 max_quality single-shot": {
+     "n": 150,
+     "success_per_100": 76.7,
+     "usd_per_100": 4.0299,
+     "under_est_rate": 0.0,
+     "over_spend_rate": 0.72,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      70.0,
+      83.3333
+     ],
+     "usd_ci95": [
+      3.5781,
+      4.4721
+     ],
+     "under_ci95": [
+      0.0,
+      0.0
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "claude-opus-5.5": 150
+     }
+    },
+    "v3 max_quality cascade<= 2 attempts": {
+     "n": 150,
+     "success_per_100": 85.3,
+     "usd_per_100": 4.6147,
+     "under_est_rate": 0.0,
+     "over_spend_rate": 0.72,
+     "mean_attempts": 1.23,
+     "success_ci95": [
+      79.3333,
+      90.6667
+     ],
+     "usd_ci95": [
+      4.0699,
+      5.1993
+     ],
+     "under_ci95": [
+      0.0,
+      0.0
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "claude-opus-5.5": 150
+     }
+    },
+    "v3 max_quality cascade<= 3 attempts": {
+     "n": 150,
+     "success_per_100": 90.0,
+     "usd_per_100": 4.643,
+     "under_est_rate": 0.0,
+     "over_spend_rate": 0.72,
+     "mean_attempts": 1.38,
+     "success_ci95": [
+      84.6667,
+      94.0167
+     ],
+     "usd_ci95": [
+      4.092,
+      5.2359
+     ],
+     "under_ci95": [
+      0.0,
+      0.0
+     ],
+     "cheap_pick_rate": 0.0,
+     "cheap_pick_fail_rate": null,
+     "picks": {
+      "claude-opus-5.5": 150
+     }
+    },
+    "v4 escalation_ladder within 1": {
+     "n": 150,
+     "success_per_100": 63.3,
+     "usd_per_100": 0.4648,
+     "under_est_rate": 0.24,
+     "over_spend_rate": 0.427,
+     "mean_attempts": 1.0,
+     "success_ci95": [
+      56.0,
+      70.6667
+     ],
+     "usd_ci95": [
+      0.3135,
+      0.6237
+     ],
+     "under_ci95": [
+      0.1798,
+      0.3067
+     ],
+     "cheap_pick_rate": 0.767,
+     "cheap_pick_fail_rate": 0.4,
+     "picks": {
+      "claude-haiku-5.5": 111,
+      "claude-opus-5.5": 10,
+      "claude-sonnet-5.5": 25,
+      "codex-gpt-6-luna": 4
+     }
+    },
+    "v4 escalation_ladder within 2": {
+     "n": 150,
+     "success_per_100": 84.7,
+     "usd_per_100": 1.2381,
+     "under_est_rate": 0.24,
+     "over_spend_rate": 0.427,
+     "mean_attempts": 1.37,
+     "success_ci95": [
+      78.6667,
+      90.0
+     ],
+     "usd_ci95": [
+      0.9891,
+      1.5193
+     ],
+     "under_ci95": [
+      0.1798,
+      0.3067
+     ],
+     "cheap_pick_rate": 0.767,
+     "cheap_pick_fail_rate": 0.4,
+     "picks": {
+      "claude-haiku-5.5": 111,
+      "claude-opus-5.5": 10,
+      "claude-sonnet-5.5": 25,
+      "codex-gpt-6-luna": 4
+     }
+    },
+    "v4 escalation_ladder within 3": {
+     "n": 150,
+     "success_per_100": 90.7,
+     "usd_per_100": 2.0128,
+     "under_est_rate": 0.24,
+     "over_spend_rate": 0.427,
+     "mean_attempts": 1.52,
+     "success_ci95": [
+      85.3333,
+      94.6833
+     ],
+     "usd_ci95": [
+      1.5378,
+      2.5814
+     ],
+     "under_ci95": [
+      0.1798,
+      0.3067
+     ],
+     "cheap_pick_rate": 0.767,
+     "cheap_pick_fail_rate": 0.4,
+     "picks": {
+      "claude-haiku-5.5": 111,
+      "claude-opus-5.5": 10,
+      "claude-sonnet-5.5": 25,
+      "codex-gpt-6-luna": 4
+     }
+    }
+   },
+   "calibration": {
+    "v4.1 p_success (calibrated)": {
+     "n_cells": 600,
+     "ece": 0.1543,
+     "mean_p": 0.5096,
+     "pass_rate": 0.6633,
+     "auc": 0.613
+    },
+    "v4.1 p_success_lower": {
+     "n_cells": 600,
+     "ece": 0.2051,
+     "mean_p": 0.4583,
+     "pass_rate": 0.6633,
+     "auc": 0.6152
+    }
+   }
+  }
+ },
+ "boot": 1000,
+ "free_picks_full_pool": {
+  "v4 cheapest_above_threshold": {
+   "n": 150,
+   "free_pick_rate": 0.0
+  },
+  "v4 max_utility": {
+   "n": 150,
+   "free_pick_rate": 0.0
+  },
+  "v4 max_quality": {
+   "n": 150,
+   "free_pick_rate": 0.0
+  },
+  "v3 cheapest_above_threshold": {
+   "n": 150,
+   "free_pick_rate": 0.88
+  },
+  "v3 max_utility": {
+   "n": 150,
+   "free_pick_rate": 0.0
+  },
+  "v3 max_quality": {
+   "n": 150,
+   "free_pick_rate": 0.0
+  }
+ }
+}

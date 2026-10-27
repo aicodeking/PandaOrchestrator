@@ -227,5 +227,37 @@ def test_escalation_ladder_and_escalate_follows_it(router):
     assert cards[lad[0]]["cost"]["output_per_mtok"] > 0  # $0 guard on the first rung
     failed = first["choice"]["model_id"]
     second = router.escalate(req, first, failed)
-    assert second["choice"]["model_id"] == next(m for m in lad if m != failed)
-    assert second["choice"]["decided_by"] == "escalation_ladder"
+    nxt = second["choice"]["model_id"]
+    assert nxt != failed
+    # follows the ladder but never steps down to a weaker model than the one that failed
+    assert _strength(cards[nxt]) >= _strength(cards[failed]) - 1e-9
+    stronger_rungs = [m for m in lad if m != failed and _strength(cards[m]) >= _strength(cards[failed]) - 1e-9]
+    if stronger_rungs:
+        assert nxt == stronger_rungs[0] and second["choice"]["decided_by"] == "escalation_ladder"
+    else:
+        assert second["choice"]["decided_by"] == "escalation:stronger"
+
+
+def _strength(card):
+    return sum(v["theta"] for v in card["skills"].values()) / len(card["skills"])
+
+
+def test_escalation_after_ladder_first_rung_fails_moves_up(router):
+    req = {"task": {"text": "Refactor the payment module to use dependency injection and add tests."}}
+    first = router.route(req)
+    cards = load_cards()
+    cur, resp = first["escalation_ladder"][0]["model_id"], first
+    for _ in range(3):  # walk the ladder: each next pick is at least as strong as every failed one
+        nxt = router.escalate(req, resp, cur)
+        new = nxt["choice"]["model_id"]
+        if new is None:
+            break
+        remaining_stronger = [m for m in cards if _strength(cards[m]) >= _strength(cards[cur]) - 1e-9
+                              and m not in (resp.get("escalation") or {}).get("failed_models", []) and m != cur]
+        if remaining_stronger:
+            assert _strength(cards[new]) >= _strength(cards[cur]) - 1e-9
+        else:
+            assert nxt["choice"]["decided_by"] == "escalation:strongest_left"
+        cur, resp = new, nxt
+
+

@@ -5,13 +5,15 @@ Panda Router only **chooses** a model. Your harness has to run it. Two integrati
 - **MCP:** the agent calls `route_task` itself (Claude Code, Codex CLI, Cursor, OpenCode, SDK agents).
 - **Direct:** your orchestrator calls the HTTP API, the CLI or the Python `Router` and dispatches the pick.
 
-Tool and endpoint details are in [API.md](API.md).
+Tool and endpoint details are in [API.md](API.md). Whichever style you use, the best results come from the loop
+route -> run -> verify -> escalate on failure -> report the outcome; see
+[BEST_RESULTS.md](BEST_RESULTS.md) for the loop, the modes and the pitfalls.
 
 ## Verification status
 
 | what | how it was checked |
 |---|---|
-| Panda Router MCP, HTTP, CLI, Python and shell snippets | **Run** against `artifacts/panda-router-v4` (Python 3.12, fresh venv) |
+| Panda Router MCP (stdio round trip: route, escalate, outcome), HTTP, CLI, Python and shell snippets, and the loops in [BEST_RESULTS.md](BEST_RESULTS.md) | **Run** against `artifacts/panda-router-v4` (Python 3.12), 2026-10-27. The loops ran with a stub in place of the model call |
 | Claude Code 2.1.310: `claude mcp add --scope project ...` | **Run**; it wrote the `.mcp.json` shown below. Project-scope servers then show "Pending approval" until you approve them in a session, so tool calls from a live Claude session were **not** run |
 | Codex CLI 0.162.1: `codex mcp add` | **Run** with a temporary `CODEX_HOME`; it wrote the TOML shown. `codex mcp list` lists the server. A live Codex session calling the tools was not run |
 | OpenCode 1.19.0: `opencode.json` `mcp` entry | **Run**; `opencode mcp list` reported the server `connected`. A model calling the tools was not run |
@@ -32,8 +34,9 @@ which panda-router-mcp   # use this absolute path in the configs below
 ```
 
 In the configs below, replace `/ABS/PATH/PandaOrchestrator` with your checkout. Use absolute paths: MCP clients
-start the server from their own working directory. The profiler directory (`artifacts/panda-router-v4`) must exist
-(see the README); without `--artifacts` and outside a checkout that has it, you get the weaker heuristic profiler.
+start the server from their own working directory. The profiler directory (`artifacts/panda-router-v4`, with the
+success head `success_head.json` inside it) must exist; without `--artifacts` and outside a checkout that has it, you
+get the weaker heuristic profiler.
 
 ## Mapping a pick to a harness
 
@@ -52,8 +55,10 @@ Every response gives `choice.model_id` (your string) and `ranking[i].card_id`. T
 `--model`, `-m` and `ollama run` syntax were taken from each tool's `--help` (Claude Code 2.1.310, Codex 0.162.1,
 OpenCode 1.19.0, Ollama 0.40.6). The `claude` and `codex` rows assume you are signed in to those tools.
 
-Practical rule: **restrict `pool` to models your harness can actually run.** A Claude Code session cannot run
-`ollama-*` or `codex-*` cards by itself, so pass `"pool": ["claude-opus-5.5", "claude-sonnet-5.5", "claude-haiku-5.5"]`.
+Practical rule: **restrict `pool` to models your harness can actually run.** The default pool is all 65 cards,
+including `openrouter-*` ones that need a key and `ollama-*` ones that need a pull. A Claude Code session cannot run
+`ollama-*` or `codex-*` cards by itself, so pass `"pool": ["claude-opus-5.5", "claude-sonnet-5.5", "claude-haiku-5.5"]`
+([pool hygiene](BEST_RESULTS.md#3-pool-hygiene)).
 
 ## Claude Code
 
@@ -88,15 +93,19 @@ The tools appear as `mcp__panda-router__route_task`, `mcp__panda-router__escalat
 
 ```markdown
 ## Model routing
-Before delegating a subtask to a subagent, call `route_task` (panda-router MCP) with the subtask text,
+Before delegating a subtask, call `route_task` (panda-router MCP) with the subtask text,
 `pool: ["claude-opus-5.5", "claude-sonnet-5.5", "claude-haiku-5.5"]` and `context` (repo_languages, files_in_scope).
-Delegate with the model it returns: `claude-opus-5.5` -> opus, `claude-sonnet-5.5` -> sonnet,
+Start with the first model in the result's `escalation_ladder` (in structuredContent); if you cannot see it, use
+the model named in the text. Delegate with it: `claude-opus-5.5` -> opus, `claude-sonnet-5.5` -> sonnet,
 `claude-haiku-5.5` -> haiku. Keep the `trace_id`.
-If the subagent's result fails tests or review, call `escalate_task` with the `trace_id` and the failed model,
-and retry with the new pick.
-When the subtask is accepted or finally abandoned, call `record_outcome` with `trace_id`, `model_id`, `success`
-(and `cost_usd` if known). Skip routing for trivial one-step edits.
+Verify the subtask's result: run the tests/lint/typecheck, or have a reviewer check it against the acceptance criteria.
+If it fails, call `escalate_task` with the latest `trace_id` and the model that failed, then retry with the model it
+returns. Allow at most 2 retries, then report the failure instead of looping.
+After every attempt call `record_outcome` with that attempt's `trace_id`, `model_id`, `success` and `cost_usd`.
+Skip routing for trivial one-step edits.
 ```
+
+The reasoning and the measured gain of the retry loop: [BEST_RESULTS.md](BEST_RESULTS.md#1-the-loop).
 
 ### Subagent pattern
 
@@ -104,6 +113,8 @@ Make the main agent the dispatcher: it calls `route_task`, then starts a subagen
 subagents are Markdown files in `.claude/agents/` with YAML frontmatter, and the Task/Agent call can override the
 model per invocation; define one generic worker and let the dispatcher choose its model. (Frontmatter field names
 and model override behaviour were **not re-verified** for this version; check `/agents` in your Claude Code.)
+Have the dispatcher verify each subagent's result and follow the retry rules above; the loop is in
+[BEST_RESULTS.md](BEST_RESULTS.md#mcp-agent-driven).
 
 ## Codex CLI
 
@@ -123,6 +134,7 @@ PANDA_ROUTER_ARTIFACTS = "/ABS/PATH/PandaOrchestrator/artifacts/panda-router-v4"
 
 Put the same routing instructions as the CLAUDE.md snippet in `AGENTS.md`, with `pool` limited to `codex-*` cards
 (for example `codex-gpt-6-luna`, `codex-gpt-5.6-terra`) and run the chosen model with `codex exec -m <card.model>`.
+Retry loop and verification: [BEST_RESULTS.md](BEST_RESULTS.md#1-the-loop).
 
 ## Cursor
 
@@ -142,7 +154,8 @@ Put the same routing instructions as the CLAUDE.md snippet in `AGENTS.md`, with 
 ```
 
 Cursor picks models in its own UI, so the router is advisory there: ask the agent to call `route_task` and tell you
-which model to select, or use it from a rule file (`.cursor/rules`) with the CLAUDE.md text above.
+which model to select, or use it from a rule file (`.cursor/rules`) with the CLAUDE.md text above. Because Cursor cannot
+re-run a model by itself, the escalate-on-failure part of [BEST_RESULTS.md](BEST_RESULTS.md) is manual there.
 
 ## OpenCode
 
@@ -166,6 +179,8 @@ as `connected` on OpenCode 1.19.0:
 `command` is a single array (executable plus arguments); environment variables go in an `environment` object.
 Newer OpenCode docs describe a different "v2" layout (`mcp.servers`, `disabled` instead of `enabled`); use the layout
 your version accepts. OpenCode models are `provider/model`, so an `openrouter` card becomes `openrouter/<card.model>`.
+Use the routing instructions and retry loop from [BEST_RESULTS.md](BEST_RESULTS.md#mcp-agent-driven) in your
+`AGENTS.md`.
 
 ## Claude Agent SDK (Python)
 
@@ -186,7 +201,7 @@ async for msg in query(prompt="Route the subtasks, then ...", options=options):
 ```
 
 Option B, call `Router` directly and set the model per subtask (the Router part is tested; the `model=` option is
-from SDK docs and was not run):
+from SDK docs and was not run). Add the verify-and-escalate loop from [BEST_RESULTS.md](BEST_RESULTS.md#python-stdlib-only):
 
 ```python
 from claude_agent_sdk import ClaudeAgentOptions, query
@@ -197,10 +212,11 @@ CLAUDE_POOL = ["claude-opus-5.5", "claude-sonnet-5.5", "claude-haiku-5.5"]
 
 async def run_subtask(text: str):
     resp = router.route({"task": {"text": text}, "pool": CLAUDE_POOL})
-    model = router.matcher.cards[resp["choice"]["model_id"]]["model"]      # e.g. "claude-sonnet-5-5"
+    first = resp["escalation_ladder"][0]["model_id"]                        # cheap-but-safe opener
+    model = router.matcher.cards[first]["model"]                            # e.g. "claude-haiku-5-5"
     async for msg in query(prompt=text, options=ClaudeAgentOptions(model=model)):
         yield msg
-    # then router.record_outcome({...}) from your own success check
+    # then verify, router.record_outcome({...}), and on failure router.escalate(req, resp, first)
 ```
 
 ## OpenAI Agents SDK
@@ -249,7 +265,7 @@ def card_id(resp):  # the ranking entry of the chosen model (ranking[0] is not a
 
 LC = {"claude": "anthropic", "openrouter": "openrouter"}   # extend for the providers you use
 
-def router_node(state):
+def router_node(state):  # on a retry, call router.escalate(request, last_response, failed_model_id) instead
     r = router.route({"task": {"text": state["task"]}, "pool": state["pool"]})
     card = router.matcher.cards[card_id(r)]
     return {"trace_id": r["trace_id"], "card_id": card["id"], "provider": card["provider"], "model": card["model"]}
@@ -265,27 +281,21 @@ To expose the MCP tools to a LangChain agent instead, use `langchain-mcp-adapter
 
 ## Any orchestrator over HTTP
 
-Start `panda-router-serve --port 8765 --artifacts artifacts/panda-router-v4`, then loop:
+Start `panda-router-serve --port 8765 --artifacts artifacts/panda-router-v4`, then use the stdlib loop in
+[BEST_RESULTS.md](BEST_RESULTS.md#python-stdlib-only): `POST /route`, run `escalation_ladder[0]`, verify,
+`POST /outcome`, and on a failure `POST /escalate` (up to 2 retries). That loop was run against a local server with a
+stub in place of the model call. In short:
 
 ```python
-import requests
-
-R = "http://127.0.0.1:8765"
-def post(path, body): return requests.post(R + path, json=body, timeout=30).json()
-
-def run_task(text, pool, max_attempts=3):
-    req = {"task": {"text": text}, "pool": pool}
-    resp = post("/route", req)
-    for _ in range(max_attempts):
-        model = resp["choice"]["model_id"]
-        if model is None:
-            break                                    # everything filtered out
-        ok, cost = execute(model, text)              # your code: invoke the harness, run tests
-        post("/outcome", {"trace_id": resp["trace_id"], "model_id": model, "success": ok, "actual_cost_usd": cost})
-        if ok:
-            return model
-        resp = post("/escalate", {"request": req, "response": resp, "failed_model_id": model})
-    return None
+resp = post("/route", req)
+model = resp["escalation_ladder"][0]["model_id"]
+for attempt in range(3):
+    ok, cost = execute(model, text)           # your code: invoke the harness, run tests
+    post("/outcome", {"trace_id": resp["trace_id"], "model_id": model, "success": ok, "actual_cost_usd": cost})
+    if ok or attempt == 2:
+        break
+    resp = post("/escalate", {"request": req, "response": resp, "failed_model_id": model})
+    model = resp["choice"]["model_id"]
 ```
 
 `execute` maps `model` to a command as in [Mapping a pick to a harness](#mapping-a-pick-to-a-harness). Remember that
@@ -294,16 +304,18 @@ with curl in [API.md](API.md#http).
 
 ## Shell scripts (CLI + jq)
 
+For a one-shot route (no retry), the CLI works:
+
 ```sh
 TASK='Add retry with backoff to the S3 uploader'
 OUT=$(panda-router route --artifacts artifacts/panda-router-v4 --db /tmp/router.sqlite --task "$TASK" \
         --pool claude-sonnet-5.5,claude-haiku-5.5 2>/dev/null)
-echo "$OUT" | jq -r '[.choice.model_id, .trace_id, .difficulty.level] | @tsv'
-# claude-haiku-5.5	r_175ec83aaf7841beaeb9a986	2
-MODEL=$(echo "$OUT" | jq -r '.choice.model_id')
-CARD=$(echo "$OUT" | jq -r '.choice.model_id as $m | .ranking[] | select(.model_id == $m) | .card_id')
+echo "$OUT" | jq -r '[.escalation_ladder[0].model_id, .trace_id, .difficulty.level] | @tsv'
+MODEL=$(echo "$OUT" | jq -r '.escalation_ladder[0].model_id')
+CARD=$(echo "$OUT" | jq -r --arg m "$MODEL" '.ranking[] | select(.model_id == $m) | .card_id')
 jq -r '.model' "cards/$CARD.json"      # claude-haiku-5-5 -> pass to: claude -p --model <that>
 ```
 
-The ONNX runtime loads on every CLI call, so a script that routes many tasks should use the HTTP server instead. The
-CLI exits 2 with `{"error": ...}` on stderr when the pool resolves to nothing, so check `$?`.
+The ONNX runtime loads on every CLI call (about 3-4 s here), and the CLI has no escalate or outcome command. For a
+retry loop use the HTTP server: the curl + jq loop is in [BEST_RESULTS.md](BEST_RESULTS.md#shell-curl--jq). The CLI
+exits 2 with `{"error": ...}` on stderr when the pool resolves to nothing, so check `$?`.

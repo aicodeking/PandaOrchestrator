@@ -1,5 +1,12 @@
 # Panda Router training data: statistics
 
+> Counts below are from the data build of 2026-10-26 (data v3), which trained the shipped v4 profiler together with
+> `data/vague_v4/` ([STATS](vague_v4/STATS.md), 1,474 vague-request examples) and the graded outcome anchors
+> ([data/outcomes/REPORT_v4_attempts.md](outcomes/REPORT_v4_attempts.md)). The v4 profiler was trained on Modal
+> (`scripts/modal/`), not on the local machine. The DeepSeek V4.1 Flash teacher runs through `dsh --profile headless` by
+> default (`PANDA_DEEPSEEK_BACKEND`, `panda_router/datagen/teachers.py`); the v3 labels below were generated through
+> OpenRouter.
+
 Generated 2026-10-26 14:28 by `scripts/datagen/run.py build`. Format: `schemas/CONTRACTS.md`.
 
 ## Totals
@@ -376,7 +383,7 @@ Teachers: deepseek = deepseek/deepseek-v4.1-flash (OpenRouter), codex = gpt-5.6-
 | ui_frontend | 0.81 |
 | data_analysis | 0.796 |
 
-### DeepSeek OpenRouter spend
+### DeepSeek OpenRouter spend (v3 labelling; the default backend is now `dsh`, which has no per-call cost log)
 
 - 636 calls, 3,743,228 prompt + 3,483,335 completion tokens, **$2.77** total (`data/cache/deepseek_usage.jsonl`)
 
@@ -490,7 +497,7 @@ Fraction where the merged teacher label of the edited task moved as expected vs 
 
 ## Data v3 changes (2026-10-26)
 
-- **DeepSeek V4.1 Flash is the second teacher everywhere** (`deepseek/deepseek-v4.1-flash` via the OpenRouter chat API, reasoning disabled, temperature 0.2, 6-8 calls in parallel, 15 tasks per call, 429/5xx backoff; key read at runtime from the opencode auth store, never written). Usage and cost are logged to `data/cache/deepseek_usage.jsonl`.
+- **DeepSeek V4.1 Flash is the second teacher everywhere** (`deepseek/deepseek-v4.1-flash` via the OpenRouter chat API for the v3 run; `teachers.py` now defaults to `dsh --profile headless`, reasoning disabled, temperature 0.2, 6-8 calls in parallel, 15 tasks per call, 429/5xx backoff; key read at runtime from the opencode auth store, never written). Usage and cost are logged to `data/cache/deepseek_usage.jsonl`.
 - Pilot (30 tasks vs Codex): category accuracy 0.80, difficulty Spearman 0.856. Full run: 8,074 new labels (all pooled Codex-only tasks, the 700 hard tasks, the minimal pairs, every split row) on top of the 300 earlier free-tier ones.
 - Merge with 3 teachers is unchanged: difficulty/skill distributions are the mean of the per-teacher Gaussians, category is the mean of one-hots, flags/checklist the mean of bits (the mean of the three points rather than a median keeps disagreement visible in the soft label).
 - **Gold**: all 360 candidates have codex + deepseek (79 rows also grok). Ollama (gemma4 no-think) answers stay in `meta.teacher_answers` but no longer enter the soft labels (`gold.EXTRA_TEACHERS`).

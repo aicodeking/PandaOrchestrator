@@ -3,6 +3,23 @@
 One JSON file per routable model, named `<id>.json`. Every file must validate against
 `schemas/model_card.schema.json`; `panda_router.matcher.load_cards()` refuses to load invalid cards.
 
+## How the v4 router uses a card
+
+A card contributes its price, limits, latency and `skills`. In v4 the P(success) you see comes from two sources
+(`ranking[].p_source`):
+
+- `success_head`: the 9 cards the learned success head was trained on (`claude-haiku-5.5`, `claude-sonnet-5.5`,
+  `claude-opus-5.5`, `codex-gpt-6-luna`, and the OpenRouter `deepseek-v4.1-flash`, `gemini-3.8-flash`, `gpt-6.1-sol`,
+  `minimax-m3.1-flash`, `qwen3.8-flash`). Their P is calibrated on graded attempts. The head is a function of the
+  task profile only, so editing these cards' `skills` changes cost/latency/filtering and the ladder's tie-breaks but
+  not the head's P.
+- `card_prior`: every other card. Its skills give a P that is mapped onto the head's scale, recentred on this task's
+  covered cards, shrunk halfway toward their median, and reduced by a provenance penalty (`verified` 0, `benchmark-informed`
+  0.5, `estimated` 1.0 logits, plus 0.5 for $0 or local cards). It can never exceed the best head-covered card. So the
+  `provenance` field you set matters: an `estimated` card is deliberately handicapped.
+
+Retraining the head to cover a new card needs graded attempts for it ([Outcome refits](#attempt-and-grade-v4-2026-10-27)).
+
 ## Skill scale
 
 `skills.<axis>.theta` is on the **same 0..10 scale as the profiler's skill levels and difficulty**
@@ -65,7 +82,8 @@ Summary at creation (2026-10-25):
   Qwen3-Coder, Nemotron, OLMo, Granite, Llama 3.1), 1-3 sizes each, Q4 default tags. `:cloud` tags are
   skipped. Tagged `not-installed`: `ollama pull <model>` first, or keep them out of `pool`. Latency is
   scaled from the measured gemma4:26b (78 tok/s) by active params; context capped at 131072.
-- Cheapest mode breaks cost ties (e.g. all local models at $0) by **lowest latency**, then P.
+- A $0 or local card only wins if its lower-bound P is within 0.05 of the best paid card's (the $0 guard), and
+  expected cost includes the cost of a failed first try, so free cards no longer win by default.
 
 ## Adding a model
 
@@ -78,6 +96,8 @@ Summary at creation (2026-10-25):
    the card's mean θ − 0.5 and a wide `se`.
 4. Record `sources`, `field_provenance` and caveats in `notes`.
 5. Run `.venv/bin/python -m pytest tests/test_matcher.py` (it validates every card).
+6. Set `provenance` honestly (see above). A new card starts as a `card_prior` card; it is only as trusted as its
+   provenance allows until graded outcomes exist for it.
 
 The router picks up new or changed cards without a restart (cache keyed on file mtimes; compiled
 pools are cached by pool hash). Later, the probe-set procedure in PLAN.md §12.4 #7 replaces the
@@ -108,7 +128,7 @@ different sizes, and the same model through a different harness (native grok-4.6
 openrouter-grok-4.7). `openrouter-gpt-6-sol`, `ollama-qwen3.{5,6}-27b` and
 `ollama-nemotron-3-nano-30b` were rebuilt on 2026-10-26 from their successors' cards.
 
-## Names in `pool`
+## Names in `pool` (aliases)
 
 `pool` entries don't have to be exact card ids. The router matches, in order: exact id; exact
 `model` (pull name / slug, also after a `vendor/` prefix); case- and separator-insensitive id or
@@ -135,3 +155,21 @@ graded them (κ 0.85 vs kimi-k3.1-pro), and a 1PL IRT fit was mapped to this sca
 `build_attempts.py --apply` updated only the per-axis thetas whose direction also holds under gpt-6.1-sol grading:
 minimax-m3.1-flash coding/debugging/math/reasoning −0.7..−1.2, gemini-3.8-flash data_analysis/planning/reasoning −0.8..−1.3,
 gpt-6.1-sol planning +0.8. Notes say 'verified (attempt-grade 2026-10)'; provenance enums and `supersedes` are unchanged.
+
+## Attempt-and-grade v4 (2026-10-27)
+
+`data/outcomes/REPORT_v4_attempts.md`: nine models (`claude-haiku/sonnet/opus-5.5` and `codex-gpt-6-luna` through their
+subscription CLIs, plus the five OpenRouter models above) answered the train/val tasks and the 150 gold tasks and were graded
+by an LLM judge (stored DeepSeek labels, then `dsh --profile headless` for DeepSeek, then `gpt-5.6-terra` via `codex exec`;
+parity kappa 0.68-0.85). A 1PL IRT fit over 7,059 graded cells updated per-axis thetas where the shift exceeded the
+combined uncertainty (notes say `verified (attempt-grade v4)`): `claude-haiku-5.5` coding 7.0 -> 8.35 and debugging
+6.8 -> 8.71 (+1.4 on average; the card was seeded low), `claude-opus-5.5` coding 9.3 -> 8.62, `openrouter-gpt-6.1-sol`
+coding 8.6 -> 9.25, `claude-sonnet-5.5` debugging 8.4 -> 9.15, minimax-m3.1-flash lower on data_analysis, research,
+ui_frontend and writing. Caveat: the Claude models ran with uncapped thinking, which favours them against the 1,500-token-capped
+OpenRouter models.
+
+The same graded cells (`data/outcomes/success_cells.jsonl`) train the success head with
+`scripts/outcomes/train_success_head.py`; gold is never used for fitting. To refit cards or the head from your own
+routed outcomes, convert the router's SQLite log to that file's shape (`task_id, split, text, card_id, pass, judge`) and
+rerun `scripts/outcomes/build_attempts.py` and `train_success_head.py`. Nothing reads the SQLite log directly yet
+([docs/BEST_RESULTS.md](../docs/BEST_RESULTS.md#6-send-outcomes)).

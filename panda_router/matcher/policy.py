@@ -382,10 +382,21 @@ class Matcher:
                                             eq_margin=float(prefs["equal_p_margin"]), p_mean=p[cand_idx])
             greedy, eligible = cand[k], list(cand)
             util[cand_idx], exp_cost[cand_idx] = u, e
-            nxt = [pool.index(m) for m in ladder if m in pool.ids and pool.index(m) in cand]
+            # after a failure never step down: only models at least as strong as the strongest failed one
+            # (over-estimate rule); a weaker ladder rung or policy pick is replaced by the safest stronger model
+            floor_s = max((strength[pool.index(m)] for m in failed if m in pool.ids), default=-np.inf)
+            up = [i for i in cand if strength[i] >= floor_s - 1e-9]
+            nxt = [pool.index(m) for m in ladder if m in pool.ids and pool.index(m) in up]
             if nxt:
                 greedy, decided_by = nxt[0], "escalation_ladder"
-            v4_info["ladder"] = self._ladder(pool, cand, p_lo, cost, strength, card_ids, float(prefs["ladder_lambda"]))
+            elif up and greedy not in up:
+                greedy, decided_by = max(up, key=lambda i: (p_lo[i], strength[i], -cost[i])), "escalation:stronger"
+            elif not up and failed and cand:  # nothing stronger left: the strongest remaining model
+                greedy, decided_by = max(cand, key=lambda i: (strength[i], p_lo[i], -cost[i])), \
+                    "escalation:strongest_left"
+            v4_info["ladder"] = [i for i in self._ladder(pool, cand, p_lo, cost, strength, card_ids,
+                                                         float(prefs["ladder_lambda"]))
+                                 if not up or i in up]
             fb["low_confidence"] = bool(p[greedy] < floor)
         else:
             eligible = [i for i in cand if p[i] >= floor]

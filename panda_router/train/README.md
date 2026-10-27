@@ -1,5 +1,8 @@
 # Profiler training pipeline
 
+The shipped v4 artifacts (`artifacts/panda-router-v4`) were made by the v4 sequence at the end of this file (Modal GPU
+jobs, then the local success head); the sections below describe the underlying pipeline and the earlier local runs.
+
 Ettin encoder (ModernBERT) + heads: category (13, soft CE), difficulty (CORN, 10 levels),
 10 skill axes (CORN, 11 levels), flags (7, BCE), checklist (24, BCE), out_tokens_log10 p10/p50/p90
 (pinball). Each head loss is divided by its first value. Extra losses:
@@ -59,6 +62,38 @@ $P scripts/eval/hard_tasks.py --profilers onnx:artifacts/panda-router-v1 onnx:ar
 
 Ablations: pass `--regret-weight 0` and/or `--pair-weight 0` and compare `val_score` in
 `train_summary.json`. Run the gold-set eval to decide what to keep.
+
+## v4 sequence (Modal GPU training + success head)
+
+GPU jobs run on [Modal](https://modal.com) (`pip install modal`, `modal setup`), not on the local Mac. Jobs log GPU, wall
+time and estimated $ to `checkpoints/v4/cost_log.jsonl` and refuse to launch past their budget cap. The whole v4 profiler
+cost about $1.67 of Modal credit.
+
+```sh
+P=.venv/bin/python
+# 1. 150M / 400M teachers, teacher cache, 32M / 68M students, soup (L40S; --stage pilot|teachers|cache|distill|soup|student68)
+$P -m modal run scripts/modal/train_modal.py --stage teachers
+# 2. fine-tune the chosen 32M soup on data/train + data/vague_v4 (vague requests), --under-w 2.5 over-estimate loss
+$P -m modal run scripts/modal/success_modal.py --stage vague_ft --init t150m_s32m_soup
+# 3. blend the weights 0.7 fine-tuned + 0.3 soup (WiSE; described in eval_reports/v4/REPORT.md section 1, no committed
+#    script), then export int8 per channel
+$P scripts/train/export.py --ckpt checkpoints/<blend> --data-dir data --out artifacts/panda-router-v4 --per-channel
+# 4. success head P(pass | task, model) from graded attempts (local, CPU; gold is never used)
+$P scripts/outcomes/train_success_head.py --profiler artifacts/panda-router-v4 --out artifacts/panda-router-v4/success_head.json
+# 5. v4 evaluation: policy tuning on train/val out-of-fold predictions, then the held-out gold run
+$P scripts/eval/v4_eval.py tune --out eval_reports/v4/tune.json
+$P scripts/eval/v4_eval.py gold --out eval_reports/v4/gold.json
+```
+
+- `--under-w 2.5` penalises difficulty under-prediction 2.5x (weighted CORN positives and an asymmetric anchor loss), so the
+  profiler errs towards harder.
+- `data/vague_v4/` holds the vague-request examples (`scripts/datagen/vague_v4.py`, `data/vague_v4/STATS.md`).
+- DeepSeek V4.1 Flash is the second teacher (Codex is the first). `panda_router/datagen/teachers.py` calls it through
+  `dsh --profile headless` by default; set `PANDA_DEEPSEEK_BACKEND=openrouter` for the paid OpenRouter API instead
+  (the 8,074 v3 labels were made that way, $2.77). The outcome judge also uses `dsh` (`panda_router/outcomes/cli_chat.py`). See
+  [data/STATS.md](../../data/STATS.md) and [eval_reports/v4/REPORT.md](../../eval_reports/v4/REPORT.md).
+- Attempt-and-grade data for the head: `scripts/outcomes/attempts_v4.py` (subscription-CLI attempters and the `dsh` judge),
+  `judge_terra.py`, then `build_attempts.py`; report `data/outcomes/REPORT_v4_attempts.md`.
 
 Serving:
 

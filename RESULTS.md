@@ -1,12 +1,19 @@
 # Panda Router v4
 
+v4.3 (2026-10-27): `/escalate` never offers a model weaker than one that already failed (the user's over-estimate
+rule). The ladder numbers are unchanged; escalating from `choice` improved to 90.7 within 2 attempts. Gold eval:
+`eval_reports/v4/gold_v43.json`. v4.2 fixed the policy modes (see `eval_reports/v4/REPORT.md`).
+
 **Shipped:** `artifacts/panda-router-v4` = 32M profiler (distilled from a 150M teacher trained on Modal, asymmetric
 "over-estimate" difficulty loss, fine-tuned on 1,474 vague-request examples) + a learned per-model success head
 (`success_head.json`) + a safer policy. Modal spend: $1.67 of the $30 budget.
 
 | on 150 held-out real attempt tasks, 9-model pool | success / 100 | $ / 100 |
 |---|---:|---:|
-| v4 single pick | 76.7 [69.3, 82.7] | 0.91 |
+| v4 single pick, max_utility (default) | 77.3 | 0.99 |
+| v4 single pick, max_quality | 82.0 | 1.20 |
+| v4 single pick, cheapest_above_threshold | 74.0 | 0.74 |
+| v4 escalate from `choice`, <= 2 attempts (v4.3: never steps down) | 90.7 | 1.68 |
 | v4 ladder, <= 2 attempts | 88.7 [83.3, 93.3] | 0.88 |
 | v4 ladder, <= 3 attempts | 92.0 | 1.23 |
 | v3 single pick (max_utility) | 66.7 | 0.23 |
