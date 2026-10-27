@@ -94,6 +94,202 @@
     },
     "success_head": "success_head.json (unweighted, per-card Platt on OOF, bootstrap lower bound; train/val only)",
     "policy_defaults": {
+      "failure_penalty_usd": 0.02,
+      "equal_p_margin": 0.05,
+      "min_p_success": 0.5,
+      "w_cost": 0.3,
+      "ladder_lambda": 3.0,
+      "best_single_usd_cap": 1.5183
+    },
+    "gold_9_model": {
+      "v4 max_utility single-shot": {
+        "success_per_100": 77.3,
+        "success_ci95": [
+          70.0,
+          84.0
+        ],
+        "usd_per_100": 0.9856,
+        "usd_ci95": [
+          0.8459,
+          1.1329
+        ],
+        "under_est_rate": 0.14,
+        "over_spend_rate": 0.707
+      },
+      "v4 escalation_ladder within 1": {
+        "success_per_100": 76.0,
+        "success_ci95": [
+          68.6667,
+          82.6667
+        ],
+        "usd_per_100": 0.5641,
+        "usd_ci95": [
+          0.4315,
+          0.6997
+        ],
+        "under_est_rate": 0.167,
+        "over_spend_rate": 0.66
+      },
+      "v4 escalation_ladder within 2": {
+        "success_per_100": 88.7,
+        "success_ci95": [
+          83.3333,
+          93.3333
+        ],
+        "usd_per_100": 0.884,
+        "usd_ci95": [
+          0.7001,
+          1.0796
+        ],
+        "under_est_rate": 0.167,
+        "over_spend_rate": 0.66
+      },
+      "v4 escalation_ladder within 3": {
+        "success_per_100": 92.0,
+        "success_ci95": [
+          87.3333,
+          96.0
+        ],
+        "usd_per_100": 1.2342,
+        "usd_ci95": [
+          0.924,
+          1.5931
+        ],
+        "under_est_rate": 0.167,
+        "over_spend_rate": 0.66
+      },
+      "always openrouter-gpt-6.1-sol": {
+        "success_per_100": 79.3,
+        "success_ci95": [
+          72.6667,
+          85.3333
+        ],
+        "usd_per_100": 1.1143,
+        "usd_ci95": [
+          0.9856,
+          1.2459
+        ],
+        "under_est_rate": 0.107,
+        "over_spend_rate": 0.747
+      },
+      "always-strongest (card skills)": {
+        "success_per_100": 76.7,
+        "success_ci95": [
+          70.0,
+          83.3333
+        ],
+        "usd_per_100": 4.0299,
+        "usd_ci95": [
+          3.5781,
+          4.4721
+        ],
+        "under_est_rate": 0.0,
+        "over_spend_rate": 0.76
+      },
+      "oracle (cheapest passing)": {
+        "success_per_100": 94.0,
+        "success_ci95": [
+          90.0,
+          97.3333
+        ],
+        "usd_per_100": 0.5597,
+        "usd_ci95": [
+          0.3216,
+          0.8389
+        ],
+        "under_est_rate": 0.0,
+        "over_spend_rate": 0.0
+      },
+      "v4 cheapest_above_threshold single-shot": {
+        "success_per_100": 74.0,
+        "success_ci95": [
+          66.6667,
+          80.6667
+        ],
+        "usd_per_100": 0.7428,
+        "usd_ci95": [
+          0.5839,
+          0.9092
+        ],
+        "under_est_rate": 0.18,
+        "over_spend_rate": 0.647
+      },
+      "v4 max_quality single-shot": {
+        "success_per_100": 82.0,
+        "success_ci95": [
+          75.3333,
+          88.0
+        ],
+        "usd_per_100": 1.1983,
+        "usd_ci95": [
+          1.057,
+          1.3594
+        ],
+        "under_est_rate": 0.093,
+        "over_spend_rate": 0.76
+      },
+      "v4 max_utility cascade<= 2 attempts": {
+        "success_per_100": 88.7,
+        "success_ci95": [
+          83.3333,
+          93.3333
+        ],
+        "usd_per_100": 1.1715,
+        "usd_ci95": [
+          1.0039,
+          1.3577
+        ],
+        "under_est_rate": 0.14,
+        "over_spend_rate": 0.707
+      },
+      "v4 max_utility cascade<= 3 attempts": {
+        "success_per_100": 91.3,
+        "success_ci95": [
+          86.6667,
+          95.3333
+        ],
+        "usd_per_100": 1.3863,
+        "usd_ci95": [
+          1.1665,
+          1.6477
+        ],
+        "under_est_rate": 0.14,
+        "over_spend_rate": 0.707
+      }
+    },
+    "report": "eval_reports/v4/REPORT.md",
+    "version": "v4.2",
+    "calibration_train_val_nested_cv": {
+      "ece": 0.0147,
+      "logloss": 0.5603,
+      "auc": 0.7446,
+      "mean_p": 0.3522,
+      "mean_margin": 0.0391
+    },
+    "calibration_gold": {
+      "v4.1 p_success (calibrated)": {
+        "n_cells": 1350,
+        "ece": 0.1266,
+        "mean_p": 0.4971,
+        "pass_rate": 0.6237,
+        "auc": 0.6504
+      },
+      "v4.1 p_success_lower": {
+        "n_cells": 1350,
+        "ece": 0.1842,
+        "mean_p": 0.4395,
+        "pass_rate": 0.6237,
+        "auc": 0.65
+      },
+      "v4.0 p_success (fail-weight 2.5 + LCB)": {
+        "n_cells": 1350,
+        "ece": 0.3751,
+        "mean_p": 0.2486,
+        "pass_rate": 0.6237,
+        "auc": 0.6166
+      }
+    },
+    "policy_defaults_v41": {
       "failure_penalty_usd": 0.1,
       "equal_p_margin": 0.05,
       "min_p_success": 0.6,
@@ -101,7 +297,7 @@
       "ladder_lambda": 3.0,
       "best_single_usd_cap": 1.5183
     },
-    "gold_9_model": {
+    "gold_9_model_v41": {
       "v4 max_utility single-shot": {
         "success_per_100": 76.7,
         "success_ci95": [
@@ -173,37 +369,125 @@
         "over_spend_rate": 0.0
       }
     },
-    "report": "eval_reports/v4/REPORT.md",
-    "version": "v4.1",
-    "calibration_train_val_nested_cv": {
-      "ece": 0.0147,
-      "logloss": 0.5603,
-      "auc": 0.7446,
-      "mean_p": 0.3522,
-      "mean_margin": 0.0391
-    },
-    "calibration_gold": {
-      "v4.1 p_success (calibrated)": {
-        "n_cells": 1350,
-        "ece": 0.1266,
-        "mean_p": 0.4971,
-        "pass_rate": 0.6237,
-        "auc": 0.6504
+    "gold_4_subscription": {
+      "v4 cheapest_above_threshold single-shot": {
+        "success_per_100": 68.7,
+        "success_ci95": [
+          60.6667,
+          75.3333
+        ],
+        "usd_per_100": 1.7298,
+        "usd_ci95": [
+          1.3933,
+          2.095
+        ],
+        "under_est_rate": 0.153,
+        "over_spend_rate": 0.527
       },
-      "v4.1 p_success_lower": {
-        "n_cells": 1350,
-        "ece": 0.1842,
-        "mean_p": 0.4395,
-        "pass_rate": 0.6237,
-        "auc": 0.65
+      "v4 max_utility single-shot": {
+        "success_per_100": 71.3,
+        "success_ci95": [
+          64.0,
+          78.6667
+        ],
+        "usd_per_100": 1.4552,
+        "usd_ci95": [
+          1.234,
+          1.6926
+        ],
+        "under_est_rate": 0.16,
+        "over_spend_rate": 0.573
       },
-      "v4.0 p_success (fail-weight 2.5 + LCB)": {
-        "n_cells": 1350,
-        "ece": 0.3751,
-        "mean_p": 0.2486,
-        "pass_rate": 0.6237,
-        "auc": 0.6166
+      "v4 max_utility cascade<= 2 attempts": {
+        "success_per_100": 84.0,
+        "success_ci95": [
+          77.3333,
+          89.3333
+        ],
+        "usd_per_100": 1.8205,
+        "usd_ci95": [
+          1.5651,
+          2.0922
+        ],
+        "under_est_rate": 0.16,
+        "over_spend_rate": 0.573
+      },
+      "v4 max_utility cascade<= 3 attempts": {
+        "success_per_100": 87.3,
+        "success_ci95": [
+          81.3333,
+          92.0
+        ],
+        "usd_per_100": 1.9474,
+        "usd_ci95": [
+          1.6676,
+          2.2482
+        ],
+        "under_est_rate": 0.16,
+        "over_spend_rate": 0.573
+      },
+      "v4 max_quality single-shot": {
+        "success_per_100": 73.3,
+        "success_ci95": [
+          66.0,
+          80.0
+        ],
+        "usd_per_100": 2.3718,
+        "usd_ci95": [
+          2.0671,
+          2.7133
+        ],
+        "under_est_rate": 0.107,
+        "over_spend_rate": 0.62
+      },
+      "v4 escalation_ladder within 1": {
+        "success_per_100": 63.3,
+        "success_ci95": [
+          56.0,
+          70.6667
+        ],
+        "usd_per_100": 0.4648,
+        "usd_ci95": [
+          0.3135,
+          0.6237
+        ],
+        "under_est_rate": 0.24,
+        "over_spend_rate": 0.427
+      },
+      "v4 escalation_ladder within 2": {
+        "success_per_100": 84.7,
+        "success_ci95": [
+          78.6667,
+          90.0
+        ],
+        "usd_per_100": 1.2381,
+        "usd_ci95": [
+          0.9891,
+          1.5193
+        ],
+        "under_est_rate": 0.24,
+        "over_spend_rate": 0.427
+      },
+      "v4 escalation_ladder within 3": {
+        "success_per_100": 90.7,
+        "success_ci95": [
+          85.3333,
+          94.6833
+        ],
+        "usd_per_100": 2.0128,
+        "usd_ci95": [
+          1.5378,
+          2.5814
+        ],
+        "under_est_rate": 0.24,
+        "over_spend_rate": 0.427
       }
-    }
+    },
+    "free_pick_rate_full_pool": {
+      "v4 cheapest_above_threshold": 0.0,
+      "v4 max_utility": 0.0,
+      "v4 max_quality": 0.0
+    },
+    "v4.2_policy_fix": "all modes search every eligible card (no anchor restriction); max_quality = max p_success_lower (0.01 tie -> cheaper); cheapest never picks below min_p when a card meets it (else ':relaxed' = max lower bound); equal-P->cheaper only within the mode's candidates and <= eq_margin below the pick's lower bound; untrained cards: card/IRT P recentred on the task's covered cards, shrunk 0.5 toward their median (router_v4.policy.shrunk_card_p)"
   }
 }

@@ -112,10 +112,10 @@ def off_matrix(esc: dict, pool: list[str]) -> np.ndarray:
     return np.array([[0.0 if a == b else esc.get(a, {}).get(b, 0.0) for b in pool] for a in pool])
 
 
-def simulate(tasks, pool, PL, C, strength_arr, res, mode, prm, prior=None, PM=None):
+def simulate(tasks, pool, PL, C, strength_arr, res, mode, prm, PM=None):
     """Single-shot picks; PL / PM: task -> calibrated out-of-fold lower bounds / P over pool."""
     return {t: [pool[choose(mode, PL[t], C[t], np.zeros(len(pool)), strength_arr, prm["min_p"], prm["L"],
-                            w_cost=prm["w_cost"], w_lat=0.0, prior=prior, eq_margin=prm["eq"],
+                            w_cost=prm["w_cost"], w_lat=0.0, eq_margin=prm["eq"],
                             p_mean=None if PM is None else PM[t])[0]]] for t in tasks}
 
 
@@ -141,11 +141,11 @@ def tune(args):
                 json.loads((ROOT / f"checkpoints/v4/success/profiles_{prof_dir}.json").read_text()).items()}
     oof = {(r["task_id"], r["card_id"]): r for r in read_jsonl(ROOT / f"checkpoints/v4/success/success_oof_{prof_dir}.jsonl")}
     head = json.loads((Path(args.profiler) / "success_head.json").read_text())
-    esc, base_rate = head["escalation_logit"], head["base_rate"]
+    esc = head["escalation_logit"]
     all9 = sorted({c for d in res.values() for c in d})
     pools = {"9-model": all9, "8-model (no opus)": [c for c in all9 if c != "claude-opus-5.5"],
              "4 subscription": list(SUB4)}
-    grid = {"L": [0.0, 0.005, 0.02, 0.05, 0.1], "min_p": [0.5, 0.6, 0.7, 0.8, 0.9],
+    grid = {"L": [0.0, 0.005, 0.02, 0.05, 0.1], "min_p": [0.2, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8],
             "w_cost": [0.0, 0.02, 0.05, 0.1, 0.3, 1.0], "eq": [-1.0, 0.0, 0.01, 0.02, 0.03, 0.05], "lam": [0.0, 0.3, 1.0, 3.0, 10.0, 30.0, 100.0]}
     report = {"grid": grid, "pools": {}}
     for pname, pool in pools.items():
@@ -166,8 +166,7 @@ def tune(args):
                         (mode != "max_utility" and wc != grid["w_cost"][0]):
                     continue
                 prm = {"L": L, "min_p": mp, "w_cost": wc, "eq": eq}
-                one = summary(score(simulate(tasks, pool, PL, C, s_arr, res, mode, prm,
-                                             prior=np.array([base_rate[c] for c in pool]), PM=PM), res, cost, pool,
+                one = summary(score(simulate(tasks, pool, PL, C, s_arr, res, mode, prm, PM=PM), res, cost, pool,
                                     strength))
                 rows.append({"mode": mode, **prm, "single": one})
         off = off_matrix(esc, pool)

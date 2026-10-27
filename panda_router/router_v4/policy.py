@@ -3,13 +3,13 @@
 Expected cost including failure:  E_m = c_m + (1 - P_m) * F_m,  F_m = c_next(m) + L
 where c_next(m) is the cost of the escalation step after m fails (the most-likely-to-pass other candidate) and L is
 a retry/latency penalty in $ (tuned on train/val). Decisions use the LOWER bound of the calibrated P (head:
-Platt(mean - z sd); uncovered cards: conservative card prior), so the policy over-estimates difficulty modestly;
+Platt(mean - z sd); uncovered cards: shrunk card prior, see shrunk_card_p), so the policy over-estimates difficulty modestly;
 the calibrated P itself is what the response displays.
 
-Modes (see choose): an anchor (best-evidence card) unless cheaper cards are clearly safe (lower bound >= min_p);
-  cheapest_above_threshold  min E among the safe cheaper cards; E within the tie tolerance -> stronger model
-  max_utility               max P - w_cost * E / max(E) - w_lat * lat / max(lat) over safe + anchor
-  max_quality               max P over safe + anchor; ties -> stronger model
+Modes (see choose; v4.2: every mode searches all eligible cards, no anchor restriction):
+  cheapest_above_threshold  min E among lower bound >= min_p; none -> max_quality pick (decided_by ':relaxed')
+  max_utility               max P - w_cost * E / max(E) - w_lat * lat / max(lat)
+  max_quality               max lower bound; within Q_TIE -> cheaper
 A $0 candidate may only win if its P is within FREE_MARGIN of the best paid candidate's P.
 """
 
@@ -53,14 +53,19 @@ def conservative_card_p(p_card_q: np.ndarray, alpha: float, beta: float, penalty
     return sigmoid(alpha + beta * logit(p_card_q) - penalty)
 
 
-def anchored_card_p(p_card_q: np.ndarray, ref_card_q: np.ndarray, ref_p: np.ndarray, penalty: np.ndarray) -> np.ndarray:
-    """Uncovered cards on the success head's scale for this task: monotone interpolation of the covered cards'
-    (card P, head P) pairs in logit space, clamped to their range (an unproven card never exceeds the best
-    evidence-backed one), minus the prior penalty."""
-    order = np.argsort(ref_card_q)
-    xs = logit(ref_card_q[order])
-    ys = np.maximum.accumulate(logit(ref_p[order]))
-    return sigmoid(np.interp(logit(p_card_q), xs, ys) - penalty)
+UNCOVERED_SHRINK = 0.5  # weight on the card/IRT estimate vs the task's covered-card median (not tuned: no outcomes)
+
+
+def shrunk_card_p(p_card_q: np.ndarray, ref_card_q: np.ndarray, ref_p: np.ndarray, penalty: np.ndarray,
+                  alpha: float, beta: float, shrink: float = UNCOVERED_SHRINK) -> np.ndarray:
+    """Uncovered cards on the success head's scale for this task: card/IRT P mapped by the global card calibration
+    (alpha + beta * logit), recentred on this task's covered cards (mean head logit - mean mapped card logit),
+    shrunk toward the covered cards' median head logit (a conservative prior), minus the prior penalty and capped
+    at the best covered card (an unproven card never exceeds the best evidence-backed one). Task- and card-dependent,
+    so cards above the covered range no longer collapse to one flat number."""
+    z, z_ref, y_ref = alpha + beta * logit(p_card_q), alpha + beta * logit(ref_card_q), logit(ref_p)
+    est = z + (y_ref.mean() - z_ref.mean())
+    return np.minimum(sigmoid(shrink * est + (1 - shrink) * np.median(y_ref) - penalty), ref_p.max())
 
 
 def next_step_cost(p: np.ndarray, cost: np.ndarray, strength: np.ndarray) -> np.ndarray:
@@ -85,7 +90,8 @@ def free_guard(p: np.ndarray, cost: np.ndarray, margin: float = FREE_MARGIN) -> 
     return ~free | (p >= p[~free].max() - margin)
 
 
-P_TIE = 0.005  # P within this of the best counts as a tie (-> stronger card)
+P_TIE = 0.005  # P within this of the best counts as a tie (-> stronger card) for exact-cost / utility ties
+Q_TIE = 0.01  # max_quality / relaxed threshold: lower bound within this of the best -> the cheaper card
 
 
 def _stronger(idx, p, strength, cost):
@@ -93,48 +99,52 @@ def _stronger(idx, p, strength, cost):
     return max((i for i in idx if p[i] >= top - P_TIE), key=lambda i: (strength[i], p[i], cost[i], -i))
 
 
+def _best_p_cheaper(idx, p, cost, strength):
+    """Highest p over idx; p within Q_TIE of the best -> the cheaper card (then stronger)."""
+    top = max(p[i] for i in idx)
+    return min((i for i in idx if p[i] >= top - Q_TIE), key=lambda i: (cost[i], -strength[i], -p[i], i))
+
+
+def _min_e(idx, E, p, strength, cost):
+    e_min = min(E[i] for i in idx)
+    return _stronger([i for i in idx if E[i] <= e_min * (1 + TIE_REL) + TIE_ABS], p, strength, cost)
+
+
 def choose(mode: str, p: np.ndarray, cost: np.ndarray, latency: np.ndarray, strength: np.ndarray,
            min_p: float, penalty_usd: float, w_cost: float = 0.3, w_lat: float = 0.1,
-           w_quality: float = 1.0, prior: np.ndarray | None = None,
-           eq_margin: float = 0.0, p_mean: np.ndarray | None = None) -> tuple[int, str, np.ndarray, np.ndarray]:
+           w_quality: float = 1.0, eq_margin: float = 0.0,
+           p_mean: np.ndarray | None = None) -> tuple[int, str, np.ndarray, np.ndarray]:
     """-> (index, decided_by, utility, expected_cost) over the given candidate arrays. p = decision (lower) bound.
 
-    Anchor = best-evidence card: max `prior` (the success head's population base rate; -inf for cards it was not
-    trained on) or, with no prior, max p. Cards cheaper than the anchor compete only when p >= min_p ("clearly
-    safe") or its calibrated P (p_mean, default p) is within eq_margin of the anchor's (roughly equal P -> the
-    cheaper card): cheapest_above_threshold takes the min expected cost among them, max_utility the max utility over
-    them + the anchor, max_quality the max p over them + the anchor. Otherwise the anchor is picked."""
+    All modes consider every candidate that passes the $0 guard:
+      max_quality               max p; p within Q_TIE -> the cheaper card
+      cheapest_above_threshold  min expected cost among p >= min_p (never a pick below min_p when one meets it);
+                                none meets it -> the max_quality pick, decided_by '...:relaxed'
+      max_utility               max utility
+    Then (cheapest / max_utility) roughly equal calibrated P (p_mean within eq_margin) -> the cheaper card, among
+    the threshold candidates for cheapest, and never more than eq_margin below the pick's lower bound."""
+    if mode not in MODE_NAMES:
+        raise ValueError(f"unknown mode {mode!r}")
     E = expected_cost(p, cost, strength, penalty_usd)
     util = (w_quality * p - w_cost * E / max(float(E.max()), 1e-12)
             - w_lat * latency / max(float(latency.max()), 1e-12))
     ok = list(np.flatnonzero(free_guard(p, cost)))
-    if prior is not None and np.isfinite(prior[ok]).any():
-        anchor = _stronger(ok, np.where(np.isfinite(prior), prior, -1.0), strength, cost)
-    else:
-        anchor = _stronger(ok, p, strength, cost)
     pm = p if p_mean is None else p_mean
-    safe = [i for i in ok if cost[i] < cost[anchor] and (p[i] >= min_p or pm[i] >= pm[anchor] - eq_margin)]
-    if mode not in MODE_NAMES:
-        raise ValueError(f"unknown mode {mode!r}")
-    if not safe:
-        k, by = anchor, f"policy:{mode}:anchor"
-    elif mode == "cheapest_above_threshold":
-        pool = safe + [anchor]
-        e_min = min(E[i] for i in pool)
-        k, by = _stronger([i for i in pool if E[i] <= e_min * (1 + TIE_REL) + TIE_ABS], p, strength, cost), \
-            "policy:cheapest_above_threshold"
-    elif mode == "max_utility":
-        pool = safe + [anchor]
+    if mode == "max_quality":
+        return _best_p_cheaper(ok, p, cost, strength), "policy:max_quality", util, E
+    if mode == "cheapest_above_threshold":
+        pool = [i for i in ok if p[i] >= min_p]
+        if not pool:
+            return _best_p_cheaper(ok, p, cost, strength), "policy:cheapest_above_threshold:relaxed", util, E
+        k, by = _min_e(pool, E, p, strength, cost), "policy:cheapest_above_threshold"
+    else:
+        pool = ok
         u_max = max(util[i] for i in pool)
         k, by = _stronger([i for i in pool if util[i] >= u_max - 1e-9], p, strength, cost), "policy:max_utility"
-    else:
-        k, by = _stronger(safe + [anchor], p, strength, cost), "policy:max_quality"
-    # roughly equal calibrated P -> never the pricier card (all modes)
-    eq = [i for i in ok if cost[i] < cost[k] * (1 - TIE_REL) - TIE_ABS and pm[i] >= pm[k] - eq_margin]
+    eq = [i for i in pool if cost[i] < cost[k] * (1 - TIE_REL) - TIE_ABS and pm[i] >= pm[k] - eq_margin
+          and p[i] >= p[k] - eq_margin]
     if eq:
-        e_min = min(E[i] for i in eq)
-        k = _stronger([i for i in eq if E[i] <= e_min * (1 + TIE_REL) + TIE_ABS], p, strength, cost)
-        by += ":equal_p_cheaper"
+        k, by = _min_e(eq, E, p, strength, cost), by + ":equal_p_cheaper"
     return k, by, util, E
 
 

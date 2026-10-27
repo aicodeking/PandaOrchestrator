@@ -33,8 +33,8 @@ DEFAULTS = {
     "explore_temperature": 0.1,
 }
 # v4 policy defaults (tuned on train/val out-of-fold head predictions: eval_reports/v4/tune.json "selection").
-V4_DEFAULTS = {"min_p_success": 0.6, "failure_penalty_usd": 0.1, "equal_p_margin": 0.05, "ladder_lambda": 3.0,
-               "weights": {"quality": 1.0, "cost": 1.0, "latency": 0.0}}
+V4_DEFAULTS = {"min_p_success": 0.5, "failure_penalty_usd": 0.02, "equal_p_margin": 0.05, "ladder_lambda": 3.0,
+               "weights": {"quality": 1.0, "cost": 0.3, "latency": 0.0}}
 P_SUCCESS_NOTE = ("p_success: estimated pass rate under strict grading (success head calibrated on train/val outcomes; "
                   "card prior for cards it was not trained on); decisions use p_success_lower")
 POLICIES = ("v4", "v3")
@@ -226,8 +226,8 @@ class Matcher:
     def _v4_p(self, pool, profile: TaskProfile, text: str, diff: np.ndarray, p_levels: np.ndarray, cost: np.ndarray,
               card_ids: list[str], failed) -> tuple[np.ndarray, np.ndarray, np.ndarray, dict]:
         """v4 P per card: calibrated success-head P and its lower bound for cards the head was trained on;
-        otherwise the card's P at the upper difficulty quantile, anchored per task to the covered cards' scale and
-        minus a provenance/free prior penalty. Returns (P, P lower, decision difficulty, info)."""
+        otherwise the card's P at the upper difficulty quantile, recentred on this task's covered cards and shrunk
+        toward their median (v4.shrunk_card_p), minus a provenance/free prior penalty. Returns (P, P lower, decision difficulty, info)."""
         head = self.success_head
         if head is not None:
             dec, vague = head.decision_difficulty(profile, text, diff)
@@ -240,7 +240,6 @@ class Matcher:
         p = v4.conservative_card_p(card_q, cal.get("alpha", 0.0), cal.get("beta", 1.0), penalty)
         p_lo = p.copy()
         source = ["card_prior"] * len(p)
-        prior = None
         covered = [i for i, c in enumerate(card_ids) if head is not None and c in head.index]
         failed_cards = [card_ids[pool.index(m)] for m in failed if m in pool.ids]
         if failed_cards and head is not None:  # uncovered cards also lose the mean correlated-failure shift
@@ -253,15 +252,13 @@ class Matcher:
             off = head.failure_offset(failed_cards, ids)
             pc, lo = head.predict(head.features(profile, text, diff), ids, off)
             if len(covered) >= 2:  # anchor uncovered cards to this task's evidence-backed P scale
-                p = v4.anchored_card_p(card_q, card_q[covered], pc, penalty)
-                p_lo = v4.anchored_card_p(card_q, card_q[covered], lo, penalty)
+                ab = cal.get("alpha", 0.0), cal.get("beta", 1.0)
+                p = v4.shrunk_card_p(card_q, card_q[covered], pc, penalty, *ab)
+                p_lo = v4.shrunk_card_p(card_q, card_q[covered], lo, penalty, *ab)
             p[covered], p_lo[covered] = pc, lo
-            base = head.params.get("base_rate") or {}
-            prior = np.full(len(p), -np.inf)
-            prior[covered] = [base.get(c, -np.inf) for c in ids]
             for i in covered:
                 source[i] = "success_head"
-        info = {"source": source, "raw_expected": round(float(diff @ np.arange(1, 11)), 3), "prior": prior,
+        info = {"source": source, "raw_expected": round(float(diff @ np.arange(1, 11)), 3),
                 "vagueness": round(float(vague), 4), "decision_level": round(float(level), 3)}
         return np.clip(p, 0.0, 1.0), np.clip(np.minimum(p_lo, p), 0.0, 1.0), dec, info
 
@@ -377,14 +374,11 @@ class Matcher:
             decided_by = "none:all_filtered"
             fb.update(triggered=True, reason="all_candidates_filtered")
         elif is_v4:
-            # v4: decide on the lower bound; anchor (best-evidence card) unless a cheaper card is clearly safe or
-            # no worse; no floor fallback. After a failure, follow the previous response's escalation ladder.
+            # v4: decide on the lower bound over all candidates (v4.router_v4.policy.choose); no floor fallback. After a failure, follow the previous response's escalation ladder.
             strength = pool.theta.mean(axis=1)
-            prior = v4_info["prior"]
             k, decided_by, u, e = v4.choose(mode, p_lo[cand_idx], cost[cand_idx], latency[cand_idx], strength[cand_idx],
                                             min_p, float(prefs["failure_penalty_usd"]), w_cost=weights["cost"],
                                             w_lat=weights["latency"], w_quality=weights["quality"],
-                                            prior=None if prior is None else prior[cand_idx],
                                             eq_margin=float(prefs["equal_p_margin"]), p_mean=p[cand_idx])
             greedy, eligible = cand[k], list(cand)
             util[cand_idx], exp_cost[cand_idx] = u, e

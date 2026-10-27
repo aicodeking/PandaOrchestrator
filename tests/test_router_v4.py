@@ -121,13 +121,61 @@ def test_equal_p_goes_cheaper_exact_cost_ties_go_stronger():
     assert v4.choose("cheapest_above_threshold", p, cost, np.zeros(2), strength, 0.4, 0.0)[0] == 1
 
 
-def test_anchor_is_best_evidence_card_unless_cheaper_is_clearly_safe():
-    p, cost, strength = np.array([0.40, 0.55, 0.50]), np.array([0.001, 0.015, 0.03]), np.array([7.0, 8.7, 8.4])
-    prior = np.array([0.35, 0.61, 0.55])
-    k, by, *_ = v4.choose("max_quality", p, cost, np.zeros(3), strength, 0.8, 0.0, prior=prior)
-    assert k == 1 and by.endswith("anchor")
-    p2 = np.array([0.85, 0.55, 0.50])
-    assert v4.choose("cheapest_above_threshold", p2, cost, np.zeros(3), strength, 0.8, 0.0, prior=prior)[0] == 0
+def test_modes_differ_and_max_quality_takes_highest_lower_bound():
+    # strong pricey card above every cheaper one: no anchor restriction hides it
+    p, cost, strength = np.array([0.52, 0.57, 0.65, 0.40]), np.array([0.0006, 0.005, 0.012, 0.0002]), \
+        np.array([7.0, 7.5, 8.7, 6.0])
+    picks = {m: v4.choose(m, p, cost, np.zeros(4), strength, 0.5, 0.02, eq_margin=0.05, p_mean=p + 0.1)
+             for m in MODES}
+    assert picks["max_quality"][0] == 2 and picks["max_quality"][1] == "policy:max_quality"
+    assert picks["cheapest_above_threshold"][0] == 0
+    assert len({k for k, *_ in picks.values()}) >= 2
+    # within Q_TIE of the best lower bound -> the cheaper card
+    assert v4.choose("max_quality", np.array([0.65, 0.645]), np.array([0.012, 0.005]), np.zeros(2),
+                     np.array([9.0, 7.0]), 0.5, 0.0)[0] == 1
+
+
+@pytest.mark.parametrize("eq", [0.0, 0.05])
+def test_cheapest_respects_min_p_when_any_meets_it(eq):
+    p, cost, strength = np.array([0.74, 0.76, 0.60]), np.array([0.001, 0.02, 0.0005]), np.array([7.0, 9.0, 6.0])
+    k, by, *_ = v4.choose("cheapest_above_threshold", p, cost, np.zeros(3), strength, 0.75, 0.02, eq_margin=eq,
+                          p_mean=np.array([0.80, 0.80, 0.70]))
+    assert k == 1 and p[k] >= 0.75 and by.startswith("policy:cheapest_above_threshold")
+    # nobody meets it -> highest lower bound, flagged relaxed
+    k, by, *_ = v4.choose("cheapest_above_threshold", p - 0.2, cost, np.zeros(3), strength, 0.75, 0.02)
+    assert k == 1 and by.endswith(":relaxed")
+
+
+def test_max_utility_equal_p_never_drops_far_below_pick():
+    p, cost, strength = np.array([0.70, 0.55]), np.array([0.01, 0.0001]), np.array([9.0, 6.0])
+    k, *_ = v4.choose("max_utility", p, cost, np.zeros(2), strength, 0.5, 0.0, w_cost=0.0, eq_margin=0.05,
+                      p_mean=np.array([0.80, 0.79]))  # calibrated P equal, lower bound 0.15 apart -> keep stronger
+    assert k == 0
+
+
+@pytest.mark.parametrize("mode", MODES)
+def test_train_a_model_min_p_075(router, mode):
+    r = route(router, "train a model", mode=mode, min_p_success=0.75)
+    rows = {x["model_id"]: x for x in r["ranking"]}
+    pick = rows[r["choice"]["model_id"]]
+    best = max(x["p_success_lower"] for x in rows.values())
+    if best >= 0.75:
+        assert pick["p_success_lower"] >= 0.75
+    elif mode != "max_utility":  # nobody clears it -> the highest lower bound (ties within 0.01 -> cheaper)
+        assert pick["p_success_lower"] >= best - 0.01
+    assert pick["est_cost_usd"] > 0
+
+
+def test_untrained_cards_get_task_dependent_estimates(router):
+    rows = route(router, "train a model")["ranking"]
+    unc = [x for x in rows if x["p_source"] == "card_prior"]
+    cov_max = max(x["p_success"] for x in rows if x["p_source"] == "success_head")
+    assert all(x["p_success"] <= cov_max + 1e-9 for x in unc)
+    strong = ["openrouter-gemini-4-argon", "openrouter-kimi-k3.1-pro", "claude-fable-5.1", "openrouter-gpt-6-astra"]
+    by_id = {x["card_id"]: (x["p_success"], x["p_success_lower"]) for x in unc}
+    assert len({by_id[c] for c in strong if c in by_id}) > 1  # no single flat prior
+    other = {x["card_id"]: x["p_success"] for x in route(router, "What does HTTP 418 mean?")["ranking"]}
+    assert any(abs(other[c] - by_id[c][0]) > 0.05 for c in strong if c in by_id)  # moves with the task
 
 
 def test_ladder_cheap_safe_first_then_stronger():
@@ -136,10 +184,11 @@ def test_ladder_cheap_safe_first_then_stronger():
     assert lad[:2] == [0, 1] and sorted(lad) == [0, 1, 2]
 
 
-def test_anchored_prior_never_exceeds_best_covered():
+def test_shrunk_prior_never_exceeds_best_covered():
     ref_q, ref_p = np.array([0.6, 0.8, 0.9]), np.array([0.2, 0.35, 0.4])
-    out = v4.anchored_card_p(np.array([0.99, 0.7, 0.1]), ref_q, ref_p, np.array([0.0, 0.0, 0.0]))
-    assert out[0] == pytest.approx(0.4) and 0.2 < out[1] < 0.35 and out[2] == pytest.approx(0.2)
+    out = v4.shrunk_card_p(np.array([0.999, 0.95, 0.7, 0.1]), ref_q, ref_p, np.zeros(4), -0.94, 0.28)
+    assert out[0] <= 0.4 + 1e-12 and out[1] > out[2] > out[3] and out[3] < 0.35
+    assert (v4.shrunk_card_p(np.array([0.95]), ref_q, ref_p, np.array([1.0]), -0.94, 0.28) < out[1]).all()
 
 
 # ----------------------------------------------------------------------------- calibrated P, review probes
@@ -157,7 +206,8 @@ def test_review_probes(router, mode):
     for text in ("What does HTTP status 418 mean?", "What does HTTP 418 mean?"):
         r = route(router, text, mode=mode)
         pick = next(x for x in r["ranking"] if x["model_id"] == r["choice"]["model_id"])
-        assert pick["est_cost_usd"] < 0.002 and r["difficulty"]["raw_expected"] <= (2.0 if "status" not in text else 2.5)
+        # v4.2: may take the best lower bound (gpt-6.1-sol, ~$0.003, > eq_margin above deepseek); still cheap
+        assert 0 < pick["est_cost_usd"] < 0.005 and r["difficulty"]["raw_expected"] <= (2.0 if "status" not in text else 2.5)
         assert 0 < pick["p_success_lower"] <= pick["p_success"] == r["choice"]["confidence"] < 1
     r = route(router, "a model trainer", mode=mode)
     pick = next(x for x in r["ranking"] if x["model_id"] == r["choice"]["model_id"])

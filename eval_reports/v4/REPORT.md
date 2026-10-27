@@ -6,6 +6,64 @@ below always-gpt-6.1-sol (79.3 @ $1.11). Gold (150 held-out tasks graded for all
 fitting or tuning; it was evaluated once for v4.1 (and re-run once after a bug fix for cards outside the gold pools,
 which changed no gold row).
 
+## v4.2 policy fix (2026-10-27)
+
+**Bug** (architect, full default pool, `--min-p 0.75`, "train a model"): all three modes returned
+gemini-3.8-flash (P 0.77, lower 0.57, $0.005, `:equal_p_cheaper`) even though claude-sonnet-5.5 had P 0.84 / lower 0.65.
+`choose()` limited candidates to the anchor (best population base rate) plus cheaper cards, and its final
+"equal P -> cheaper" pass ran in every mode, which could override min_p. Uncovered cards
+(gemini-4-argon, kimi-k3.1-pro, claude-fable-5.1, gpt-6-astra) all showed 0.766 / 0.528 because
+`anchored_card_p` clamped every card above the covered range to the best covered value.
+
+**Fix** (`panda_router/router_v4/policy.py`):
+- No anchor. Every mode considers all candidates that pass the $0 guard.
+- `max_quality`: the max `p_success_lower`. Cards within 0.01 of the best count as tied, and the cheaper one wins.
+- `cheapest_above_threshold`: the min expected cost (failure term included) among cards with lower >= min_p.
+  Equal-P -> cheaper applies only among those cards. If no card meets min_p, it returns the max_quality pick with
+  `decided_by` `...:relaxed`. It never returns a pick below min_p when some card meets it.
+- `max_utility`: max utility over all eligible cards. Equal-P -> cheaper is allowed only if the cheaper card's
+  lower bound is at most `eq_margin` below the pick's.
+- Untrained cards (`shrunk_card_p`): card/IRT P is mapped by the head's card calibration (alpha + beta * logit) and
+  recentred on this task's covered cards. It is then shrunk 0.5 toward the covered cards' median head logit (the
+  conservative prior), the provenance / $0 penalty is subtracted, and the result is capped at the best covered
+  card. The estimate now depends on both the task and the card. The shrink weight 0.5 is fixed, not tuned: there
+  are no outcomes for these cards.
+
+**Re-tune (train/val OOF only, same pre-registered rule; min_p grid extended down to 0.2):** L 0.1 -> 0.02,
+min_p 0.6 -> 0.5, w_cost 1.0 -> 0.3. eq_margin 0.05 and ladder lambda 3.0 are unchanged. Train/val 8-model pool:
+max_quality 53.9 @ $1.69, cheapest@0.5 52.1 @ $1.46, max_utility 52.9 @ $1.35. The v4.1 anchor policy scored
+55.1 @ $1.38 here: the anchor (gpt-6.1-sol, best base rate) was a strong default on train/val.
+
+**Gold, 9-model (150 tasks, 95% CI), v4.1 -> v4.2** (success/100 @ $/100; under-estimation; over-spend):
+
+| row | v4.1 | v4.2 |
+|---|---|---|
+| single-shot max_utility (default) | 76.7 [69.3, 82.7] @ $0.91; 0.140; 0.687 | 77.3 [70.0, 84.0] @ $0.99; 0.140; 0.707 |
+| single-shot cheapest_above_threshold | 76.0 [68.7, 82.0] @ $0.88; 0.147; 0.680 | 74.0 [66.7, 80.7] @ $0.74; 0.180; 0.647 |
+| single-shot max_quality | 76.7 [69.3, 82.7] @ $0.91; 0.140; 0.687 | **82.0 [75.3, 88.0] @ $1.20; 0.093; 0.760** |
+| max_utility cascade <= 2 | 89.3 [84.0, 94.0] @ $1.12 | 88.7 [83.3, 93.3] @ $1.17 |
+| max_utility cascade <= 3 | 91.3 [86.7, 95.3] @ $1.30 | 91.3 [86.7, 95.3] @ $1.39 |
+| escalation_ladder within 1 / 2 / 3 | 76.0 / 88.7 / 92.0 @ $0.56 / $0.88 / $1.23 | unchanged (ladder untouched) |
+| $0 pick rate, full default pool, all modes | 0.00 | 0.00 |
+
+4 subscription pool, v4.1 -> v4.2: max_utility 72.7 @ $1.93 -> 71.3 @ $1.46 (under 0.127 -> 0.160). Cheapest
+72.7 -> 68.7 @ $1.73. Max_quality 72.7 -> 73.3 @ $2.37 (under 0.107). Cascade <= 2: 84.7 -> 84.0, <= 3: 88.0 -> 87.3.
+In v4.1 all three modes made nearly the same picks. In v4.2 they differ. max_quality is now the strongest
+single-shot row (82.0, above always-gpt-6.1-sol 79.3 [72.7, 85.3] @ $1.11) and has the lowest under-estimation.
+On the 9-model pool, the default (max_utility) changes within noise, and cheapest trades about 2 points for 16%
+lower $. Gold was run once for v4.2 and not used for any choice.
+
+**Probes (full default pool):**
+- "train a model", min_p 0.75: no card has lower >= 0.75 (best is sonnet at 0.648). All three modes pick
+  claude-sonnet-5.5 (cheapest via `:relaxed`).
+- "train a model", defaults (min_p 0.5): cheapest -> haiku-5.5 (lower 0.51 >= 0.5, $0.0006); max_utility and
+  max_quality -> sonnet.
+- "HTTP 418": max_utility -> deepseek-v4.1-flash ($0.0002, `:equal_p_cheaper`). Cheapest (relaxed) and
+  max_quality -> gpt-6.1-sol ($0.0029), because its lower bound is 0.04 higher. "HTTP status 418": all modes ->
+  gpt-6.1-sol ($0.003). Its lower bound is 0.055 above deepseek's, which is more than eq_margin, so the new rule
+  keeps it. The probe test now checks est $ < $0.005 (it was < $0.002).
+- "a model trainer": a paid card in every mode, never $0.
+
 ## Verdict
 
 - **85/100 single-shot: not reached, and not reachable with this data.** v4.1 single-shot (max_utility, default) is

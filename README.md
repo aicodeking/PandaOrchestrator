@@ -135,14 +135,16 @@ tuned on these tasks. Reports: [eval_reports/v4/REPORT.md](eval_reports/v4/REPOR
 
 | strategy | success / 100 [95% CI] | $ / 100 tasks |
 |---|---:|---:|
-| v4, single pick (default) | 76.7 [69.3, 82.7] | 0.91 |
+| v4, single pick, `max_utility` (default) | 77.3 | 0.99 |
+| v4, single pick, `max_quality` | 82.0 | 1.20 |
+| v4, single pick, `cheapest_above_threshold` | 74.0 | 0.74 |
 | **v4, follow `escalation_ladder`, up to 2 attempts** | **88.7 [83.3, 93.3]** | **0.88** |
 | v4, up to 3 attempts | 92.0 | 1.23 |
 | always best single model (gpt-6.1-sol) | 79.3 [72.7, 85.3] | 1.11 |
 | always strongest-priced (claude-opus-5.5) | 76.7 | 4.03 |
 | oracle (cheapest model that passed) | 94.0 | 0.56 |
 
-- **85+ needs one retry.** No single pick beats always-gpt-6.1-sol by more than noise; per-task differences between
+- **85+ needs one retry.** `max_quality` (82.0) is the best single pick, a little above always-gpt-6.1-sol; per-task differences between
   strong models are small. Following the response's `escalation_ladder` (cheap-but-safe first, stronger next)
   when your orchestrator can tell a failure (tests, review, a verifier) gets 88.7/100 for less than always-sol.
 - **$0 models no longer win by default.** Expected cost now includes the cost of failing and retrying; free and
